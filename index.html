@@ -395,7 +395,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/1-IOC-DI-%E6%BA%90%E7%A0%81/">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/9-%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C-%E5%9F%BA%E7%A1%80/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -409,7 +409,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/1-IOC-DI-%E6%BA%90%E7%A0%81/" class="post-title-link" itemprop="url">1-IOC-DI-源码</a>
+            <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/9-%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C-%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">9-数据操作-BASE</a>
         </h1>
 
         <div class="post-meta">
@@ -451,20 +451,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="0-BeanFactory"><a href="#0-BeanFactory" class="headerlink" title="0 BeanFactory"></a>0 BeanFactory</h1><ul>
-<li>BeanFactory接口的子类或子接口</li>
-</ul>
-<p><img src="/images/springofficial/3-BeanFactory.png" alt=""></p>
-<ul>
-<li><p><strong>AutowireCapableBeanFactory：</strong><br>beanFactory接口的扩展实现，假如它们想要对已经存在的bean暴露它的功能，实现它就能实现自动装配功能。定义了将容器中的Bean按某种规则（如按名字匹配、按类型匹配等）进行自动装配的方法；</p>
-</li>
-<li><p><strong>HierarchicalBeanFactory</strong> :</p>
-<p>是一个bean factory 子接口实现，可以作为层次结构的一部分。相对应的bean Factory方法setParentBeanFactory允许在一个可配置beanfactory中设置它们的父bean factory。</p>
-</li>
-</ul>
+          <h1 id="1-事务管理"><a href="#1-事务管理" class="headerlink" title="1 事务管理"></a>1 事务管理</h1><h2 id="1-1-理解事务管理的抽象类"><a href="#1-1-理解事务管理的抽象类" class="headerlink" title="1.1 理解事务管理的抽象类"></a>1.1 理解事务管理的抽象类</h2><p>The key to the Spring transaction abstraction is the notion(<strong>概念</strong>) of a <em>transaction strategy</em>. A transaction strategy is defined by the<code>org.springframework.transaction.PlatformTransactionManager</code> interface:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PlatformTransactionManager</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">TransactionStatus <span class="title">getTransaction</span><span class="params">(TransactionDefinition definition)</span> </span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> TransactionException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">commit</span><span class="params">(TransactionStatus status)</span> <span class="keyword">throws</span> TransactionException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">rollback</span><span class="params">(TransactionStatus status)</span> <span class="keyword">throws</span> TransactionException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/1-IOC-DI-%E6%BA%90%E7%A0%81/#" rel="contents">
+              <a class="btn" href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/9-%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C-%E5%9F%BA%E7%A1%80/#" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -904,90 +895,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/1-IOC-DI/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="zxucooly">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZXUBLOG">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/1-IOC-DI/" class="post-title-link" itemprop="url">1-IOC-DI</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-12-05 16:45:00" itemprop="dateCreated datePublished" datetime="2018-12-05T16:45:00+08:00">2018-12-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-23 23:00:52" itemprop="dateModified" datetime="2019-12-23T23:00:52+08:00">2019-12-23</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index">
-                    <span itemprop="name">java</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="0-IOC-DI"><a href="#0-IOC-DI" class="headerlink" title="0 IOC DI"></a>0 IOC DI</h1><h2 id="1、IOC是什么"><a href="#1、IOC是什么" class="headerlink" title="1、IOC是什么"></a>1、IOC是什么</h2><p>IOC—Inversion of Control，即“控制反转”，不是什么技术，而是一种设计思想。在Java开发中，Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下：</p>
-<p><strong>谁控制谁，控制什么</strong>：传统Java SE程序设计，我们直接在对象内部通过new进行创建对象，是程序主动去创建依赖对象；而IOC是有专门一个容器来创建这些对象，即由IOC容器来控制对象的创建而不再显式地使用new；谁控制谁？当然是IOC容器控制了对象；控制什么？那就是主要控制了外部资源获取和生命周期（不只是对象也包括文件等）。<br><strong>为何是反转，哪些方面反转了</strong>：有反转就有正转，传统应用程序是由我们自己在对象中主动控制去直接获取依赖对象，也就是正转；而反转则是由容器来帮忙创建及注入依赖对象；为何是反转？因为由容器帮我们查找及注入依赖对象，对象只是被动的接受依赖对象，所以是反转；哪些方面反转了？依赖对象的获取被反转了。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/1-IOC-DI/#" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/9-%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C-JPA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1066,6 +973,90 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/9-%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C-JPA/#" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/1-IOC-DI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/1-IOC-DI/" class="post-title-link" itemprop="url">1-IOC-DI</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 16:45:00" itemprop="dateCreated datePublished" datetime="2018-12-05T16:45:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-23 23:00:52" itemprop="dateModified" datetime="2019-12-23T23:00:52+08:00">2019-12-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="0-IOC-DI"><a href="#0-IOC-DI" class="headerlink" title="0 IOC DI"></a>0 IOC DI</h1><h2 id="1、IOC是什么"><a href="#1、IOC是什么" class="headerlink" title="1、IOC是什么"></a>1、IOC是什么</h2><p>IOC—Inversion of Control，即“控制反转”，不是什么技术，而是一种设计思想。在Java开发中，Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下：</p>
+<p><strong>谁控制谁，控制什么</strong>：传统Java SE程序设计，我们直接在对象内部通过new进行创建对象，是程序主动去创建依赖对象；而IOC是有专门一个容器来创建这些对象，即由IOC容器来控制对象的创建而不再显式地使用new；谁控制谁？当然是IOC容器控制了对象；控制什么？那就是主要控制了外部资源获取和生命周期（不只是对象也包括文件等）。<br><strong>为何是反转，哪些方面反转了</strong>：有反转就有正转，传统应用程序是由我们自己在对象中主动控制去直接获取依赖对象，也就是正转；而反转则是由容器来帮忙创建及注入依赖对象；为何是反转？因为由容器帮我们查找及注入依赖对象，对象只是被动的接受依赖对象，所以是反转；哪些方面反转了？依赖对象的获取被反转了。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/1-IOC-DI/#" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
