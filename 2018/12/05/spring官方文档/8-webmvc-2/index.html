@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="1 Annotated Controllers1.1 Declaration配置后置处理器容器。 12345@Configuration@ComponentScan(&quot;org.example.web&quot;)public class WebConfig &amp;#123;    &#x2F;&#x2F; ...&amp;#125;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8-webmvc-2">
+<meta property="og:url" content="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-2/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="1 Annotated Controllers1.1 Declaration配置后置处理器容器。 12345@Configuration@ComponentScan(&quot;org.example.web&quot;)public class WebConfig &amp;#123;    &#x2F;&#x2F; ...&amp;#125;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-12-05T08:45:00.000Z">
+<meta property="article:modified_time" content="2019-12-23T15:00:52.663Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="Spring官方文档">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>8-webmvc-2 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          8-webmvc-2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 16:45:00" itemprop="dateCreated datePublished" datetime="2018-12-05T16:45:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-23 23:00:52" itemprop="dateModified" datetime="2019-12-23T23:00:52+08:00">2019-12-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-Annotated-Controllers"><a href="#1-Annotated-Controllers" class="headerlink" title="1 Annotated Controllers"></a>1 Annotated Controllers</h1><h2 id="1-1-Declaration"><a href="#1-1-Declaration" class="headerlink" title="1.1 Declaration"></a>1.1 Declaration</h2><p>配置后置处理器容器。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(<span class="string">"org.example.web"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>The following example shows the XML configuration equivalent of the preceding example:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:p</span>=<span class="string">"http://www.springframework.org/schema/p"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/context</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/context/spring-context.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"org.example.web"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- ... --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>@RestController</code> is a <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2NvcmUuaHRtbCNiZWFucy1tZXRhLWFubm90YXRpb25z" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-meta-annotations">composed annotation<i class="fa fa-external-link"></i></span> that is itself meta-annotated with <code>@Controller</code> and <code>@ResponseBody</code> to indicate a controller whose every method inherits the type-level <code>@ResponseBody</code> annotation and, therefore, writes directly to the response body versus view resolution and rendering with an HTML template.</p>
+<h3 id="1-1-1-AOP-Proxies"><a href="#1-1-1-AOP-Proxies" class="headerlink" title="1.1.1 AOP Proxies"></a>1.1.1 AOP Proxies</h3><p>In some cases, you many need to decorate a controller with an AOP proxy at runtime. One example is if you choose to have <code>@Transactional</code> annotations directly on the controller. When this is the case, for controllers specifically, we recommend using class-based proxying. This is typically the default choice with controllers.<br> However, if a controller must implement an interface that is not a Spring Context callback (such as <code>InitializingBean</code>, <code>*Aware</code>, and others), you may need to explicitly configure class-based proxying. <strong>For example, with <code>&lt;tx:annotation-driven/&gt;</code>, you can change to <code>&lt;tx:annotation-driven proxy-target-class=&quot;true&quot;/&gt;</code>.</strong></p>
+<h2 id="1-2-Request-Mapping"><a href="#1-2-Request-Mapping" class="headerlink" title="1.2 Request Mapping"></a>1.2 Request Mapping</h2><p>You can use the <code>@RequestMapping</code> annotation to map requests to controllers methods. It has various attributes to <strong>match by URL, HTTP method, request parameters, headers, and media types.</strong> You can use it at the class level to express shared mappings or at the method level to narrow down to a specific endpoint mapping.</p>
+<p>There are also HTTP method specific shortcut variants of <code>@RequestMapping</code>:</p>
+<ul>
+<li><code>@GetMapping</code></li>
+<li><code>@PostMapping</code></li>
+<li><code>@PutMapping</code></li>
+<li><code>@DeleteMapping</code></li>
+<li><code>@PatchMapping</code></li>
+</ul>
+<p>The following example has type and method level mappings:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/persons"</span>) <span class="comment">// 匹配所有http方法</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">getPerson</span><span class="params">(@PathVariable Long id)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="meta">@ResponseStatus</span>(HttpStatus.CREATED)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(@RequestBody Person person)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-1-URI样式"><a href="#1-2-1-URI样式" class="headerlink" title="1.2.1 URI样式"></a>1.2.1 URI样式</h3><p>You can map requests by using the following glob patterns and wildcards:</p>
+<ul>
+<li><code>?</code> matches one character</li>
+<li><code>*</code> matches zero or more characters within a path segment</li>
+<li><code>**</code> match zero or more path segments</li>
+</ul>
+<p>You can also declare URI variables and access their values with <code>@PathVariable</code>, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/test3/*/&#123;name&#125;"</span>) <span class="comment">// 匹配浏览器访问路径</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">test3</span><span class="params">(@PathVariable String name)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/owners/&#123;ownerId&#125;/pets/&#123;petId&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Pet <span class="title">findPet</span><span class="params">(@PathVariable Long ownerId, @PathVariable Long petId)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You can declare URI variables at the class and method levels, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/owners/&#123;ownerId&#125;"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OwnerController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/pets/&#123;petId&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Pet <span class="title">findPet</span><span class="params">(@PathVariable Long ownerId, @PathVariable Long petId)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>URI variables are automatically converted to the appropriate type, or <code>TypeMismatchException</code> is raised. Simple types (<code>int</code>, <code>long</code>, <code>Date</code>, and so on) are supported by default and you can register support for any other data type. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tdHlwZWNvbnZlcnNpb24=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-typeconversion">Type Conversion<i class="fa fa-external-link"></i></span> and <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-initbinder" target="_blank" rel="noopener">Using <code>DataBinder</code></a>.</p>
+<p>您可以显式地命名URI变量(例如，@PathVariable(“customId”))，但是如果名称相同，并且您的代码使用调试信息或Java 8上的-parameters编译器标记进行编译，那么您可以省略这个细节。</p>
+<p>The syntax <code>{varName:regex}</code> declares a URI variable with a regular expression that has syntax of <code>{varName:regex}</code>. For example, given URL <code>&quot;/spring-web-3.0.5 .jar&quot;</code>, the following method extracts the name, version, and file extension:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 请求：http://localhost:8080/ha-1.2.3.haha</span></span><br><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/&#123;name:[a-z-]+&#125;-&#123;version:\\d\\.\\d\\.\\d&#125;&#123;ext:\\.[a-z]+&#125;"</span>)</span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">handle</span><span class="params">(@PathVariable String version, @PathVariable String ext)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> version+<span class="string">"------"</span>+ext; <span class="comment">//1.2.3------.haha</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>URI path patterns can also have embedded <code>${…}</code> placeholders that are resolved on startup by using <code>PropertyPlaceHolderConfigurer</code> against local, system, environment, and other property sources. You can use this, for example, to parameterize a base URL based on some external configuration.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/test2"</span>)</span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">test2</span><span class="params">(@Value(<span class="string">"$&#123;my.props.name&#125;"</span>)</span> String name)</span>&#123;</span><br><span class="line">   <span class="keyword">return</span> name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// application.properties</span></span><br><span class="line"><span class="comment">//my.props.name=张三</span></span><br></pre></td></tr></table></figure>
+
+<p>Spring MVC uses the <code>PathMatcher</code> contract and the <code>AntPathMatcher</code> implementation from <code>spring-core</code> for URI path matching.</p>
+<h3 id="1-2-2-样式比较"><a href="#1-2-2-样式比较" class="headerlink" title="1.2.2 样式比较"></a>1.2.2 样式比较</h3><p>When multiple patterns match a URL, they must be compared to find the best match. This is done by using <code>AntPathMatcher.getPatternComparator(String path)</code>, which looks for patterns that are more specific.</p>
+<p>如果模式的URI变量计数较低，且单个通配符计数为1，双通配符计数为2，那么模式的特异性就不那么强。在相同的分数下，选择较长的图案。在相同的分数和长度下，选择的模式比通配符有更多的URI变量。</p>
+<p>The default mapping pattern (<code>/**</code>) is excluded from scoring and always sorted last. Also, prefix patterns (such as <code>/public/**</code>) are considered less specific than other pattern that do not have double wildcards.</p>
+<p>For the full details, see <a href="https://docs.spring.io/spring-framework/docs/5.1.0.RELEASE/javadoc-api/org/springframework/util/AntPathMatcher.AntPatternComparator.html" target="_blank" rel="noopener"><code>AntPatternComparator</code></a> in <a href="https://docs.spring.io/spring-framework/docs/5.1.0.RELEASE/javadoc-api/org/springframework/util/AntPathMatcher.html" target="_blank" rel="noopener"><code>AntPathMatcher</code></a> and also keep mind that you can customize the <a href="https://docs.spring.io/spring-framework/docs/5.1.0.RELEASE/javadoc-api/org/springframework/util/PathMatcher.html" target="_blank" rel="noopener"><code>PathMatcher</code></a>implementation. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctcGF0aC1tYXRjaGluZw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-path-matching">Path Matching<i class="fa fa-external-link"></i></span> in the configuration section.</p>
+<h4 id="1-2-2-1-后缀匹配"><a href="#1-2-2-1-后缀匹配" class="headerlink" title="1.2.2.1 后缀匹配"></a>1.2.2.1 后缀匹配</h4><p>By default, Spring MVC performs <code>.*</code> suffix pattern matching so that a controller mapped to <code>/person</code> is also implicitly mapped to <code>/person.*</code>. The file extension is then used to interpret the requested content type to use for the response (that is, instead of the <code>Accept</code> header) — for example, <code>/person.pdf</code>, <code>/person.xml</code>, and others.</p>
+<p>当浏览器用于发送难以一致解释的Accept标头时，以这种方式使用文件扩展名是必要的。目前，这已经不再是必须的，使用Accept标头应该是首选的选择。</p>
+<p>随着时间的推移，使用文件名扩展在很多方面都存在问题。当与URI变量、路径参数和URI编码的使用重叠时，它会导致歧义。关于基于url的授权和安全性(有关更多细节，请参阅下一节)的推理也变得更加困难。</p>
+<p><strong>To completely disable the use of file extensions, you must set both of the following:</strong></p>
+<ul>
+<li><code>useSuffixPatternMatching(false)</code>, see <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctcGF0aC1tYXRjaGluZw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-path-matching">PathMatchConfigurer<i class="fa fa-external-link"></i></span></li>
+<li><code>favorPathExtension(false)</code>, see <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctY29udGVudC1uZWdvdGlhdGlvbg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-content-negotiation">ContentNeogiationConfigurer<i class="fa fa-external-link"></i></span></li>
+</ul>
+<p>基于URL的内容协商仍然很有用(例如，在浏览器中输入URL时)。为了实现这一点，我们推荐一种基于查询参数的策略，以避免文件扩展名带来的大多数问题。或者，如果必须使用文件扩展名，可以考虑通过ContentNeogiationConfigurer的mediaTypes属性将它们限制为一组显式注册的扩展名。</p>
+<h4 id="1-2-2-2-Suffix-Match-and-RFD"><a href="#1-2-2-2-Suffix-Match-and-RFD" class="headerlink" title="1.2.2.2 Suffix Match and RFD"></a>1.2.2.2 Suffix Match and RFD</h4><p>反射文件下载(RFD)攻击与XSS类似，它依赖于响应中反映的请求输入(例如查询参数和URI变量)。然而，RFD攻击并没有将JavaScript插入HTML中，而是依赖于浏览器切换来执行下载，并将响应作为可执行脚本在双击之后处理。</p>
+<p>在Spring MVC中，@ResponseBody和ResponseEntity方法存在风险，因为它们可以呈现不同的内容类型，客户可以通过URL路径扩展请求这些内容类型。禁用后缀模式匹配和使用路径扩展进行内容协商降低了风险，但不足以防止RFD攻击。</p>
+<p>To prevent RFD attacks, prior to rendering the response body, Spring MVC adds a <code>Content-Disposition:inline;filename=f.txt</code>header to suggest a fixed and safe download file. </p>
+<p>只有当URL路径包含一个文件扩展名时才会这样做，该文件扩展名既不是白名单也不是为内容协商显式注册的。然而，当url被直接输入到浏览器中时，它可能会有潜在的副作用。</p>
+<p>Many common path extensions are whitelisted by default. Applications with custom <code>HttpMessageConverter</code> implementations can explicitly register file extensions for content negotiation to avoid having a <code>Content-Disposition</code> header added for those extensions. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctY29udGVudC1uZWdvdGlhdGlvbg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-content-negotiation">Content Types<i class="fa fa-external-link"></i></span>.</p>
+<p>See <span class="exturl" data-url="aHR0cHM6Ly9waXZvdGFsLmlvL3NlY3VyaXR5L2N2ZS0yMDE1LTUyMTE=" title="https://pivotal.io/security/cve-2015-5211">CVE-2015-5211<i class="fa fa-external-link"></i></span> for additional recommendations related to RFD.</p>
+<h4 id="1-2-2-3-Consumable-Media-Types"><a href="#1-2-2-3-Consumable-Media-Types" class="headerlink" title="1.2.2.3 Consumable Media Types"></a>1.2.2.3 Consumable Media Types</h4><p><strong>匹配浏览器请求的Content-Type类型。</strong></p>
+<p><strong>You can narrow the request mapping based on the <code>Content-Type</code> of the request, as the following example shows:</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(path = <span class="string">"/pets"</span>, consumes = <span class="string">"application/json"</span>) </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addPet</span><span class="params">(@RequestBody Pet pet)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The <code>consumes</code> attribute also supports negation expressions — for example, <code>!text/plain</code> means any content type other than <code>text/plain</code>.</p>
+<p>可以在类上设置，但方法设置的会覆盖类级别上的。</p>
+<h3 id="1-2-3-Producible-Media-Types"><a href="#1-2-3-Producible-Media-Types" class="headerlink" title="1.2.3 Producible Media Types"></a>1.2.3 Producible Media Types</h3><p><strong>匹配浏览器请求的Accept类型。</strong></p>
+<p><strong>You can narrow the request mapping based on the <code>Accept</code> request header and the list of content types that a controller method produces, as the following example shows:</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(path = <span class="string">"/pets/&#123;petId&#125;"</span>, produces = <span class="string">"application/json;charset=UTF-8"</span>) </span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Pet <span class="title">getPet</span><span class="params">(@PathVariable String petId)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Using a <code>produces</code> attribute to narrow the mapping by the content type.</p>
+<p>The media type can specify a character set. Negated expressions are supported — for example, <code>!text/plain</code> means any content type other than “text/plain”.</p>
+<p>对于JSON内容类型，应该指定UTF-8字符集，即使RFC7159明确声明“本次注册不定义字符集参数”，因为一些浏览器要求它正确解释UTF-8特殊字符。</p>
+<p>可以在类级别声明一个shared produces属性。然而，与大多数其他请求映射属性不同的是，当在类级别使用时，方法级别生成属性覆盖而不是扩展类级别声明。</p>
+<h3 id="1-2-4-Parameters-headers"><a href="#1-2-4-Parameters-headers" class="headerlink" title="1.2.4 Parameters, headers"></a>1.2.4 Parameters, headers</h3><p>You can narrow request mappings based on request parameter conditions. You can test for the presence of a request parameter (<code>myParam</code>), for the absence of one (<code>!myParam</code>), or for a specific value (<code>myParam=myValue</code>). The following example shows how to test for a specific value:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(path = <span class="string">"/pets/&#123;petId&#125;"</span>, params = <span class="string">"myParam=myValue"</span>) </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findPet</span><span class="params">(@PathVariable String petId)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Testing whether <code>myParam</code> equals <code>myValue</code>.</p>
+</blockquote>
+<p>You can also use the same with request header conditions, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(path = <span class="string">"/pets"</span>, headers = <span class="string">"myHeader=myValue"</span>) </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findPet</span><span class="params">(@PathVariable String petId)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Testing whether <code>myHeader</code> equals <code>myValue</code>.    </p>
+</blockquote>
+<h3 id="1-2-5-HTTP-HEAD-OPTIONS"><a href="#1-2-5-HTTP-HEAD-OPTIONS" class="headerlink" title="1.2.5 HTTP HEAD, OPTIONS"></a>1.2.5 HTTP HEAD, OPTIONS</h3><p><code>@GetMapping</code> (and <code>@RequestMapping(method=HttpMethod.GET)</code>) support HTTP HEAD transparently for request mapping. Controller methods do not need to change. A response wrapper, applied in <code>javax.servlet.http.HttpServlet</code>, ensures a <code>Content-Length</code> header is set to the number of bytes written (without actually writing to the response).</p>
+<p><code>@GetMapping</code> (and <code>@RequestMapping(method=HttpMethod.GET)</code>) are implicitly mapped to and support HTTP HEAD. An HTTP HEAD request is processed as if it were HTTP GET except that, instead of writing the body, the number of bytes are counted and the <code>Content-Length</code> header is set.</p>
+<p>By default, HTTP OPTIONS is handled by setting the <code>Allow</code> response header to the list of HTTP methods listed in all <code>@RequestMapping</code> methods that have matching URL patterns.</p>
+<p>For a <code>@RequestMapping</code> without HTTP method declarations, the <code>Allow</code> header is set to<code>GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS</code>. Controller methods should always declare the supported HTTP methods (for example, by using the HTTP method specific variants: <code>@GetMapping</code>, <code>@PostMapping</code>, and others).</p>
+<p>You can explicitly map the <code>@RequestMapping</code> method to HTTP HEAD and HTTP OPTIONS, but that is not necessary in the common case.</p>
+<h3 id="1-2-6-Custom-Annotations"><a href="#1-2-6-Custom-Annotations" class="headerlink" title="1.2.6 Custom Annotations"></a>1.2.6 Custom Annotations</h3><p>Spring MVC supports the use of <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2NvcmUuaHRtbCNiZWFucy1tZXRhLWFubm90YXRpb25z" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-meta-annotations">composed annotations<i class="fa fa-external-link"></i></span> for request mapping. Those are annotations that are themselves meta-annotated with <code>@RequestMapping</code> and composed to redeclare a subset (or all) of the <code>@RequestMapping</code> attributes with a narrower, more specific purpose.</p>
+<p><code>@GetMapping</code>, <code>@PostMapping</code>, <code>@PutMapping</code>, <code>@DeleteMapping</code>, and <code>@PatchMapping</code> are examples of composed annotations. They are provided because, arguably, most controller methods should be mapped to a specific HTTP method versus using <code>@RequestMapping</code>, which, by default, matches to all HTTP methods. If you need an example of composed annotations, look at how those are declared.</p>
+<p>Spring MVC also supports custom request-mapping attributes with custom request-matching logic. This is a more advanced option that requires subclassing <code>RequestMappingHandlerMapping</code> and overriding the <code>getCustomMethodCondition</code> method, where you can check the custom attribute and return your own <code>RequestCondition</code>.</p>
+<h3 id="1-2-7-Explicit-Registrations-编程式"><a href="#1-2-7-Explicit-Registrations-编程式" class="headerlink" title="1.2.7 Explicit Registrations(编程式)"></a>1.2.7 Explicit Registrations(编程式)</h3><p>You can programmatically register handler methods, which you can use for dynamic registrations or for advanced cases, such as different instances of the same handler under different URLs. The following example registers a handler method:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConfig</span> </span>&#123;</span><br><span class="line">	<span class="comment">//1. Inject the target handler and the handler mapping for controllers.</span></span><br><span class="line">	<span class="comment">//2. Prepare the request mapping meta data.</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHandlerMapping</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        RequestMappingHandlerMapping mapping, </span></span></span><br><span class="line"><span class="function"><span class="params">        UserHandler handler)</span> <span class="keyword">throws</span> NoSuchMethodException </span>&#123;</span><br><span class="line">	</span><br><span class="line">        RequestMappingInfo info = RequestMappingInfo</span><br><span class="line">                .paths(<span class="string">"/user/&#123;id&#125;"</span>).methods(RequestMethod.GET).build(); </span><br><span class="line">		</span><br><span class="line">        <span class="comment">// 3.Get the handler method.</span></span><br><span class="line">        Method method = UserHandler.class.getMethod("getUser", Long.class); </span><br><span class="line">		<span class="comment">// 4.Add the registration.</span></span><br><span class="line">        mapping.registerMapping(info, handler, method); </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-3-Handler-Methods"><a href="#1-3-Handler-Methods" class="headerlink" title="1.3 Handler Methods"></a>1.3 Handler Methods</h2><p><code>@RequestMapping</code> handler methods have a flexible signature and can choose from a range of supported controller method arguments and return values.</p>
+<h3 id="1-3-1-方法参数"><a href="#1-3-1-方法参数" class="headerlink" title="1.3.1 方法参数"></a>1.3.1 方法参数</h3><p>The next table describes the supported controller method arguments. <strong>Reactive types are not supported for any arguments.</strong></p>
+<p>JDK 8’s <code>java.util.Optional</code> is supported as a method argument in combination with annotations that have a <code>required</code>attribute (for example, <code>@RequestParam</code>, <code>@RequestHeader</code>, and others) and is equivalent to <code>required=false</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Controller method argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>WebRequest</code>, <code>NativeWebRequest</code></td>
+<td>Generic access to request parameters and request and session attributes, without direct use of the Servlet API.</td>
+</tr>
+<tr>
+<td><code>javax.servlet.ServletRequest</code>, <code>javax.servlet.ServletResponse</code></td>
+<td>Choose any specific request or response type — for example, <code>ServletRequest</code>, <code>HttpServletRequest</code>, or Spring’s <code>MultipartRequest</code>, <code>MultipartHttpServletRequest</code>.</td>
+</tr>
+<tr>
+<td><code>javax.servlet.http.HttpSession</code></td>
+<td>Enforces the presence of a session. As a consequence, such an argument is never <code>null</code>. Note that session access is not thread-safe. Consider setting the<code>RequestMappingHandlerAdapter</code> instance’s <code>synchronizeOnSession</code> flag to <code>true</code> if multiple requests are allowed to concurrently access a session.</td>
+</tr>
+<tr>
+<td><code>javax.servlet.http.PushBuilder</code></td>
+<td>Servlet 4.0 push builder API for programmatic HTTP/2 resource pushes. Note that, per the Servlet specification, the injected <code>PushBuilder</code> instance can be null if the client does not support that HTTP/2 feature.</td>
+</tr>
+<tr>
+<td><code>java.security.Principal</code></td>
+<td>Currently authenticated user — possibly a specific <code>Principal</code> implementation class if known.</td>
+</tr>
+<tr>
+<td><code>HttpMethod</code>获取访问方法Get|Put等</td>
+<td>The HTTP method of the request.</td>
+</tr>
+<tr>
+<td><code>java.util.Locale</code></td>
+<td>The current request locale, determined by the most specific <code>LocaleResolver</code>available (in effect, the configured <code>LocaleResolver</code> or <code>LocaleContextResolver</code>).</td>
+</tr>
+<tr>
+<td><code>java.util.TimeZone</code> + <code>java.time.ZoneId</code></td>
+<td>The time zone associated with the current request, as determined by a <code>LocaleContextResolver</code>.</td>
+</tr>
+<tr>
+<td><code>java.io.InputStream</code>, <code>java.io.Reader</code></td>
+<td>For access to the raw request body as exposed by the Servlet API.</td>
+</tr>
+<tr>
+<td><code>java.io.OutputStream</code>, <code>java.io.Writer</code></td>
+<td>For access to the raw response body as exposed by the Servlet API.</td>
+</tr>
+<tr>
+<td><code>@PathVariable</code></td>
+<td>For access to URI template variables. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tcmVxdWVzdG1hcHBpbmctdXJpLXRlbXBsYXRlcw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-requestmapping-uri-templates">URI patterns<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><code>@MatrixVariable</code></td>
+<td>For access to name-value pairs in URI path segments. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tbWF0cml4LXZhcmlhYmxlcw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-matrix-variables">Matrix Variables<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><code>@RequestParam</code></td>
+<td>For access to the Servlet request parameters. Parameter values are converted to the declared method argument type. See <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-requestparam" target="_blank" rel="noopener">Using <code>@RequestParam</code></a>.Note that use of <code>@RequestParam</code> is optional (for example, to set its attributes). See “Any other argument”, at the end of this table.</td>
+</tr>
+<tr>
+<td><code>@RequestHeader</code></td>
+<td>For access to request headers. Header values are converted to the declared method argument type. See <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-requestheader" target="_blank" rel="noopener">Using <code>@RequestHeader</code></a>.</td>
+</tr>
+<tr>
+<td><code>@CookieValue</code></td>
+<td>For access to cookies. Cookies values are converted to the declared method argument type. See <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-cookievalue" target="_blank" rel="noopener">Using <code>@CookieValue</code></a>.</td>
+</tr>
+<tr>
+<td><code>@RequestBody</code></td>
+<td>For access to the HTTP request body. Body content is converted to the declared method argument type by using <code>HttpMessageConverter</code> implementations. See <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-requestbody" target="_blank" rel="noopener">Using <code>@RequestBody</code></a>.</td>
+</tr>
+<tr>
+<td><code>HttpEntity&lt;B&gt;</code></td>
+<td>For access to request headers and body. The body is converted with <code>HttpMessageConverter</code> implementations. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4taHR0cGVudGl0eQ==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-httpentity">HttpEntity<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><code>@RequestPart</code></td>
+<td>For access to a part in a <code>multipart/form-data</code> request. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1tdWx0aXBhcnQtZm9ybXM=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-multipart-forms">Multipart<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><strong><code>java.util.Map</code>, <code>org.springframework.ui.Model</code>, <code>org.springframework.ui.ModelMap</code></strong></td>
+<td><strong>For access to the model that is used in HTML controllers and exposed to templates as part of view rendering.</strong></td>
+</tr>
+<tr>
+<td><code>RedirectAttributes</code></td>
+<td>Specify attributes to use in case of a redirect (that is, to be appended to the query string) and flash attributes to be stored temporarily until the request after redirect. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1yZWRpcmVjdGluZy1wYXNzaW5nLWRhdGE=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-redirecting-passing-data">Redirect Attributes<i class="fa fa-external-link"></i></span> and <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1mbGFzaC1hdHRyaWJ1dGVz" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-flash-attributes">Flash Attributes<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><code>@ModelAttribute</code></td>
+<td>For access to an existing attribute in the model (instantiated if not present) with data binding and validation applied. See <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-method-args" target="_blank" rel="noopener">Using <code>@ModelAttribute</code></a> as well as <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tbW9kZWxhdHRyaWItbWV0aG9kcw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-methods">Model<i class="fa fa-external-link"></i></span>and <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-initbinder" target="_blank" rel="noopener">Using <code>DataBinder</code></a>.Note that use of <code>@ModelAttribute</code> is optional (for example, to set its attributes). See “Any other argument” at the end of this table.</td>
+</tr>
+<tr>
+<td><code>Errors</code>, <code>BindingResult</code></td>
+<td>For access to errors from validation and data binding for a command object (that is, a <code>@ModelAttribute</code> argument) or errors from the validation of a <code>@RequestBody</code>or <code>@RequestPart</code> arguments. You must declare an <code>Errors</code>, or <code>BindingResult</code>argument immediately after the validated method argument.</td>
+</tr>
+<tr>
+<td><code>SessionStatus</code> + class-level <code>@SessionAttributes</code></td>
+<td>For marking form processing complete, which triggers cleanup of session attributes declared through a class-level <code>@SessionAttributes</code> annotation. See<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-sessionattributes" target="_blank" rel="noopener">Using <code>@SessionAttributes</code></a> for more details.</td>
+</tr>
+<tr>
+<td><code>UriComponentsBuilder</code></td>
+<td>For preparing a URL relative to the current request’s host, port, scheme, context path, and the literal part of the servlet mapping. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy11cmktYnVpbGRpbmc=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-uri-building">URI Links<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><code>@SessionAttribute</code></td>
+<td>For access to any session attribute, in contrast to model attributes stored in the session as a result of a class-level <code>@SessionAttributes</code> declaration. See <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-sessionattribute" target="_blank" rel="noopener">Using <code>@SessionAttribute</code></a> for more details.</td>
+</tr>
+<tr>
+<td><code>@RequestAttribute</code></td>
+<td>For access to request attributes. See <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-requestattrib" target="_blank" rel="noopener">Using <code>@RequestAttribute</code></a> for more details.</td>
+</tr>
+<tr>
+<td>Any other argument</td>
+<td>If a method argument is not matched to any of the earlier values in this table and it is a simple type (as determined by <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmctZnJhbWV3b3JrL2RvY3MvNS4xLjAuUkVMRUFTRS9qYXZhZG9jLWFwaS9vcmcvc3ByaW5nZnJhbWV3b3JrL2JlYW5zL0JlYW5VdGlscy5odG1sI2lzU2ltcGxlUHJvcGVydHktamF2YS5sYW5nLkNsYXNzLQ==" title="https://docs.spring.io/spring-framework/docs/5.1.0.RELEASE/javadoc-api/org/springframework/beans/BeanUtils.html#isSimpleProperty-java.lang.Class-">BeanUtils#isSimpleProperty<i class="fa fa-external-link"></i></span>, it is a resolved as a <code>@RequestParam</code>. Otherwise, it is resolved as a <code>@ModelAttribute</code>.</td>
+</tr>
+</tbody></table>
+<p>1.3.2  </p>
+<h3 id="1-3-2-返回值"><a href="#1-3-2-返回值" class="headerlink" title="1.3.2 返回值"></a>1.3.2 返回值</h3><p>The next table describes the supported controller method return values. Reactive types are supported for all return values.</p>
+<table>
+<thead>
+<tr>
+<th>Controller method return value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@ResponseBody</code></td>
+<td>The return value is converted through <code>HttpMessageConverter</code>implementations and written to the response. See <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-responsebody" target="_blank" rel="noopener">Using <code>@ResponseBody</code></a>.</td>
+</tr>
+<tr>
+<td><code>HttpEntity&lt;B&gt;</code>, <code>ResponseEntity&lt;B&gt;</code></td>
+<td>The return value that specifies the full response (including HTTP headers and body) is to be converted through <code>HttpMessageConverter</code>implementations and written to the response. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tcmVzcG9uc2VlbnRpdHk=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-responseentity">ResponseEntity<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><code>HttpHeaders</code></td>
+<td>For returning a response with headers and no body.</td>
+</tr>
+<tr>
+<td><code>String</code></td>
+<td>A view name to be resolved with <code>ViewResolver</code> implementations and used together with the implicit model — determined through command objects and <code>@ModelAttribute</code> methods. The handler method can also programmatically enrich the model by declaring a <code>Model</code> argument (see <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tcmVxdWVzdG1hcHBpbmctcmVnaXN0cmF0aW9u" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-requestmapping-registration">Explicit Registrations<i class="fa fa-external-link"></i></span>).</td>
+</tr>
+<tr>
+<td><code>View</code></td>
+<td>A <code>View</code> instance to use for rendering together with the implicit model — determined through command objects and <code>@ModelAttribute</code> methods. The handler method can also programmatically enrich the model by declaring a <code>Model</code> argument (see <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tcmVxdWVzdG1hcHBpbmctcmVnaXN0cmF0aW9u" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-requestmapping-registration">Explicit Registrations<i class="fa fa-external-link"></i></span>).</td>
+</tr>
+<tr>
+<td><code>java.util.Map</code>, <code>org.springframework.ui.Model</code></td>
+<td>Attributes to be added to the implicit model, with the view name implicitly determined through a <code>RequestToViewNameTranslator</code>.</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th><code>@ModelAttribute</code></th>
+<th>An attribute to be added to the model, with the view name implicitly determined through a <code>RequestToViewNameTranslator</code>.Note that <code>@ModelAttribute</code> is optional. See “Any other return value” at the end of this table.</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ModelAndView</code> object</td>
+<td>The view and model attributes to use and, optionally, a response status.</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td>A method with a <code>void</code> return type (or <code>null</code> return value) is considered to have fully handled the response if it also has a <code>ServletResponse</code>, an <code>OutputStream</code> argument, or an <code>@ResponseStatus</code> annotation. The same is also true if the controller has made a positive <code>ETag</code> or <code>lastModified</code>timestamp check (see <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jYWNoaW5nLWV0YWctbGFzdG1vZGlmaWVk" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-caching-etag-lastmodified">Controllers<i class="fa fa-external-link"></i></span> for details).If none of the above is true, a <code>void</code> return type can also indicate “no response body” for REST controllers or a default view name selection for HTML controllers.</td>
+</tr>
+<tr>
+<td><strong><code>DeferredResult&lt;V&gt;</code></strong></td>
+<td><strong>Produce any of the preceding return values asynchronously from any thread — for example, as a result of some event or callback. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tYXN5bmM=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-async">Asynchronous Requests<i class="fa fa-external-link"></i></span> and <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-async-deferredresult" target="_blank" rel="noopener">Using <code>DeferredResult</code></a>.</strong></td>
+</tr>
+<tr>
+<td><strong><code>Callable&lt;V&gt;</code></strong></td>
+<td><strong>Produce any of the above return values asynchronously in a Spring MVC-managed thread. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tYXN5bmM=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-async">Asynchronous Requests<i class="fa fa-external-link"></i></span> and <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-async-callable" target="_blank" rel="noopener">Using <code>Callable</code></a>.</strong></td>
+</tr>
+</tbody></table>
+<h3 id="1-3-3-Matrix-Variables"><a href="#1-3-3-Matrix-Variables" class="headerlink" title="1.3.3   Matrix  Variables"></a>1.3.3   Matrix  Variables</h3><ul>
+<li>示例</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GET /pets/42;q=11;r=22</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/pets/&#123;petId&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findPet</span><span class="params">(@PathVariable String petId, @MatrixVariable <span class="keyword">int</span> q)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// petId == 42</span></span><br><span class="line">    <span class="comment">// q == 1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Given that all path segments may contain matrix variables, you may sometimes need to disambiguate which path variable the matrix variable is expected to be in. The following example shows how to do so:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GET /owners/42;q=11/pets/21;q=22</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/owners/&#123;ownerId&#125;/pets/&#123;petId&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findPet</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        @MatrixVariable(name=<span class="string">"q"</span>, pathVar=<span class="string">"ownerId"</span>)</span> <span class="keyword">int</span> q1,</span></span><br><span class="line"><span class="function">        @<span class="title">MatrixVariable</span><span class="params">(name=<span class="string">"q"</span>, pathVar=<span class="string">"petId"</span>)</span> <span class="keyword">int</span> q2) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// q1 == 11</span></span><br><span class="line">    <span class="comment">// q2 == 22</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A matrix variable may be defined as optional and a default value specified, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GET /pets/42</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/pets/&#123;petId&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findPet</span><span class="params">(@MatrixVariable(required=<span class="keyword">false</span>, defaultValue=<span class="string">"1"</span>)</span> <span class="keyword">int</span> q) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// q == 1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To get all matrix variables, you can use a <code>MultiValueMap</code>, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GET /owners/42;q=11;r=12/pets/21;q=22;s=23</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/owners/&#123;ownerId&#125;/pets/&#123;petId&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findPet</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        @MatrixVariable MultiValueMap&lt;String, String&gt; matrixVars,</span></span></span><br><span class="line"><span class="function"><span class="params">        @MatrixVariable(pathVar=<span class="string">"petId"</span>)</span> MultiValueMap&lt;String, String&gt; petMatrixVars) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// matrixVars: ["q" : [11,22], "r" : 12, "s" : 23]</span></span><br><span class="line">    <span class="comment">// petMatrixVars: ["q" : 22, "s" : 23]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Note that you need to enable the use of matrix variables. In the MVC Java configuration, you need to set a <code>UrlPathHelper</code> with <code>removeSemicolonContent=false</code> through <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctcGF0aC1tYXRjaGluZw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-path-matching">Path Matching<i class="fa fa-external-link"></i></span>. In the MVC XML namespace, you can set <code>&lt;mvc:annotation-driven enable-matrix-variables=&quot;true&quot;/&gt;</code>.</p>
+<h3 id="1-3-4-Using-RequestParam"><a href="#1-3-4-Using-RequestParam" class="headerlink" title="1.3.4 Using @RequestParam"></a>1.3.4 Using @RequestParam</h3><p>You can use the <code>@RequestParam</code> annotation to bind Servlet request parameters (that is, query parameters or form data) to a method argument in a controller.</p>
+<p>The following example shows how to do so:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EditPetForm</span> </span>&#123;</span><br><span class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/test2"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">test2</span><span class="params">(@RequestParam(required = <span class="keyword">false</span>, value = <span class="string">"name"</span>)</span> String name) 	</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"姓名："</span> + name;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-3-5-Using-RequestHeader"><a href="#1-3-5-Using-RequestHeader" class="headerlink" title="1.3.5 Using @RequestHeader"></a>1.3.5 Using @RequestHeader</h3><p>You can use the <code>@RequestHeader</code> annotation to bind a request header to a method argument in a controller.</p>
+<p>Consider the following request, with headers:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Host                    localhost:8080</span><br><span class="line">Accept                  text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9</span><br><span class="line">Accept-Language         fr,en-gb;q&#x3D;0.7,en;q&#x3D;0.3</span><br><span class="line">Accept-Encoding         gzip,deflate</span><br><span class="line">Accept-Charset          ISO-8859-1,utf-8;q&#x3D;0.7,*;q&#x3D;0.7</span><br><span class="line">Keep-Alive              300</span><br></pre></td></tr></table></figure>
+
+<p>The following example gets the value of the <code>Accept-Encoding</code> and <code>Keep-Alive</code> headers:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/demo"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        @RequestHeader(<span class="string">"Accept-Encoding"</span>)</span> String encoding, </span></span><br><span class="line"><span class="function">        @<span class="title">RequestHeader</span><span class="params">(<span class="string">"Keep-Alive"</span>)</span> <span class="keyword">long</span> keepAlive) </span>&#123; </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>If the target method parameter type is not <code>String</code>, type conversion is automatically applied. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tdHlwZWNvbnZlcnNpb24=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-typeconversion">Type Conversion<i class="fa fa-external-link"></i></span>.</p>
+<p>When an <code>@RequestHeader</code> annotation is used on a <code>Map&lt;String, String&gt;</code>, <code>MultiValueMap&lt;String, String&gt;</code>, or <code>HttpHeaders</code>argument, the map is populated with all header values.</p>
+<p>Built-in support is available for converting a comma-separated string into an array or collection of strings or other types known to the type conversion system. For example, a method parameter annotated with <code>@RequestHeader(&quot;Accept&quot;)</code> can be of type <code>String</code> but also <code>String[]</code> or <code>List&lt;String&gt;</code>.</p>
+<h3 id="1-3-6-Using-CookieValue"><a href="#1-3-6-Using-CookieValue" class="headerlink" title="1.3.6 Using @CookieValue"></a>1.3.6 Using @<code>CookieValue</code></h3><p>You can use the <code>@CookieValue</code> annotation to bind the value of an HTTP cookie to a method argument in a controller.</p>
+<p>Consider a request with the following cookie:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JSESSIONID&#x3D;415A4AC178C59DACE0B2C9CA727CDD84</span><br></pre></td></tr></table></figure>
+
+<p>The following example shows how to get the cookie value:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/demo"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(@CookieValue(<span class="string">"JSESSIONID"</span>)</span> String cookie) </span>&#123; </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-7-Using-ModelAttribute"><a href="#1-3-7-Using-ModelAttribute" class="headerlink" title="1.3.7 Using @ModelAttribute"></a>1.3.7 Using <code>@ModelAttribute</code></h3><p>您可以在方法参数上使用@ModelAttribute注释从模型访问属性，或者在不存在的情况下实例化属性。模型属性还与HTTP Servlet请求参数的值重叠，这些参数的名称与字段名称匹配。这被称为数据绑定，它使您不必解析和转换单个查询参数和表单字段。下面的例子展示了如何做到这一点:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/owners/&#123;ownerId&#125;/pets/&#123;petId&#125;/edit"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">processSubmit</span><span class="params">(@ModelAttribute Pet pet)</span> </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>The <code>Pet</code> instance above is resolved as follows:</p>
+<ul>
+<li>From the model if already added by using <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tbW9kZWxhdHRyaWItbWV0aG9kcw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-methods">Model<i class="fa fa-external-link"></i></span>.</li>
+<li>From the HTTP session by using <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-sessionattributes" target="_blank" rel="noopener">Using <code>@SessionAttributes</code></a>.</li>
+<li>From a URI path variable passed through a <code>Converter</code> (see the next example).</li>
+<li>From the invocation of a default constructor.</li>
+<li>From the invocation of a “primary constructor” with arguments that match to Servlet request parameters. Argument names are determined through JavaBeans <code>@ConstructorProperties</code> or through runtime-retained parameter names in the bytecode.</li>
+</ul>
+<p>While it is common to use a <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tbW9kZWxhdHRyaWItbWV0aG9kcw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-methods">Model<i class="fa fa-external-link"></i></span> to populate the model with attributes, one other alternative is to rely on a <code>Converter&lt;String, T&gt;</code> in combination with a URI path variable convention. In the following example, the model attribute name, <code>account</code>, matches the URI path variable, <code>account</code>, and the <code>Account</code> is loaded by passing the <code>String</code> account number through a registered <code>Converter&lt;String, Account&gt;</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PutMapping</span>(<span class="string">"/accounts/&#123;account&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">save</span><span class="params">(@ModelAttribute(<span class="string">"account"</span>)</span> Account account) </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>After the model attribute instance is obtained, data binding is applied. The <code>WebDataBinder</code> class matches Servlet request parameter names (query parameters and form fields) to field names on the target <code>Object</code>. Matching fields are populated after type conversion is applied, where necessary. For more on data binding (and validation), see <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2NvcmUuaHRtbCN2YWxpZGF0aW9u" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#validation">Validation<i class="fa fa-external-link"></i></span>. For more on customizing data binding, see <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-initbinder" target="_blank" rel="noopener">Using <code>DataBinder</code></a>.</p>
+<p>Data binding can result in errors. By default, a <code>BindException</code> is raised. However, to check for such errors in the controller method, you can add a <code>BindingResult</code> argument immediately next to the <code>@ModelAttribute</code>, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/owners/&#123;ownerId&#125;/pets/&#123;petId&#125;/edit"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">processSubmit</span><span class="params">(@ModelAttribute(<span class="string">"pet"</span>)</span> Pet pet, BindingResult result) </span>&#123; </span><br><span class="line">    <span class="keyword">if</span> (result.hasErrors()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"petForm"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In some cases, you may want access to a model attribute without data binding. For such cases, you can inject the <code>Model</code> into the controller and access it directly or, alternatively, set <code>@ModelAttribute(binding=false)</code>, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ModelAttribute</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> AccountForm <span class="title">setUpForm</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> AccountForm();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ModelAttribute</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Account <span class="title">findAccount</span><span class="params">(@PathVariable String accountId)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> accountRepository.findOne(accountId);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"update"</span>)  <span class="comment">// 数据不绑定</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">update</span><span class="params">(@Valid AccountUpdateForm form, BindingResult result,</span></span></span><br><span class="line"><span class="function"><span class="params">        @ModelAttribute(binding=<span class="keyword">false</span>)</span> Account account) </span>&#123; </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>绑定时验证</strong></li>
+</ul>
+<p>You can automatically apply validation after data binding by adding the <code>javax.validation.Valid</code> annotation or Spring’s <code>@Validated</code> annotation (ee <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2NvcmUuaHRtbCN2YWxpZGF0aW9uLWJlYW52YWxpZGF0aW9u" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#validation-beanvalidation">Bean validation<i class="fa fa-external-link"></i></span> and <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2NvcmUuaHRtbCN2YWxpZGF0aW9u" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#validation">Spring validation<i class="fa fa-external-link"></i></span>). The following example shows how to do so:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/owners/&#123;ownerId&#125;/pets/&#123;petId&#125;/edit"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">processSubmit</span><span class="params">(@Valid @ModelAttribute(<span class="string">"pet"</span>)</span> Pet pet, BindingResult result) </span>&#123; </span><br><span class="line">    <span class="keyword">if</span> (result.hasErrors()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"petForm"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-8-Using-SessionAttributes"><a href="#1-3-8-Using-SessionAttributes" class="headerlink" title="1.3.8 Using @SessionAttributes"></a>1.3.8 Using <code>@SessionAttributes</code></h3><p>@SessionAttributes用于在请求之间的HTTP Servlet会话中存储模型属性。它是一个类类型级注释，声明特定控制器使用的会话属性。这通常列出模型属性的名称或模型属性的类型，这些属性应该透明地存储在会话中，以便后续请求访问。</p>
+<p>The following example uses a <code>@SessionAttributes</code> annotation:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@SessionAttributes</span>(<span class="string">"pet"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EditPetForm</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在第一个请求中，当一个名为pet的模型属性添加到模型中时，它会自动提升到HTTP Servlet会话中并保存。直到另一个控制器方法使用一个SessionStatus方法参数来清除存储为止，它仍然存在，如下例所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@SessionAttributes</span>(<span class="string">"pet"</span>) </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EditPetForm</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"/pets/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">handle</span><span class="params">(Pet pet, BindingResult errors, SessionStatus status)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (errors.hasErrors) &#123;</span><br><span class="line">            <span class="comment">// ...</span></span><br><span class="line">        &#125;</span><br><span class="line">            status.setComplete();</span><br><span class="line">            <span class="comment">// ...</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-9-Using-SessionAttribute"><a href="#1-3-9-Using-SessionAttribute" class="headerlink" title="1.3.9 Using @SessionAttribute"></a>1.3.9 Using <code>@SessionAttribute</code></h3><p>If you need access to pre-existing session attributes that are managed globally (that is, outside the controller — for example, by a filter) and may or may not be present, you can use the <code>@SessionAttribute</code> annotation on a method parameter, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">handle</span><span class="params">(@SessionAttribute User user)</span> </span>&#123; </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>For use cases that require adding or removing session attributes, consider injecting<code>org.springframework.web.context.request.WebRequest</code> or <code>javax.servlet.http.HttpSession</code> into the controller method.</p>
+<p>For temporary storage of model attributes in the session as part of a controller workflow, consider using <code>@SessionAttributes</code> as described in <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-sessionattributes" target="_blank" rel="noopener">Using <code>@SessionAttributes</code></a>.</p>
+<h3 id="1-3-10-Using-RequestAttribute"><a href="#1-3-10-Using-RequestAttribute" class="headerlink" title="1.3.10  Using @RequestAttribute"></a>1.3.10  Using <code>@RequestAttribute</code></h3><p>Similar to <code>@SessionAttribute</code>, you can use the <code>@RequestAttribute</code> annotations to access pre-existing request attributes created earlier (for example, by a Servlet <code>Filter</code> or <code>HandlerInterceptor</code>):</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">handle</span><span class="params">(@RequestAttribute Client client)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-11-Redirect-Attributes"><a href="#1-3-11-Redirect-Attributes" class="headerlink" title="1.3.11 Redirect Attributes"></a>1.3.11 Redirect Attributes</h3><p>默认情况下，所有模型属性都被认为是作为URI模板变量在重定向URL中公开的。在其余的属性中，那些是基本类型或基本类型集合或数组的属性被自动附加为查询参数。</p>
+<p>如果专门为重定向准备了模型实例，那么将原始类型属性附加为查询参数可能是所需的结果。<strong>但是，在带注释的控制器中，模型可以包含为呈现目的而添加的其他属性(例如，下拉字段值)</strong>。为了避免在URL中出现这样的属性，@RequestMapping方法可以声明类型为RedirectAttributes的参数，并使用它指定精确的属性以使RedirectView可用。如果方法重定向，则使用RedirectAttributes的内容。否则，将使用模型的内容。</p>
+<p>RequestMappingHandlerAdapter提供了一个名为ignoreDefaultModelOnRedirect的标记，您可以使用它来指示，如果控制器方法重定向，则不应该使用默认模型的内容。相反，控制器方法应该声明类型为RedirectAttributes的属性，否则，不应该将任何属性传递给RedirectView。MVC名称空间和MVC Java配置都将此标志设置为false，以保持向后兼容性。然而，对于新应用程序，我们建议将其设置为true。</p>
+<p>Note that URI template variables from the present request are automatically made available when expanding a redirect URL, and you need explicitly add them through <code>Model</code> or <code>RedirectAttributes</code>. The following example shows how to define a redirect:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/files/&#123;path&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">upload</span><span class="params">(...)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">"redirect:files/&#123;path&#125;"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Another way of passing data to the redirect target is by using flash attributes. Unlike other redirect attributes, flash attributes are saved in the HTTP session (and, hence, do not appear in the URL). See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1mbGFzaC1hdHRyaWJ1dGVz" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-flash-attributes">Flash Attributes<i class="fa fa-external-link"></i></span> for more information.</p>
+<h3 id="1-3-12-Flash-Attributes"><a href="#1-3-12-Flash-Attributes" class="headerlink" title="1.3.12  Flash Attributes"></a>1.3.12  Flash Attributes</h3><p>Flash属性为一个请求提供了一种方法来存储用于另一个请求的属性。这是重定向时最常见的需求——例如，后直接获取模式。Flash属性在重定向(通常在会话中)之前被临时保存，以便在重定向后对请求可用，并立即删除。</p>
+<p>Spring MVC有两个支持flash属性的主要抽象。FlashMap用于保存flash属性，而FlashMapManager用于存储、检索和管理FlashMap实例。</p>
+<p>Flash属性支持总是“on”，不需要显式启用。但是，如果不使用，它就不会导致HTTP会话创建。对于每个请求，都有一个“输入”FlashMap，其中包含从前一个请求传递的属性(如果有的话)，以及一个“输出”FlashMap，其中包含为后续请求保存的属性。两个FlashMap实例都可以通过requestcontext中的静态方法从Spring MVC的任何地方访问。</p>
+<p>带注释的控制器通常不需要直接使用FlashMap。相反，@RequestMapping方法可以接受类型为RedirectAttributes的参数，并用它为重定向场景添加flash属性。通过RedirectAttributes添加的Flash属性会自动传播到“output”FlashMap。同样，在重定向之后，“输入”FlashMap的属性将自动添加到服务于目标URL的控制器的模型中。</p>
+<ul>
+<li>将请求匹配到flash属性</li>
+</ul>
+<p>flash属性的概念存在于许多其他web框架中，并且有时会暴露于并发问题中。这是因为，根据定义，flash属性要存储到下一个请求。然而，下一个请求可能不是预期的接收者，而是另一个异步请求(例如，轮询或资源请求)，在这种情况下，flash属性删除得太早。为了减少发生这种问题的可能性，RedirectView会自动用目标重定向URL的路径和查询参数来标记FlashMap实例。反过来，默认的FlashMapManager在查找输入FlashMap时，会将该信息与传入的请求匹配。这并没有完全消除并发问题的可能性，但是通过重定向URL中已经提供的信息，可以大大减少并发问题。因此，我们建议您将flash属性主要用于重定向场景。</p>
+<h3 id="1-3-13-Multipart-RequestPart"><a href="#1-3-13-Multipart-RequestPart" class="headerlink" title="1.3.13 Multipart-@RequestPart"></a>1.3.13 Multipart-<code>@RequestPart</code></h3><p>After a <code>MultipartResolver</code> has been <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1tdWx0aXBhcnQ=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-multipart">enabled<i class="fa fa-external-link"></i></span>, the content of POST requests with <code>multipart/form-data</code> is parsed and accessible as regular request parameters. The following example accesses one regular form field and one uploaded file:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FileUploadController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"/form"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">handleFormUpload</span><span class="params">(@RequestParam(<span class="string">"name"</span>)</span> String name,</span></span><br><span class="line"><span class="function">            @<span class="title">RequestParam</span><span class="params">(<span class="string">"file"</span>)</span> MultipartFile file) </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!file.isEmpty()) &#123;</span><br><span class="line">            <span class="keyword">byte</span>[] bytes = file.getBytes();</span><br><span class="line">            <span class="comment">// store the bytes somewhere</span></span><br><span class="line">            <span class="keyword">return</span> <span class="string">"redirect:uploadSuccess"</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"redirect:uploadFailure"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>WEB3.0 文件解析</li>
+</ul>
+<p>When you use Servlet 3.0 multipart parsing, you can also use <code>javax.servlet.http.Part</code>, instead of Spring’s <code>MultipartFile</code>, as a method argument</p>
+<ul>
+<li>绑定文件到对象上</li>
+</ul>
+<p>You can also use multipart content as part of data binding to a <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tbW9kZWxhdHRyaWItbWV0aG9kLWFyZ3M=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-method-args">command object<i class="fa fa-external-link"></i></span>. For example, the form field and file from the preceding example could be fields on a form object, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyForm</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> MultipartFile file;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FileUploadController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"/form"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">handleFormUpload</span><span class="params">(MyForm form, BindingResult errors)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!form.getFile().isEmpty()) &#123;</span><br><span class="line">            <span class="keyword">byte</span>[] bytes = form.getFile().getBytes();</span><br><span class="line">            <span class="comment">// store the bytes somewhere</span></span><br><span class="line">            <span class="keyword">return</span> <span class="string">"redirect:uploadSuccess"</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"redirect:uploadFailure"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>RESTful service scenario</li>
+</ul>
+<p>Multipart requests can also be submitted from non-browser clients in a RESTful service scenario. The following example shows a file with JSON:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;someUrl</span><br><span class="line">Content-Type: multipart&#x2F;mixed</span><br><span class="line"></span><br><span class="line">--edt7Tfrdusa7r3lNQc79vXuhIIMlatb7PQg7Vp</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;meta-data&quot;</span><br><span class="line">Content-Type: application&#x2F;json; charset&#x3D;UTF-8</span><br><span class="line">Content-Transfer-Encoding: 8bit</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;name&quot;: &quot;value&quot;</span><br><span class="line">&#125;</span><br><span class="line">--edt7Tfrdusa7r3lNQc79vXuhIIMlatb7PQg7Vp</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;file-data&quot;; filename&#x3D;&quot;file.properties&quot;</span><br><span class="line">Content-Type: text&#x2F;xml</span><br><span class="line">Content-Transfer-Encoding: 8bit</span><br><span class="line">... File Data ...</span><br></pre></td></tr></table></figure>
+
+<p>You can access the “meta-data” part with <code>@RequestParam</code> as a <code>String</code> but you’ll probably want it deserialized from JSON (similar to <code>@RequestBody</code>). Use the <code>@RequestPart</code> annotation to access a multipart after converting it with an<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2ludGVncmF0aW9uLmh0bWwjcmVzdC1tZXNzYWdlLWNvbnZlcnNpb24=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#rest-message-conversion">HttpMessageConverter<i class="fa fa-external-link"></i></span>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">handle</span><span class="params">(@RequestPart(<span class="string">"meta-data"</span>)</span> MetaData metadata,</span></span><br><span class="line"><span class="function">        @<span class="title">RequestPart</span><span class="params">(<span class="string">"file-data"</span>)</span> MultipartFile file) </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You can use <code>@RequestPart</code> in combination with <code>javax.validation.Valid</code> or use Spring’s <code>@Validated</code> annotation, both of which cause Standard Bean Validation to be applied. By default, validation errors cause a <code>MethodArgumentNotValidException</code>, which is turned into a 400 (BAD_REQUEST) response. Alternatively, you can handle validation errors locally within the controller through an <code>Errors</code> or <code>BindingResult</code> argument, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">handle</span><span class="params">(@Valid @RequestPart(<span class="string">"meta-data"</span>)</span> MetaData metadata,</span></span><br><span class="line"><span class="function">        BindingResult result) </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-3-14-Using-RequestBody"><a href="#1-3-14-Using-RequestBody" class="headerlink" title="1.3.14 Using @RequestBody"></a>1.3.14 Using <code>@RequestBody</code></h3><p>You can use the <code>@RequestBody</code> annotation to have the request body read and deserialized into an <code>Object</code> through an <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#rest-message-conversion" target="_blank" rel="noopener"><code>HttpMessageConverter</code></a>. The following example uses a <code>@RequestBody</code> argument:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/accounts"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(@RequestBody Account account)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You can use the <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctbWVzc2FnZS1jb252ZXJ0ZXJz" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-message-converters">Message Converters<i class="fa fa-external-link"></i></span> option of the <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWc=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config">MVC Config<i class="fa fa-external-link"></i></span> to configure or customize message conversion.</p>
+<p>You can use <code>@RequestBody</code> in combination with <code>javax.validation.Valid</code> or Spring’s <code>@Validated</code> annotation, both of which cause Standard Bean Validation to be applied. By default, validation errors cause a <code>MethodArgumentNotValidException</code>, which is turned into a 400 (BAD_REQUEST) response. Alternatively, you can handle validation errors locally within the controller through an <code>Errors</code> or <code>BindingResult</code> argument, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/accounts"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(@Valid @RequestBody Account account, BindingResult result)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-15-Using-ResponseBody"><a href="#1-3-15-Using-ResponseBody" class="headerlink" title="1.3.15 Using @ResponseBody"></a>1.3.15 Using <code>@ResponseBody</code></h3><p>You can use the <code>@ResponseBody</code> annotation on a method to have the return serialized to the response body through an<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2ludGVncmF0aW9uLmh0bWwjcmVzdC1tZXNzYWdlLWNvbnZlcnNpb24=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#rest-message-conversion">HttpMessageConverter<i class="fa fa-external-link"></i></span>. The following listing shows an example:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/accounts/&#123;id&#125;"</span>)</span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Account <span class="title">handle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>@ResponseBody</code> is also supported at the class level, in which case it is inherited by all controller methods. This is the effect of <code>@RestController</code>, which is nothing more than a meta-annotation marked with <code>@Controller</code> and <code>@ResponseBody</code>.</p>
+<p>You can use <code>@ResponseBody</code> with reactive types. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tYXN5bmM=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-async">Asynchronous Requests<i class="fa fa-external-link"></i></span> and <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tYXN5bmMtcmVhY3RpdmUtdHlwZXM=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-async-reactive-types">Reactive Types<i class="fa fa-external-link"></i></span> for more details.</p>
+<p>You can use the <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctbWVzc2FnZS1jb252ZXJ0ZXJz" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-message-converters">Message Converters<i class="fa fa-external-link"></i></span> option of the <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWc=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config">MVC Config<i class="fa fa-external-link"></i></span> to configure or customize message conversion.</p>
+<p>You can combine <code>@ResponseBody</code> methods with JSON serialization views. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tamFja3Nvbg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-jackson">Jackson JSON<i class="fa fa-external-link"></i></span> for details.</p>
+<h3 id="1-3-16-ResponseEntity"><a href="#1-3-16-ResponseEntity" class="headerlink" title="1.3.16 ResponseEntity"></a>1.3.16 ResponseEntity</h3><p><code>ResponseEntity</code> is more or less identical to using <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-responsebody" target="_blank" rel="noopener">Using <code>@ResponseBody</code></a> but is based on a container object that specifies request headers and body. The following listing shows an example:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/something"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> ResponseEntity&lt;String&gt; <span class="title">handle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    URI location = ... ;</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.created(location).build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-17-Jackson-JSON-JsonView"><a href="#1-3-17-Jackson-JSON-JsonView" class="headerlink" title="1.3.17  Jackson JSON-@JsonView"></a>1.3.17  Jackson JSON-<code>@JsonView</code></h3><p>Spring MVC provides built-in support for <span class="exturl" data-url="aHR0cDovL3dpa2kuZmFzdGVyeG1sLmNvbS9KYWNrc29uSnNvblZpZXdz" title="http://wiki.fasterxml.com/JacksonJsonViews">Jackson’s Serialization Views<i class="fa fa-external-link"></i></span>, which allow rendering only a subset of all fields in an <code>Object</code>. To use it with <code>@ResponseBody</code> or <code>ResponseEntity</code> controller methods, you can use Jackson’s <code>@JsonView</code> annotation to activate a serialization view class, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/user"</span>)</span><br><span class="line">    <span class="meta">@JsonView</span>(User.WithoutPasswordView<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">User</span> <span class="title">getUser</span>() </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> User(<span class="string">"eric"</span>, <span class="string">"7!jd#h23"</span>); <span class="comment">// 浏览器显示为&#123;"username":"eric"&#125;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">WithoutPasswordView</span> </span>&#123;&#125;;</span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">WithPasswordView</span> <span class="keyword">extends</span> <span class="title">WithoutPasswordView</span> </span>&#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String username, String password)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.username = username;</span><br><span class="line">        <span class="keyword">this</span>.password = password;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonView</span>(WithoutPasswordView<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">String</span> <span class="title">getUsername</span>() </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonView</span>(WithPasswordView<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">String</span> <span class="title">getPassword</span>() </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.password;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>@JsonView</code> allows an array of view classes, but you can specify only one per controller method. If you need to activate multiple views, you can use a composite interface.</p>
+<p>For controllers that rely on view resolution, you can add the serialization view class to the model, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> <span class="keyword">extends</span> <span class="title">AbstractController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/user"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUser</span><span class="params">(Model model)</span> </span>&#123;</span><br><span class="line">        model.addAttribute(<span class="string">"user"</span>, <span class="keyword">new</span> User(<span class="string">"eric"</span>, <span class="string">"7!jd#h23"</span>));</span><br><span class="line">        model.addAttribute(JsonView<span class="class">.<span class="keyword">class</span>.<span class="title">getName</span>(),</span></span><br><span class="line"><span class="class">                           <span class="title">User</span>.<span class="title">WithoutPasswordView</span>.<span class="title">class</span>)</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"userView"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-4-Model-ModelAttribute"><a href="#1-4-Model-ModelAttribute" class="headerlink" title="1.4 Model-@ModelAttribute"></a>1.4 Model-<code>@ModelAttribute</code></h2><p>You can use the <code>@ModelAttribute</code> annotation:</p>
+<ul>
+<li>On a <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tbW9kZWxhdHRyaWItbWV0aG9kLWFyZ3M=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-method-args">method argument<i class="fa fa-external-link"></i></span> in <code>@RequestMapping</code> methods to create or access an <code>Object</code> from the model and to bind it to the request through a <code>WebDataBinder</code>.-<strong>方法级别数据绑定</strong></li>
+<li>As a method-level annotation in <code>@Controller</code> or <code>@ControllerAdvice</code> classes that help to initialize the model prior to any <code>@RequestMapping</code> method invocation.-<strong>类级别使用</strong></li>
+<li>On a <code>@RequestMapping</code> method to mark its return value is a model attribute.-<strong>响应值</strong></li>
+</ul>
+<p>A controller can have any number of <code>@ModelAttribute</code> methods. All such methods <strong>are invoked before <code>@RequestMapping</code> methods in the same controller.</strong> </p>
+<p>A <code>@ModelAttribute</code> method can also be shared across controllers through <code>@ControllerAdvice</code>. See the section on <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tY29udHJvbGxlci1hZHZpY2U=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-controller-advice">Controller Advice<i class="fa fa-external-link"></i></span> for more details.</p>
+<p><code>@ModelAttribute</code> methods have flexible method signatures. They support many of the same arguments as <code>@RequestMapping</code>methods, except for <code>@ModelAttribute</code> itself or anything related to the request body.</p>
+<p>The following example shows a <code>@ModelAttribute</code> method:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ModelAttribute</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">populateModel</span><span class="params">(@RequestParam String number, Model model)</span> </span>&#123;</span><br><span class="line">    model.addAttribute(accountRepository.findAccount(number));</span><br><span class="line">    <span class="comment">// add more ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The following example adds only one attribute:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ModelAttribute</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Account <span class="title">addAccount</span><span class="params">(@RequestParam String number)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> accountRepository.findAccount(number);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还可以使用@ModelAttribute作为@RequestMapping方法上的方法级注释，在这种情况下，@RequestMapping方法的返回值被解释为模型属性。这通常不是必需的，因为这是HTML控制器的默认行为，除非返回值是一个字符串，否则将被解释为一个视图名。</p>
+<p> <code>@ModelAttribute</code> can also help to customize the model attribute name, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/accounts/&#123;id&#125;"</span>)</span><br><span class="line"><span class="meta">@ModelAttribute</span>(<span class="string">"myAccount"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Account <span class="title">handle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">return</span> account;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-5-DataBind"><a href="#1-5-DataBind" class="headerlink" title="1.5 DataBind"></a>1.5 DataBind</h2><p><code>@Controller</code> or <code>@ControllerAdvice</code> classes can have <code>@InitBinder</code> methods that initialize instances of <code>WebDataBinder</code>, and those, in turn, can:</p>
+<ul>
+<li>Bind request parameters (that is, form or query data) to a model object.</li>
+<li>Convert String-based request values (such as request parameters, path variables, headers, cookies, and others) to the target type of controller method arguments.</li>
+<li>Format model object values as <code>String</code> values when rendering HTML forms.</li>
+</ul>
+<p><code>@InitBinder</code> methods can register controller-specific <code>java.bean.PropertyEditor</code> or Spring <code>Converter</code> and <code>Formatter</code>components. In addition, you can use the <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctY29udmVyc2lvbg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-conversion">MVC config<i class="fa fa-external-link"></i></span> to register <code>Converter</code> and <code>Formatter</code> types in a globally shared <code>FormattingConversionService</code>.</p>
+<p><code>@InitBinder</code> methods support many of the same arguments that <code>@RequestMapping</code> methods do, <strong>except for <code>@ModelAttribute</code>(command object) arguments.</strong> Typically, they are declared with a <code>WebDataBinder</code> argument (for registrations) and a <code>void</code> return value. The following listing shows an example:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FormController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InitBinder</span> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initBinder</span><span class="params">(WebDataBinder binder)</span> </span>&#123;</span><br><span class="line">        SimpleDateFormat dateFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>);</span><br><span class="line">        dateFormat.setLenient(<span class="keyword">false</span>);</span><br><span class="line">        binder.registerCustomEditor(Date<span class="class">.<span class="keyword">class</span>, <span class="title">new</span> <span class="title">CustomDateEditor</span>(<span class="title">dateFormat</span>, <span class="title">false</span>))</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Alternatively, when you use a <code>Formatter</code>-based setup through a shared <code>FormattingConversionService</code>, you can re-use the same approach and register controller-specific <code>Formatter</code> implementations, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FormController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InitBinder</span> </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initBinder</span><span class="params">(WebDataBinder binder)</span> </span>&#123;</span><br><span class="line">        binder.addCustomFormatter(<span class="keyword">new</span> DateFormatter(<span class="string">"yyyy-MM-dd"</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-6-Exceptions"><a href="#1-6-Exceptions" class="headerlink" title="1.6 Exceptions"></a>1.6 Exceptions</h2><p><code>@Controller</code> and <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tY29udHJvbGxlci1hZHZpY2U=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-controller-advice">@ControllerAdvice<i class="fa fa-external-link"></i></span> classes can have <code>@ExceptionHandler</code> methods to handle exceptions from controller methods, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseEntity&lt;String&gt; <span class="title">handle</span><span class="params">(IOException ex)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该异常可以与正在传播的顶级异常(即直接抛出IOException)匹配，也可以与顶级包装器异常中的直接原因匹配(例如，包装在IllegalStateException中的IOException)。</p>
+<p>对于匹配异常类型，最好将目标异常声明为方法参数，如前面的示例所示。当多个异常方法匹配时，根异常匹配通常优于原因异常匹配。更具体地说，ExceptionDepthComparator用于根据抛出异常类型的深度对异常进行排序。</p>
+<p>Alternatively, the annotation declaration may narrow the exception types to match, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ExceptionHandler</span>(&#123;FileSystemException<span class="class">.<span class="keyword">class</span>, <span class="title">RemoteException</span>.<span class="title">class</span>&#125;)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">ResponseEntity</span>&lt;<span class="title">String</span>&gt; <span class="title">handle</span>(<span class="title">IOException</span> <span class="title">ex</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You can even use a list of specific exception types with a very generic argument signature, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ExceptionHandler</span>(&#123;FileSystemException<span class="class">.<span class="keyword">class</span>, <span class="title">RemoteException</span>.<span class="title">class</span>&#125;)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">ResponseEntity</span>&lt;<span class="title">String</span>&gt; <span class="title">handle</span>(<span class="title">Exception</span> <span class="title">ex</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>异常处理</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ControllerAdvice</span> <span class="comment">// 全局,跨控制器。</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExceptionController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@ExceptionHandler</span></span><br><span class="line">   <span class="meta">@ResponseBody</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> String <span class="title">doException</span><span class="params">(Exception e)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> e.getMessage()+<span class="string">"错误！11"</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-7-Controller-Advice"><a href="#1-7-Controller-Advice" class="headerlink" title="1.7 Controller Advice"></a>1.7 Controller Advice</h2><p>Typically <code>@ExceptionHandler</code>, <code>@InitBinder</code>, and <code>@ModelAttribute</code> methods apply within the <code>@Controller</code> class (or class hierarchy) in which they are declared. If you want such methods to <strong>apply more globally (across controllers)</strong>, you can declare them in a class marked with <code>@ControllerAdvice</code> or <code>@RestControllerAdvice</code>.</p>
+<p><code>@ControllerAdvice</code> is marked with <code>@Component</code>, which means such classes can be registered as Spring beans through <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2NvcmUuaHRtbCNiZWFucy1qYXZhLWluc3RhbnRpYXRpbmctY29udGFpbmVyLXNjYW4=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-java-instantiating-container-scan">component scanning<i class="fa fa-external-link"></i></span>. <code>@RestControllerAdvice</code> is also a meta-annotation marked with both <code>@ControllerAdvice</code> and<code>@ResponseBody</code>, which essentially means <code>@ExceptionHandler</code> methods are rendered to the response body through message conversion (versus view resolution or template rendering).</p>
+<p>On startup, the infrastructure classes for <code>@RequestMapping</code> and <code>@ExceptionHandler</code> methods detect Spring beans of type <code>@ControllerAdvice</code> and then apply their methods at runtime. Global <code>@ExceptionHandler</code> methods (from an <code>@ControllerAdvice</code>) are applied <em>after</em> local ones (from the <code>@Controller</code>). By contrast, global <code>@ModelAttribute</code> and <code>@InitBinder</code> methods are applied <em>before</em> local ones.</p>
+<ul>
+<li><strong>默认在所有控制器之前，可控制处理范围</strong></li>
+</ul>
+<p>By default, <code>@ControllerAdvice</code> methods apply to every request (that is, all controllers), but you can narrow that down to a subset of controllers by using attributes on the annotation, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Target all Controllers annotated with @RestController</span></span><br><span class="line"><span class="meta">@ControllerAdvice</span>(annotations = RestController<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">ExampleAdvice1</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Target all Controllers within specific packages</span></span><br><span class="line"><span class="meta">@ControllerAdvice</span>(<span class="string">"org.example.controllers"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleAdvice2</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Target all Controllers assignable to specific classes</span></span><br><span class="line"><span class="meta">@ControllerAdvice</span>(assignableTypes = &#123;ControllerInterface<span class="class">.<span class="keyword">class</span>, <span class="title">AbstractController</span>.<span class="title">class</span>&#125;)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">ExampleAdvice3</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The selectors in the preceding example are evaluated at runtime and may negatively impact performance if used extensively. See the <a href="https://docs.spring.io/spring-framework/docs/5.1.0.RELEASE/javadoc-api/org/springframework/web/bind/annotation/ControllerAdvice.html" target="_blank" rel="noopener"><code>@ControllerAdvice</code></a> Javadoc for more details.</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-2/" title="8-webmvc-2">https://zxucooly.github.io/2018/12/05/spring官方文档/8-webmvc-2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/" rel="tag"><i class="fa fa-tag"></i> Spring官方文档</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/4-SpEl/" rel="prev" title="4-SpEL">
+      <i class="fa fa-chevron-left"></i> 4-SpEL
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/5-AOP/" rel="next" title="5-AOP">
+      5-AOP <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Annotated-Controllers"><span class="nav-number">1.</span> <span class="nav-text">1 Annotated Controllers</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-Declaration"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 Declaration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-1-AOP-Proxies"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1.1 AOP Proxies</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-Request-Mapping"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 Request Mapping</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-URI样式"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 URI样式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-样式比较"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2 样式比较</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-1-后缀匹配"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">1.2.2.1 后缀匹配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-2-Suffix-Match-and-RFD"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">1.2.2.2 Suffix Match and RFD</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-3-Consumable-Media-Types"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">1.2.2.3 Consumable Media Types</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-3-Producible-Media-Types"><span class="nav-number">1.2.3.</span> <span class="nav-text">1.2.3 Producible Media Types</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-4-Parameters-headers"><span class="nav-number">1.2.4.</span> <span class="nav-text">1.2.4 Parameters, headers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-5-HTTP-HEAD-OPTIONS"><span class="nav-number">1.2.5.</span> <span class="nav-text">1.2.5 HTTP HEAD, OPTIONS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-6-Custom-Annotations"><span class="nav-number">1.2.6.</span> <span class="nav-text">1.2.6 Custom Annotations</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-7-Explicit-Registrations-编程式"><span class="nav-number">1.2.7.</span> <span class="nav-text">1.2.7 Explicit Registrations(编程式)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-Handler-Methods"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Handler Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-1-方法参数"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.3.1 方法参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-2-返回值"><span class="nav-number">1.3.2.</span> <span class="nav-text">1.3.2 返回值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-3-Matrix-Variables"><span class="nav-number">1.3.3.</span> <span class="nav-text">1.3.3   Matrix  Variables</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-4-Using-RequestParam"><span class="nav-number">1.3.4.</span> <span class="nav-text">1.3.4 Using @RequestParam</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-5-Using-RequestHeader"><span class="nav-number">1.3.5.</span> <span class="nav-text">1.3.5 Using @RequestHeader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-6-Using-CookieValue"><span class="nav-number">1.3.6.</span> <span class="nav-text">1.3.6 Using @CookieValue</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-7-Using-ModelAttribute"><span class="nav-number">1.3.7.</span> <span class="nav-text">1.3.7 Using @ModelAttribute</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-8-Using-SessionAttributes"><span class="nav-number">1.3.8.</span> <span class="nav-text">1.3.8 Using @SessionAttributes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-9-Using-SessionAttribute"><span class="nav-number">1.3.9.</span> <span class="nav-text">1.3.9 Using @SessionAttribute</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-10-Using-RequestAttribute"><span class="nav-number">1.3.10.</span> <span class="nav-text">1.3.10  Using @RequestAttribute</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-11-Redirect-Attributes"><span class="nav-number">1.3.11.</span> <span class="nav-text">1.3.11 Redirect Attributes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-12-Flash-Attributes"><span class="nav-number">1.3.12.</span> <span class="nav-text">1.3.12  Flash Attributes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-13-Multipart-RequestPart"><span class="nav-number">1.3.13.</span> <span class="nav-text">1.3.13 Multipart-@RequestPart</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-14-Using-RequestBody"><span class="nav-number">1.3.14.</span> <span class="nav-text">1.3.14 Using @RequestBody</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-15-Using-ResponseBody"><span class="nav-number">1.3.15.</span> <span class="nav-text">1.3.15 Using @ResponseBody</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-16-ResponseEntity"><span class="nav-number">1.3.16.</span> <span class="nav-text">1.3.16 ResponseEntity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-17-Jackson-JSON-JsonView"><span class="nav-number">1.3.17.</span> <span class="nav-text">1.3.17  Jackson JSON-@JsonView</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-Model-ModelAttribute"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 Model-@ModelAttribute</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-DataBind"><span class="nav-number">1.5.</span> <span class="nav-text">1.5 DataBind</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-6-Exceptions"><span class="nav-number">1.6.</span> <span class="nav-text">1.6 Exceptions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-7-Controller-Advice"><span class="nav-number">1.7.</span> <span class="nav-text">1.7 Controller Advice</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

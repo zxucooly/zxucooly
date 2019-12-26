@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="1 Servlet3.0不使用web.xml和WebServlet注解，配置启动web应用。 在类路径下&#x2F;META-INF&#x2F;services&#x2F;创建文件javax.servlet.ServletContainerInitializer,文件中写入加载WEB应用的类的全路径。如：com.zx.config.MyServletContainerInitializer。 配置web应用： 12345678">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8-webmvc-1">
+<meta property="og:url" content="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-1/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="1 Servlet3.0不使用web.xml和WebServlet注解，配置启动web应用。 在类路径下&#x2F;META-INF&#x2F;services&#x2F;创建文件javax.servlet.ServletContainerInitializer,文件中写入加载WEB应用的类的全路径。如：com.zx.config.MyServletContainerInitializer。 配置web应用： 12345678">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-12-05T08:45:00.000Z">
+<meta property="article:modified_time" content="2019-12-23T15:00:52.587Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="Spring官方文档">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>8-webmvc-1 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          8-webmvc-1
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 16:45:00" itemprop="dateCreated datePublished" datetime="2018-12-05T16:45:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-23 23:00:52" itemprop="dateModified" datetime="2019-12-23T23:00:52+08:00">2019-12-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-Servlet3-0"><a href="#1-Servlet3-0" class="headerlink" title="1 Servlet3.0"></a>1 Servlet3.0</h1><p>不使用web.xml和WebServlet注解，配置启动web应用。</p>
+<p>在类路径下<code>/META-INF/services/</code>创建文件<code>javax.servlet.ServletContainerInitializer</code>,文件中写入加载WEB应用的类的全路径。如：<code>com.zx.config.MyServletContainerInitializer</code>。</p>
+<p>配置web应用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@HandlesTypes</span>(UserService<span class="class">.<span class="keyword">class</span>) // 感兴趣的类，会扫描<span class="title">Class</span>子类放入<span class="title">set</span>集合中</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">MyServletContainerInitializer</span> <span class="keyword">implements</span> <span class="title">ServletContainerInitializer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStartup</span><span class="params">(Set&lt;Class&lt;?&gt;&gt; set, ServletContext servletContext)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (set != <span class="keyword">null</span>) &#123; <span class="comment">// 获取感兴趣的类</span></span><br><span class="line">            <span class="keyword">for</span> (Class&lt;?&gt; aClass : set) &#123;</span><br><span class="line">                System.out.println(aClass.getName());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">		</span><br><span class="line">        <span class="comment">// 注入Servlet</span></span><br><span class="line">        ServletRegistration.Dynamic loginServlet =</span><br><span class="line">                servletContext.addServlet(<span class="string">"loginServlet"</span>, UserAction<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        </span><br><span class="line">        loginServlet.addMapping(<span class="string">"/login"</span>); <span class="comment">// 访问路径</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>对应的Servlet</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserAction</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> UserService userService = <span class="keyword">new</span> UserServiceImpl();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        doPost(req, resp);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        User user = <span class="keyword">new</span> User();</span><br><span class="line">        user.setUserName(req.getParameter(<span class="string">"userName"</span>));</span><br><span class="line">        user.setUserPwd(req.getParameter(<span class="string">"userPwd"</span>));</span><br><span class="line">        resp.setContentType(<span class="string">"text/html;charset=utf8"</span>);</span><br><span class="line">        <span class="keyword">if</span> (userService.ValidateUser(user) != <span class="keyword">null</span>) &#123;</span><br><span class="line">            resp.getWriter().print(<span class="string">"&lt;h1&gt;登录成功@bb&lt;/h1&gt;"</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            resp.getWriter().print(<span class="string">"&lt;h1&gt;登录失败@aa&lt;/h1&gt;"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-springMVC加载web容器"><a href="#2-springMVC加载web容器" class="headerlink" title="2 springMVC加载web容器"></a>2 springMVC加载web容器</h1><h2 id="2-1-SpringContainerInitializer"><a href="#2-1-SpringContainerInitializer" class="headerlink" title="2.1 SpringContainerInitializer"></a>2.1 SpringContainerInitializer</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@HandlesTypes</span>(WebApplicationInitializer<span class="class">.<span class="keyword">class</span>) // 感兴趣类</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">SpringServletContainerInitializer</span> <span class="keyword">implements</span> <span class="title">ServletContainerInitializer</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自定义一个springweb应用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWebApplicationInitializer</span> <span class="keyword">implements</span> <span class="title">WebApplicationInitializer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStartup</span><span class="params">(ServletContext servletCxt)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Load Spring web application configuration</span></span><br><span class="line">        AnnotationConfigWebApplicationContext ac = <span class="keyword">new</span> AnnotationConfigWebApplicationContext();</span><br><span class="line">        ac.register(AppConfig<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        ac.refresh();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Create and register the DispatcherServlet</span></span><br><span class="line">        DispatcherServlet servlet = <span class="keyword">new</span> DispatcherServlet(ac); <span class="comment">// ac -&gt; webConfig</span></span><br><span class="line">        ServletRegistration.Dynamic registration = servletCxt.addServlet(<span class="string">"app"</span>, servlet);</span><br><span class="line">        registration.setLoadOnStartup(<span class="number">1</span>);</span><br><span class="line">        registration.addMapping(<span class="string">"/app/*"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Below is an example of <code>web.xml</code> configuration to register and initialize the <code>DispatcherServlet</code>:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">web-app</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">context-param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>/WEB-INF/app-context.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>app<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param-value</span>&gt;</span><span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>app<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/app/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2-层级的容器配置"><a href="#2-2-层级的容器配置" class="headerlink" title="2.2 层级的容器配置"></a>2.2 层级的容器配置</h2><p><code>DispatcherServlet</code> expects a <code>WebApplicationContext</code>, an extension of a plain <code>ApplicationContext</code>, for its own configuration. <code>WebApplicationContext</code> has a link to the <code>ServletContext</code> and <code>Servlet</code> it is associated with. It is also bound to the <code>ServletContext</code> such that applications can use static methods on <code>RequestContextUtils</code> to look up the <code>WebApplicationContext</code>if they need access to it.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注解层级配置</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWebAppInitializer</span> <span class="keyword">extends</span> <span class="title">AbstractAnnotationConfigDispatcherServletInitializer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> Class&lt;?&gt;[] getRootConfigClasses() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Class&lt;?&gt;[] &#123; RootConfig<span class="class">.<span class="keyword">class</span> &#125;</span>; <span class="comment">// dao层、 service层</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> Class&lt;?&gt;[] getServletConfigClasses() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Class&lt;?&gt;[] &#123; App1Config<span class="class">.<span class="keyword">class</span> &#125;</span>; <span class="comment">// web层</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> String[] getServletMappings() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String[] &#123; <span class="string">"/app1/*"</span> &#125;; <span class="comment">// DispatcherServlet 映射路径</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// xml</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWebAppInitializer</span> <span class="keyword">extends</span> <span class="title">AbstractDispatcherServletInitializer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> WebApplicationContext <span class="title">createRootApplicationContext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> WebApplicationContext <span class="title">createServletApplicationContext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        XmlWebApplicationContext cxt = <span class="keyword">new</span> XmlWebApplicationContext();</span><br><span class="line">        cxt.setConfigLocation(<span class="string">"/WEB-INF/spring/dispatcher-config.xml"</span>);</span><br><span class="line">        <span class="keyword">return</span> cxt;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> String[] getServletMappings() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String[] &#123; <span class="string">"/"</span> &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And the <code>web.xml</code> equivalent:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">web-app</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">context-param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>/WEB-INF/root-context.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>app1<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>/WEB-INF/app1-context.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>app1<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/app1/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="3-DispatcherServlet功能介绍"><a href="#3-DispatcherServlet功能介绍" class="headerlink" title="3 DispatcherServlet功能介绍"></a>3 DispatcherServlet功能介绍</h1><h2 id="3-1-Special-Bean-Types"><a href="#3-1-Special-Bean-Types" class="headerlink" title="3.1 Special Bean Types"></a>3.1 Special Bean Types</h2><p>DispatcherServlet将委托给特殊bean来处理请求并呈现适当的响应。所谓“特殊bean”，我们指的是实现WebFlux框架契约的spring托管对象实例。它们通常带有内置的契约，但是您可以定制它们的属性、扩展或替换它们。</p>
+<table>
+<thead>
+<tr>
+<th>Bean type</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1oYW5kbGVybWFwcGluZw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-handlermapping">HandlerMapping<i class="fa fa-external-link"></i></span></td>
+<td>Map a request to a handler along with a list of <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1oYW5kbGVybWFwcGluZy1pbnRlcmNlcHRvcg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-handlermapping-interceptor">interceptors<i class="fa fa-external-link"></i></span> for pre- and post-processing. The mapping is based on some criteria the details of which vary by <code>HandlerMapping</code> implementation.The two main <code>HandlerMapping</code> implementations are <code>RequestMappingHandlerMapping</code> which supports <code>@RequestMapping</code> annotated methods and <code>SimpleUrlHandlerMapping</code> which maintains explicit registrations of URI path patterns to handlers.</td>
+</tr>
+<tr>
+<td>HandlerAdapter</td>
+<td>Help the <code>DispatcherServlet</code> to invoke a handler mapped to a request regardless of how the handler is actually invoked. For example, invoking an annotated controller requires resolving annotations. The main purpose of a <code>HandlerAdapter</code>is to shield the <code>DispatcherServlet</code> from such details. —&gt;&gt;&gt;&gt;保护DispatcherServlet不受处理类细节影响</td>
+</tr>
+<tr>
+<td><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1leGNlcHRpb25oYW5kbGVycw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-exceptionhandlers">HandlerExceptionResolver<i class="fa fa-external-link"></i></span></td>
+<td>Strategy to resolve exceptions possibly mapping them to handlers, or to HTML error views, or other. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1leGNlcHRpb25oYW5kbGVycw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-exceptionhandlers">Exceptions<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy12aWV3cmVzb2x2ZXI=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-viewresolver">ViewResolver<i class="fa fa-external-link"></i></span></td>
+<td>Resolve logical String-based view names returned from a handler to an actual <code>View</code> to render to the response with. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy12aWV3cmVzb2x2ZXI=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-viewresolver">View Resolution<i class="fa fa-external-link"></i></span> and <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy12aWV3" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-view">View Technologies<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1sb2NhbGVyZXNvbHZlcg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-localeresolver">LocaleResolver<i class="fa fa-external-link"></i></span>, <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy10aW1lem9uZQ==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-timezone">LocaleContextResolver<i class="fa fa-external-link"></i></span></td>
+<td>Resolve the <code>Locale</code> a client is using and possibly their time zone, in order to be able to offer internationalized views. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1sb2NhbGVyZXNvbHZlcg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-localeresolver">Locale<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy10aGVtZXJlc29sdmVy" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-themeresolver">ThemeResolver<i class="fa fa-external-link"></i></span></td>
+<td>Resolve themes your web application can use, for example, to offer personalized layouts. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy10aGVtZXJlc29sdmVy" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-themeresolver">Themes<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1tdWx0aXBhcnQ=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-multipart">MultipartResolver<i class="fa fa-external-link"></i></span></td>
+<td>Abstraction for parsing a multi-part request (e.g. browser form file upload) with the help of some multipart parsing library. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1tdWx0aXBhcnQ=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-multipart">Multipart resolver<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1mbGFzaC1hdHRyaWJ1dGVz" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-flash-attributes">FlashMapManager<i class="fa fa-external-link"></i></span></td>
+<td>Store and retrieve the “input” and the “output” <code>FlashMap</code> that can be used to pass attributes from one request to another, usually across a redirect. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1mbGFzaC1hdHRyaWJ1dGVz" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-flash-attributes">Flash attributes<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+</tbody></table>
+<h2 id="3-2-processing-requests"><a href="#3-2-processing-requests" class="headerlink" title="3.2 processing requests"></a>3.2 processing requests</h2><p>The <code>DispatcherServlet</code> processes requests as follows:</p>
+<ul>
+<li><p>The <code>WebApplicationContext</code> is searched for and bound in the request as an attribute that the controller and other elements in the process can use. It is bound by default under the <code>DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE</code> key.</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Request attribute to hold the current web application context.</span></span><br><span class="line"><span class="comment"> * Otherwise only the global web app context is obtainable by tags etc.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> org.springframework.web.servlet.support.RequestContextUtils#findWebApplicationContext</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String </span><br><span class="line">WEB_APPLICATION_CONTEXT_ATTRIBUTE</span><br><span class="line">= </span><br><span class="line">DispatcherServlet.class.getName() + ".CONTEXT";</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>The locale resolver is bound to the request to let elements in the process resolve the locale to use when processing the request (rendering the view, preparing data, and so on). If you do not need locale resolving, you do not need the locale resolver.</p>
+</li>
+<li><p>The theme resolver is bound to the request to let elements such as views determine which theme to use. If you do not use themes, you can ignore it.</p>
+</li>
+<li><p>If you specify a multipart file resolver, the request is inspected for multiparts. If multiparts are found, the request is wrapped in a <code>MultipartHttpServletRequest</code> for further processing by other elements in the process.</p>
+</li>
+<li><p>An appropriate handler is searched for. If a handler is found, the execution chain associated with the handler (preprocessors, postprocessors, and controllers) is executed in order to prepare a model or rendering. Alternatively, <strong>for annotated controllers, the response can be rendered (within the <code>HandlerAdapter</code>) instead of returning a view.</strong></p>
+</li>
+<li><p>If a model is returned, the view is rendered. If no model is returned (maybe due to a preprocessor or postprocessor intercepting the request, perhaps for security reasons), no view is rendered, because the request could already have been fulfilled.</p>
+</li>
+</ul>
+<p>The <code>HandlerExceptionResolver</code> beans declared in the <code>WebApplicationContext</code> are used to resolve exceptions thrown during request processing. Those exception resolvers allow customizing the logic to address exceptions.</p>
+<p>Spring DispatcherServlet还支持返回Servlet API指定的最后修改日期。确定特定请求的最后修改日期的过程很简单:DispatcherServlet查找适当的处理程序映射并测试找到的处理程序是否实现LastModified接口。如果是，LastModified接口的long getLastModified(request)方法的值将返回给客户端。</p>
+<p>You can customize individual <code>DispatcherServlet</code> instances by adding Servlet initialization parameters (<code>init-param</code> elements) to the Servlet declaration in the <code>web.xml</code> file. The following table lists the supported parameters:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>contextClass</code></td>
+<td>Class that implements <code>WebApplicationContext</code>, which instantiates the context used by this Servlet. By default, <code>XmlWebApplicationContext</code> is used.</td>
+</tr>
+<tr>
+<td><code>contextConfigLocation</code></td>
+<td>String that is passed to the context instance (specified by <code>contextClass</code>) to indicate where contexts can be found. The string consists potentially of multiple strings (using a comma as a delimiter) to support multiple contexts. In the case of multiple context locations with beans that are defined twice, the latest location takes precedence.</td>
+</tr>
+<tr>
+<td><code>namespace</code></td>
+<td>Namespace of the <code>WebApplicationContext</code>. Defaults to <code>[servlet-name]-servlet</code>.</td>
+</tr>
+<tr>
+<td><code>throwExceptionIfNoHandlerFound</code></td>
+<td>Whether to throw a <code>NoHandlerFoundException</code> when no handler was found for a request. The exception can then be caught with a <code>HandlerExceptionResolver</code> (for example, by using an <code>@ExceptionHandler</code> controller method) and handled as any others. \n By default, this is set to <code>false</code>, in which case the <code>DispatcherServlet</code> sets the response status to 404 (NOT_FOUND) without raising an exception.Note that, if <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1kZWZhdWx0LXNlcnZsZXQtaGFuZGxlcg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-default-servlet-handler">default servlet handling<i class="fa fa-external-link"></i></span> is also configured, unresolved requests are always forwarded to the default servlet and a 404 is never raised.</td>
+</tr>
+</tbody></table>
+<h2 id="3-3-Interception"><a href="#3-3-Interception" class="headerlink" title="3.3 Interception"></a>3.3 Interception</h2><p>All <code>HandlerMapping</code> implementations support handler interceptors that are useful when you want to apply specific functionality to certain requests — for example, checking for a principal. Interceptors must implement <code>HandlerInterceptor</code> from the<code>org.springframework.web.servlet</code> package with three methods that should provide enough flexibility to do all kinds of pre-processing and post-processing:</p>
+<ul>
+<li><code>preHandle(..)</code>: Before the actual handler is executed</li>
+<li><code>postHandle(..)</code>: After the handler is executed</li>
+<li><code>afterCompletion(..)</code>: After the complete request has finished</li>
+</ul>
+<p>The <code>preHandle(..)</code> method returns a boolean value. You can use this method to break or continue the processing of the execution chain. When this method returns <code>true</code>, the handler execution chain continues. When it returns false, the <code>DispatcherServlet</code> assumes the interceptor itself has taken care of requests (and, for example, rendered an appropriate view) and does not continue executing the other interceptors and the actual handler in the execution chain.</p>
+<p>See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctaW50ZXJjZXB0b3Jz" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-interceptors">Interceptors<i class="fa fa-external-link"></i></span> in the section on MVC configuration for examples of how to configure interceptors. You can also register them directly by using setters on individual <code>HandlerMapping</code> implementations.</p>
+<p>Note that <code>postHandle</code> is less useful with <code>@ResponseBody</code> and <code>ResponseEntity</code> methods for which the response is written and committed within the <code>HandlerAdapter</code> and before <code>postHandle</code>. That means it is too late to make any changes to the response, such as adding an extra header. For such scenarios, you can implement <code>ResponseBodyAdvice</code> and either declare it as an <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tY29udHJvbGxlci1hZHZpY2U=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-controller-advice">Controller Advice<i class="fa fa-external-link"></i></span> bean or configure it directly on <code>RequestMappingHandlerAdapter</code>.</p>
+<h2 id="3-4-Exceptions"><a href="#3-4-Exceptions" class="headerlink" title="3.4 Exceptions"></a>3.4 Exceptions</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtZGlzcGF0Y2hlci1leGNlcHRpb25z" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-dispatcher-exceptions">Same as in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>If an exception occurs during request mapping or is thrown from a request handler (such as a <code>@Controller</code>), the <code>DispatcherServlet</code> delegates to a chain of <code>HandlerExceptionResolver</code> beans to resolve the exception and provide alternative handling, which is typically an error response.</p>
+<p>The following table lists the available <code>HandlerExceptionResolver</code> implementations:</p>
+<table>
+<thead>
+<tr>
+<th><code>HandlerExceptionResolver</code></th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SimpleMappingExceptionResolver</code></td>
+<td>A mapping between exception class names and error view names. Useful for rendering error pages in a browser application.</td>
+</tr>
+<tr>
+<td><a href="https://docs.spring.io/spring-framework/docs/5.1.0.RELEASE/javadoc-api/org/springframework/web/servlet/mvc/support/DefaultHandlerExceptionResolver.html" target="_blank" rel="noopener"><code>DefaultHandlerExceptionResolver</code></a></td>
+<td>Resolves exceptions raised by Spring MVC and maps them to HTTP status codes. See also alternative <code>ResponseEntityExceptionHandler</code> and <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tcmVzdC1leGNlcHRpb25z" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-rest-exceptions">REST API exceptions<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><code>ResponseStatusExceptionResolver</code></td>
+<td>Resolves exceptions with the <code>@ResponseStatus</code> annotation and maps them to HTTP status codes based on the value in the annotation.</td>
+</tr>
+<tr>
+<td><code>ExceptionHandlerExceptionResolver</code></td>
+<td>Resolves exceptions by invoking an <code>@ExceptionHandler</code> method in a <code>@Controller</code>or a <code>@ControllerAdvice</code> class. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1hbm4tZXhjZXB0aW9uaGFuZGxlcg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-exceptionhandler">@ExceptionHandler methods<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+</tbody></table>
+<h3 id="Chain-of-Resolvers"><a href="#Chain-of-Resolvers" class="headerlink" title="Chain of Resolvers"></a>Chain of Resolvers</h3><p>You can form an exception resolver chain by declaring multiple <code>HandlerExceptionResolver</code> beans in your Spring configuration and setting their <code>order</code> properties as needed. The higher the order property, the later the exception resolver is positioned.</p>
+<p>The contract of <code>HandlerExceptionResolver</code> specifies that it can return:</p>
+<ul>
+<li>a <code>ModelAndView</code> that points to an error view.</li>
+<li>An empty <code>ModelAndView</code> if the exception was handled within the resolver.</li>
+<li><code>null</code> if the exception remains unresolved, for subsequent resolvers to try, and, if the exception remains at the end, it is allowed to bubble up to the Servlet container.</li>
+</ul>
+<p>The <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWc=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config">MVC Config<i class="fa fa-external-link"></i></span> automatically declares built-in resolvers for default Spring MVC exceptions, for <code>@ResponseStatus</code> annotated exceptions, and for support of <code>@ExceptionHandler</code> methods. You can customize that list or replace it.</p>
+<h3 id="Container-Error-Page"><a href="#Container-Error-Page" class="headerlink" title="Container Error Page"></a>Container Error Page</h3><p>If an exception remains unresolved by any <code>HandlerExceptionResolver</code> and is, therefore, left to propagate or if the response status is set to an error status (that is, 4xx, 5xx), Servlet containers ca render a default error page in HTML. To customize the default error page of the container, you can declare an error page mapping in <code>web.xml</code>. The following example shows how to do so:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">error-page</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">location</span>&gt;</span>/error<span class="tag">&lt;/<span class="name">location</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">error-page</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Given the preceding example, when an exception bubbles up or the response has an error status, the Servlet container makes an ERROR dispatch within the container to the configured URL (for example, <code>/error</code>). This is then processed by the <code>DispatcherServlet</code>, possibly mapping it to a <code>@Controller</code>, which could be implemented to return an error view name with a model or to render a JSON response, as the following example shows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ErrorController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(path = <span class="string">"/error"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title">handle</span><span class="params">(HttpServletRequest request)</span> </span>&#123;</span><br><span class="line">        Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</span><br><span class="line">        map.put(<span class="string">"status"</span>, request.getAttribute(<span class="string">"javax.servlet.error.status_code"</span>));</span><br><span class="line">        map.put(<span class="string">"reason"</span>, request.getAttribute(<span class="string">"javax.servlet.error.message"</span>));</span><br><span class="line">        <span class="keyword">return</span> map;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>More ActionsThe Servlet API does not provide a way to create error page mappings in Java. You can, however, use both a <code>WebApplicationInitializer</code> and a minimal <code>web.xml</code>.</p>
+<h2 id="3-5-View-Resolution"><a href="#3-5-View-Resolution" class="headerlink" title="3.5 View Resolution"></a>3.5 View Resolution</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtdmlld3Jlc29sdXRpb24=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-viewresolution">Same as in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>Spring MVC defines the <code>ViewResolver</code> and <code>View</code> interfaces that let you render models in a browser without tying you to a specific view technology. <code>ViewResolver</code> provides a mapping between view names and actual views. <code>View</code> addresses the preparation of data before handing over to a specific view technology.</p>
+<p>The following table provides more details on the <code>ViewResolver</code> hierarchy:</p>
+<table>
+<thead>
+<tr>
+<th>ViewResolver</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>AbstractCachingViewResolver</code></td>
+<td>Sub-classes of <code>AbstractCachingViewResolver</code> cache view instances that they resolve. Caching improves performance of certain view technologies. You can turn off the cache by setting the <code>cache</code> property to <code>false</code>. Furthermore, if you must refresh a certain view at runtime (for example, when a FreeMarker template is modified), you can use the <code>removeFromCache(String viewName, Locale loc)</code> method.</td>
+</tr>
+<tr>
+<td><code>XmlViewResolver</code></td>
+<td>Implementation of <code>ViewResolver</code> that accepts a configuration file written in XML with the same DTD as Spring’s XML bean factories. The default configuration file is<code>/WEB-INF/views.xml</code>.</td>
+</tr>
+<tr>
+<td><code>ResourceBundleViewResolver</code></td>
+<td>Implementation of <code>ViewResolver</code> that uses bean definitions in a <code>ResourceBundle</code>, specified by the bundle base name. For each view it is supposed to resolve, it uses the value of the property <code>[viewname].(class)</code> as the view class and the value of the property <code>[viewname].url</code> as the view URL. You can find examples in the chapter on <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy12aWV3" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-view">View Technologies<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+<tr>
+<td><code>UrlBasedViewResolver</code></td>
+<td>Simple implementation of the <code>ViewResolver</code> interface that affects the direct resolution of logical view names to URLs without an explicit mapping definition. This is appropriate if your logical names match the names of your view resources in a straightforward manner, without the need for arbitrary mappings.</td>
+</tr>
+<tr>
+<td><code>InternalResourceViewResolver</code></td>
+<td>Convenient subclass of <code>UrlBasedViewResolver</code> that supports <code>InternalResourceView</code> (in effect, Servlets and JSPs) and subclasses such as <code>JstlView</code> and <code>TilesView</code>. You can specify the view class for all views generated by this resolver by using <code>setViewClass(..)</code>. See the <a href="https://docs.spring.io/spring-framework/docs/5.1.0.RELEASE/javadoc-api/org/springframework/web/reactive/result/view/UrlBasedViewResolver.html" target="_blank" rel="noopener"><code>UrlBasedViewResolver</code>Javadoc</a> for details.</td>
+</tr>
+<tr>
+<td><code>FreeMarkerViewResolver</code></td>
+<td>Convenient subclass of <code>UrlBasedViewResolver</code> that supports <code>FreeMarkerView</code> and custom subclasses of them.</td>
+</tr>
+<tr>
+<td><code>ContentNegotiatingViewResolver</code></td>
+<td>Implementation of the <code>ViewResolver</code> interface that resolves a view based on the request file name or <code>Accept</code> header. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1tdWx0aXBsZS1yZXByZXNlbnRhdGlvbnM=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-multiple-representations">Content Negotiation<i class="fa fa-external-link"></i></span>.</td>
+</tr>
+</tbody></table>
+<h3 id="Handling"><a href="#Handling" class="headerlink" title="Handling"></a>Handling</h3><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtdmlld3Jlc29sdXRpb24taGFuZGxpbmc=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-viewresolution-handling">Same as in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>You can chain view resolvers by declaring more than one resolver bean and, if necessary, by setting the <code>order</code> property to specify ordering. Remember, the higher the order property, the later the view resolver is positioned in the chain.</p>
+<p>The contract of a <code>ViewResolver</code> specifies that it can return null to indicate that the view could not be found. However, in the case of JSPs and <code>InternalResourceViewResolver</code>, the only way to figure out if a JSP exists is to perform a dispatch through<code>RequestDispatcher</code>. Therefore, you must always configure an <code>InternalResourceViewResolver</code> to be last in the overall order of view resolvers.</p>
+<p>Configuring view resolution is as simple as adding <code>ViewResolver</code> beans to your Spring configuration. The <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWc=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config">MVC Config<i class="fa fa-external-link"></i></span> provides a dedicated configuration API for <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctdmlldy1yZXNvbHZlcnM=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-view-resolvers">View Resolvers<i class="fa fa-external-link"></i></span> and for adding logic-less <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctdmlldy1jb250cm9sbGVy" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-view-controller">View Controllers<i class="fa fa-external-link"></i></span> which are useful for HTML template rendering without controller logic.</p>
+<h3 id="Redirecting"><a href="#Redirecting" class="headerlink" title="Redirecting"></a>Redirecting</h3><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtcmVkaXJlY3RpbmctcmVkaXJlY3QtcHJlZml4" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-redirecting-redirect-prefix">Same as in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>The special <code>redirect:</code> prefix in a view name lets you perform a redirect. The <code>UrlBasedViewResolver</code> (and its subclasses) recognize this as an instruction that a redirect is needed. The rest of the view name is the redirect URL.</p>
+<p>The net effect is the same as if the controller had returned a <code>RedirectView</code>, but now the controller itself can operate in terms of logical view names. A logical view name (such as <code>redirect:/myapp/some/resource</code>) redirects relative to the current Servlet context, while a name such as <code>redirect:http://myhost.com/some/arbitrary/path</code> redirects to an absolute URL.</p>
+<p>Note that, if a controller method is annotated with the <code>@ResponseStatus</code>, the annotation value takes precedence over the response status set by <code>RedirectView</code>.</p>
+<h3 id="Forwarding"><a href="#Forwarding" class="headerlink" title="Forwarding"></a>Forwarding</h3><p>You can also use a special <code>forward:</code> prefix for view names that are ultimately resolved by <code>UrlBasedViewResolver</code> and subclasses. This creates an <code>InternalResourceView</code>, which does a <code>RequestDispatcher.forward()</code>. Therefore, this prefix is not useful with <code>InternalResourceViewResolver</code> and <code>InternalResourceView</code> (for JSPs), but it can be helpful if you use another view technology but still want to force a forward of a resource to be handled by the Servlet/JSP engine. Note that you may also chain multiple view resolvers, instead.</p>
+<h3 id="Content-Negotiation"><a href="#Content-Negotiation" class="headerlink" title="Content Negotiation"></a>Content Negotiation</h3><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtbXVsdGlwbGUtcmVwcmVzZW50YXRpb25z" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-multiple-representations">Same as in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p><a href="https://docs.spring.io/spring-framework/docs/5.1.0.RELEASE/javadoc-api/org/springframework/web/servlet/view/ContentNegotiatingViewResolver.html" target="_blank" rel="noopener"><code>ContentNegotiatingViewResolver</code></a> does not resolve views itself but rather delegates to other view resolvers and selects the view that resembles the representation requested by the client. The representation can be determined from the <code>Accept</code> header or from a query parameter (for example, <code>&quot;/path?format=pdf&quot;</code>).</p>
+<p>The <code>ContentNegotiatingViewResolver</code> selects an appropriate <code>View</code> to handle the request by comparing the request media types with the media type (also known as <code>Content-Type</code>) supported by the <code>View</code> associated with each of its <code>ViewResolvers</code>. The first <code>View</code> in the list that has a compatible <code>Content-Type</code> returns the representation to the client. If a compatible view cannot be supplied by the <code>ViewResolver</code> chain, the list of views specified through the <code>DefaultViews</code> property is consulted. This latter option is appropriate for singleton <code>Views</code> that can render an appropriate representation of the current resource regardless of the logical view name. The <code>Accept</code> header can include wildcards (for example <code>text/*</code>), in which case a <code>View</code> whose <code>Content-Type</code> is <code>text/xml</code> is a compatible match.</p>
+<p>See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctdmlldy1yZXNvbHZlcnM=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-view-resolvers">View Resolvers<i class="fa fa-external-link"></i></span> under <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWc=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config">MVC Config<i class="fa fa-external-link"></i></span> for configuration details.</p>
+<h2 id="3-6-Locale"><a href="#3-6-Locale" class="headerlink" title="3.6 Locale"></a>3.6 Locale</h2><p>Most parts of Spring’s architecture support internationalization, as the Spring web MVC framework does. <code>DispatcherServlet</code>lets you automatically resolve messages by using the client’s locale. This is done with <code>LocaleResolver</code> objects.</p>
+<p>When a request comes in, the <code>DispatcherServlet</code> looks for a locale resolver and, if it finds one, it tries to use it to set the locale. By using the <code>RequestContext.getLocale()</code> method, you can always retrieve the locale that was resolved by the locale resolver.</p>
+<p>In addition to automatic locale resolution, you can also attach an interceptor to the handler mapping (see <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1oYW5kbGVybWFwcGluZy1pbnRlcmNlcHRvcg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-handlermapping-interceptor">Interception<i class="fa fa-external-link"></i></span> for more information on handler mapping interceptors) to change the locale under specific circumstances (for example, based on a parameter in the request).</p>
+<p>Locale resolvers and interceptors are defined in the <code>org.springframework.web.servlet.i18n</code> package and are configured in your application context in the normal way. The following selection of locale resolvers is included in Spring.</p>
+<ul>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy10aW1lem9uZQ==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-timezone">Time Zone<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1sb2NhbGVyZXNvbHZlci1hY2NlcHRoZWFkZXI=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-localeresolver-acceptheader">Header Resolver<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1sb2NhbGVyZXNvbHZlci1jb29raWU=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-localeresolver-cookie">Cookie Resolver<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1sb2NhbGVyZXNvbHZlci1zZXNzaW9u" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-localeresolver-session">Session Resolver<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1sb2NhbGVyZXNvbHZlci1pbnRlcmNlcHRvcg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-localeresolver-interceptor">Locale Interceptor<i class="fa fa-external-link"></i></span></li>
+</ul>
+<h3 id="Time-Zone"><a href="#Time-Zone" class="headerlink" title="Time Zone"></a>Time Zone</h3><p>In addition to obtaining the client’s locale, it is often useful to know its time zone. The <code>LocaleContextResolver</code> interface offers an extension to <code>LocaleResolver</code> that lets resolvers provide a richer <code>LocaleContext</code>, which may include time zone information.</p>
+<p>When available, the user’s <code>TimeZone</code> can be obtained by using the <code>RequestContext.getTimeZone()</code> method. Time zone information is automatically used by any Date/Time <code>Converter</code> and <code>Formatter</code> objects that are registered with Spring’s<code>ConversionService</code>.</p>
+<h3 id="Header-Resolver"><a href="#Header-Resolver" class="headerlink" title="Header Resolver"></a>Header Resolver</h3><p>This locale resolver inspects the <code>accept-language</code> header in the request that was sent by the client (for example, a web browser). Usually, this header field contains the locale of the client’s operating system. Note that this resolver does not support time zone information.</p>
+<h3 id="Cookie-Resolver"><a href="#Cookie-Resolver" class="headerlink" title="Cookie Resolver"></a>Cookie Resolver</h3><p>This locale resolver inspects a <code>Cookie</code> that might exist on the client to see if a <code>Locale</code> or <code>TimeZone</code> is specified. If so, it uses the specified details. By using the properties of this locale resolver, you can specify the name of the cookie as well as the maximum age. The following example defines a <code>CookieLocaleResolver</code>:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"localeResolver"</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.i18n.CookieLocaleResolver"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"cookieName"</span> <span class="attr">value</span>=<span class="string">"clientlanguage"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- in seconds. If set to -1, the cookie is not persisted (deleted when browser shuts down) --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"cookieMaxAge"</span> <span class="attr">value</span>=<span class="string">"100000"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>The following table describes the properties <code>CookieLocaleResolver</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>cookieName</code></td>
+<td>classname + LOCALE</td>
+<td>The name of the cookie</td>
+</tr>
+<tr>
+<td><code>cookieMaxAge</code></td>
+<td>Servlet container default</td>
+<td>The maximum time a cookie persists on the client. If <code>-1</code> is specified, the cookie will not be persisted. It is available only until the client shuts down the browser.</td>
+</tr>
+<tr>
+<td><code>cookiePath</code></td>
+<td>/</td>
+<td>Limits the visibility of the cookie to a certain part of your site. When <code>cookiePath</code> is specified, the cookie is visible only to that path and the paths below it.</td>
+</tr>
+</tbody></table>
+<h3 id="Session-Resolver"><a href="#Session-Resolver" class="headerlink" title="Session Resolver"></a>Session Resolver</h3><p>The <code>SessionLocaleResolver</code> lets you retrieve <code>Locale</code> and <code>TimeZone</code> from the session that might be associated with the user’s request. In contrast to <code>CookieLocaleResolver</code>, this strategy stores locally chosen locale settings in the Servlet container’s <code>HttpSession</code>. As a consequence, those settings are temporary for each session and are, therefore, lost when each session terminates.</p>
+<p>Note that there is no direct relationship with external session management mechanisms, such as the Spring Session project. This <code>SessionLocaleResolver</code> evaluates and modifies the corresponding <code>HttpSession</code> attributes against the current <code>HttpServletRequest</code>.</p>
+<h3 id="Locale-Interceptor"><a href="#Locale-Interceptor" class="headerlink" title="Locale Interceptor"></a>Locale Interceptor</h3><p>You can enable changing of locales by adding the <code>LocaleChangeInterceptor</code> to one of the handler mappings (see <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1oYW5kbGVybWFwcGluZw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-handlermapping">[mvc-handlermapping]<i class="fa fa-external-link"></i></span>). It detects a parameter in the request and changes the locale. It calls <code>setLocale()</code> on the <code>LocaleResolver</code>that also exists in the context. The next example shows that calls to all <code>*.view</code> resources that contain a parameter named <code>siteLanguage</code> now changes the locale. So, for example, a request for the URL, <code>http://www.sf.net/home.view?siteLanguage=nl</code>, changes the site language to Dutch. The following example shows how to intercept the locale:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"localeChangeInterceptor"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.i18n.LocaleChangeInterceptor"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"paramName"</span> <span class="attr">value</span>=<span class="string">"siteLanguage"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"localeResolver"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.i18n.CookieLocaleResolver"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"urlMapping"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"interceptors"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">"localeChangeInterceptor"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"mappings"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>/**/*.view=someController<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-7-Themes"><a href="#3-7-Themes" class="headerlink" title="3.7 Themes"></a>3.7 Themes</h2><p>You can apply Spring Web MVC framework themes to set the overall look-and-feel of your application, thereby enhancing user experience. A theme is a collection of static resources, typically style sheets and images, that affect the visual style of the application.</p>
+<h3 id="Defining-a-theme"><a href="#Defining-a-theme" class="headerlink" title="Defining a theme"></a>Defining a theme</h3><p>To use themes in your web application, you must set up an implementation of the<code>org.springframework.ui.context.ThemeSource</code> interface. The <code>WebApplicationContext</code> interface extends <code>ThemeSource</code> but delegates its responsibilities to a dedicated implementation. By default, the delegate is an<code>org.springframework.ui.context.support.ResourceBundleThemeSource</code> implementation that loads properties files from the root of the classpath. To use a custom <code>ThemeSource</code> implementation or to configure the base name prefix of the <code>ResourceBundleThemeSource</code>, you can register a bean in the application context with the reserved name, <code>themeSource</code>. The web application context automatically detects a bean with that name and uses it.</p>
+<p>When you use the <code>ResourceBundleThemeSource</code>, a theme is defined in a simple properties file. The properties file lists the resources that make up the theme, as the following example shows:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">styleSheet&#x3D;&#x2F;themes&#x2F;cool&#x2F;style.css</span><br><span class="line">background&#x3D;&#x2F;themes&#x2F;cool&#x2F;img&#x2F;coolBg.jpg</span><br></pre></td></tr></table></figure>
+
+<p>The keys of the properties are the names that refer to the themed elements from view code. For a JSP, you typically do this using the <code>spring:theme</code> custom tag, which is very similar to the <code>spring:message</code> tag. The following JSP fragment uses the theme defined in the previous example to customize the look and feel:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">%@</span> <span class="attr">taglib</span> <span class="attr">prefix</span>=<span class="string">"spring"</span> <span class="attr">uri</span>=<span class="string">"http://www.springframework.org/tags"</span>%&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"&lt;spring:theme code='styleSheet'/&gt;"</span> <span class="attr">type</span>=<span class="string">"text/css"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span> <span class="attr">style</span>=<span class="string">"background=&lt;spring:theme code='background'/&gt;"</span>&gt;</span></span><br><span class="line">        ...</span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>By default, the <code>ResourceBundleThemeSource</code> uses an empty base name prefix. As a result, the properties files are loaded from the root of the classpath. Thus, you would put the <code>cool.properties</code> theme definition in a directory at the root of the classpath (for example, in <code>/WEB-INF/classes</code>). The <code>ResourceBundleThemeSource</code> uses the standard Java resource bundle loading mechanism, allowing for full internationalization of themes. For example, we could have a <code>/WEB-INF/classes/cool_nl.properties</code> that references a special background image with Dutch text on it.</p>
+<h3 id="Resolving-Themes"><a href="#Resolving-Themes" class="headerlink" title="Resolving Themes"></a>Resolving Themes</h3><p>After you define themes, as described in the <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy10aGVtZXJlc29sdmVyLWRlZmluaW5n" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-themeresolver-defining">preceding section<i class="fa fa-external-link"></i></span>, you decide which theme to use. The <code>DispatcherServlet</code> looks for a bean named <code>themeResolver</code> to find out which <code>ThemeResolver</code> implementation to use. A theme resolver works in much the same way as a <code>LocaleResolver</code>. It detects the theme to use for a particular request and can also alter the request’s theme. The following table describes the theme resolvers provided by Spring:</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>FixedThemeResolver</code></td>
+<td>Selects a fixed theme, set by using the <code>defaultThemeName</code> property.</td>
+</tr>
+<tr>
+<td><code>SessionThemeResolver</code></td>
+<td>The theme is maintained in the user’s HTTP session. It needs to be set only once for each session but is not persisted between sessions.</td>
+</tr>
+<tr>
+<td><code>CookieThemeResolver</code></td>
+<td>The selected theme is stored in a cookie on the client.</td>
+</tr>
+</tbody></table>
+<p>Spring also provides a <code>ThemeChangeInterceptor</code> that lets theme changes on every request with a simple request parameter.</p>
+<h2 id="3-8-Multipart-Resolver"><a href="#3-8-Multipart-Resolver" class="headerlink" title="3.8 Multipart Resolver"></a>3.8 Multipart Resolver</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtbXVsdGlwYXJ0" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-multipart">Same as in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p><code>MultipartResolver</code> from the <code>org.springframework.web.multipart</code> package is a strategy for parsing multipart requests including file uploads. There is one implementation based on <span class="exturl" data-url="aHR0cHM6Ly9qYWthcnRhLmFwYWNoZS5vcmcvY29tbW9ucy9maWxldXBsb2Fk" title="https://jakarta.apache.org/commons/fileupload">Commons FileUpload<i class="fa fa-external-link"></i></span> and another based on Servlet 3.0 multipart request parsing.</p>
+<p>To enable multipart handling, you need to declare a <code>MultipartResolver</code> bean in your <code>DispatcherServlet</code> Spring configuration with a name of <code>multipartResolver</code>. The <code>DispatcherServlet</code> detects it and applies it to the incoming request. When a POST with content-type of <code>multipart/form-data</code> is received, the resolver parses the content and wraps the current <code>HttpServletRequest</code> as <code>MultipartHttpServletRequest</code> to provide access to resolved parts in addition to exposing them as request parameters.</p>
+<h3 id="Apache-FileUpload"><a href="#Apache-FileUpload" class="headerlink" title="Apache FileUpload"></a>Apache <code>FileUpload</code></h3><p>To use Apache Commons <code>FileUpload</code>, you can configure a bean of type <code>CommonsMultipartResolver</code> with a name of <code>multipartResolver</code>. You also need to have <code>commons-fileupload</code> as a dependency on your classpath.</p>
+<h3 id="Servlet-3-0"><a href="#Servlet-3-0" class="headerlink" title="Servlet 3.0"></a>Servlet 3.0</h3><p>Servlet 3.0 multipart parsing needs to be enabled through Servlet container configuration. To do so:</p>
+<ul>
+<li>In Java, set a <code>MultipartConfigElement</code> on the Servlet registration.</li>
+<li>In <code>web.xml</code>, add a <code>&quot;&lt;multipart-config&gt;&quot;</code> section to the servlet declaration.</li>
+</ul>
+<p>The following example shows how to set a <code>MultipartConfigElement</code> on the Servlet registration:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppInitializer</span> <span class="keyword">extends</span> <span class="title">AbstractAnnotationConfigDispatcherServletInitializer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">customizeRegistration</span><span class="params">(ServletRegistration.Dynamic registration)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Optionally also set maxFileSize, maxRequestSize, fileSizeThreshold</span></span><br><span class="line">        registration.setMultipartConfig(<span class="keyword">new</span> MultipartConfigElement(<span class="string">"/tmp"</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Once the Servlet 3.0 configuration is in place, you can add a bean of type <code>StandardServletMultipartResolver</code> with a name of <code>multipartResolver</code>.</p>
+<h2 id="3-9-Logging"><a href="#3-9-Logging" class="headerlink" title="3.9 Logging"></a>3.9 Logging</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtbG9nZ2luZw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-logging">Same as in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>DEBUG-level logging in Spring MVC is designed to be compact, minimal, and human-friendly. It focuses on high-value bits of information that are useful over and over again versus others that are useful only when debugging a specific issue.</p>
+<p>TRACE-level logging generally follows the same principles as DEBUG (and, for example, also should not be a fire hose) but can be used for debugging any issue. In addition, some log messages may show a different level of detail at TRACE versus DEBUG.</p>
+<p>Good logging comes from the experience of using the logs. If you spot anything that does not meet the stated goals, please let us know.</p>
+<h3 id="Sensitive-Data"><a href="#Sensitive-Data" class="headerlink" title="Sensitive Data"></a>Sensitive Data</h3><p>DEBUG and TRACE logging may log sensitive information. This is why request parameters and headers are masked by default and their logging in full must be enabled explicitly through the <code>enableLoggingRequestDetails</code> property on <code>DispatcherServlet</code>.</p>
+<p>The following example shows how to do so by using Java configuration:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyInitializer</span></span></span><br><span class="line"><span class="class">        <span class="keyword">extends</span> <span class="title">AbstractAnnotationConfigDispatcherServletInitializer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> Class&lt;?&gt;[] getRootConfigClasses() &#123;</span><br><span class="line">        <span class="keyword">return</span> ... ;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> Class&lt;?&gt;[] getServletConfigClasses() &#123;</span><br><span class="line">        <span class="keyword">return</span> ... ;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> String[] getServletMappings() &#123;</span><br><span class="line">        <span class="keyword">return</span> ... ;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">customizeRegistration</span><span class="params">(Dynamic registration)</span> </span>&#123;</span><br><span class="line">        registration.setInitParameter(<span class="string">"enableLoggingRequestDetails"</span>, <span class="string">"true"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="4-Filters"><a href="#4-Filters" class="headerlink" title="4 Filters"></a>4 Filters</h1><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtZmlsdGVycw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-filters">Same as in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>The <code>spring-web</code> module provides some useful filters:</p>
+<ul>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI2ZpbHRlcnMtaHR0cC1wdXQ=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#filters-http-put">Form Data<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI2ZpbHRlcnMtZm9yd2FyZGVkLWhlYWRlcnM=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#filters-forwarded-headers">Forwarded Headers<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI2ZpbHRlcnMtc2hhbGxvdy1ldGFn" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#filters-shallow-etag">Shallow ETag<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI2ZpbHRlcnMtY29ycw==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#filters-cors">CORS<i class="fa fa-external-link"></i></span></li>
+</ul>
+<h2 id="Form-Data"><a href="#Form-Data" class="headerlink" title="Form Data"></a>Form Data</h2><p>Browsers can submit form data only through HTTP GET or HTTP POST but non-browser clients can also use HTTP PUT, PATCH, and DELETE. The Servlet API requires <code>ServletRequest.getParameter*()</code> methods to support form field access only for HTTP POST.</p>
+<p>The <code>spring-web</code> module provides <code>FormContentFilter</code> to intercept HTTP PUT, PATCH, and DELETE requests with a content type of <code>application/x-www-form-urlencoded</code>, read the form data from the body of the request, and wrap the <code>ServletRequest</code> to make the form data available through the <code>ServletRequest.getParameter*()</code> family of methods.</p>
+<h2 id="Forwarded-Headers"><a href="#Forwarded-Headers" class="headerlink" title="Forwarded Headers"></a>Forwarded Headers</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtZm9yd2FyZGVkLWhlYWRlcnM=" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-forwarded-headers">Same as in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>As a request goes through proxies (such as load balancers) the host, port, and scheme may change, and that makes it a challenge to create links that point to the correct host, port, and scheme from a client perspective.</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly90b29scy5pZXRmLm9yZy9odG1sL3JmYzcyMzk=" title="https://tools.ietf.org/html/rfc7239">RFC 7239<i class="fa fa-external-link"></i></span> defines the <code>Forwarded</code> HTTP header that proxies can use to provide information about the original request. There are other non-standard headers, too, including <code>X-Forwarded-Host</code>, <code>X-Forwarded-Port</code>, <code>X-Forwarded-Proto</code>, <code>X-Forwarded-Ssl</code>, and <code>X-Forwarded-Prefix</code>.</p>
+<p><code>ForwardedHeaderFilter</code> is a Servlet filter that modifies the host, port, and scheme of the request, based on <code>Forwarded</code> headers, and then removes those headers.</p>
+<p>There are security considerations for forwarded headers since an application cannot know if the headers were added by a proxy, as intended, or by a malicious client. This is why a proxy at the boundary of trust should be configured to remove untrusted <code>Forwarded</code> headers that come from the outside. You can also configure the <code>ForwardedHeaderFilter</code> with <code>removeOnly=true</code>, in which case it removes but does not use the headers.</p>
+<h2 id="Shallow-ETag"><a href="#Shallow-ETag" class="headerlink" title="Shallow ETag"></a>Shallow ETag</h2><p>The <code>ShallowEtagHeaderFilter</code> filter creates a “shallow” ETag by caching the content written to the response and computing an MD5 hash from it. The next time a client sends, it does the same, but it also compares the computed value against the <code>If-None-Match</code> request header and, if the two are equal, returns a 304 (NOT_MODIFIED).</p>
+<p>This strategy saves network bandwidth but not CPU, as the full response must be computed for each request. Other strategies at the controller level, described earlier, can avoid the computation. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jYWNoaW5n" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-caching">HTTP Caching<i class="fa fa-external-link"></i></span>.</p>
+<p>This filter has a <code>writeWeakETag</code> parameter that configures the filter to write weak ETags similar to the following: <code>W/&quot;02a2d595e6ed9a0b24f027f2b63b134d6&quot;</code> (as defined in <span class="exturl" data-url="aHR0cHM6Ly90b29scy5pZXRmLm9yZy9odG1sL3JmYzcyMzIjc2VjdGlvbi0yLjM=" title="https://tools.ietf.org/html/rfc7232#section-2.3">RFC 7232 Section 2.3<i class="fa fa-external-link"></i></span>).</p>
+<p>CORS</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtZmlsdGVycy1jb3Jz" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-filters-cors">Same as in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>Spring MVC provides fine-grained support for CORS configuration through annotations on controllers. However, when used with Spring Security, we advise relying on the built-in <code>CorsFilter</code> that must be ordered ahead of Spring Security’s chain of filters.</p>
+<p>See the sections on <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb3Jz" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-cors">CORS<i class="fa fa-external-link"></i></span> and the <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy9jdXJyZW50L3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb3JzLWZpbHRlcg==" title="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-cors-filter">CORS Filter<i class="fa fa-external-link"></i></span> for more details.</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-1/" title="8-webmvc-1">https://zxucooly.github.io/2018/12/05/spring官方文档/8-webmvc-1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/" rel="tag"><i class="fa fa-tag"></i> Spring官方文档</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-3/" rel="prev" title="8-webmvc-3">
+      <i class="fa fa-chevron-left"></i> 8-webmvc-3
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/9-%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C-JPA/" rel="next" title="9-数据操作-JPA">
+      9-数据操作-JPA <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Servlet3-0"><span class="nav-number">1.</span> <span class="nav-text">1 Servlet3.0</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-springMVC加载web容器"><span class="nav-number">2.</span> <span class="nav-text">2 springMVC加载web容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-SpringContainerInitializer"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 SpringContainerInitializer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-层级的容器配置"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 层级的容器配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-DispatcherServlet功能介绍"><span class="nav-number">3.</span> <span class="nav-text">3 DispatcherServlet功能介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-Special-Bean-Types"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Special Bean Types</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-processing-requests"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 processing requests</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-Interception"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 Interception</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-Exceptions"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 Exceptions</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chain-of-Resolvers"><span class="nav-number">3.4.1.</span> <span class="nav-text">Chain of Resolvers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Container-Error-Page"><span class="nav-number">3.4.2.</span> <span class="nav-text">Container Error Page</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-View-Resolution"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 View Resolution</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Handling"><span class="nav-number">3.5.1.</span> <span class="nav-text">Handling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redirecting"><span class="nav-number">3.5.2.</span> <span class="nav-text">Redirecting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Forwarding"><span class="nav-number">3.5.3.</span> <span class="nav-text">Forwarding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Content-Negotiation"><span class="nav-number">3.5.4.</span> <span class="nav-text">Content Negotiation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-6-Locale"><span class="nav-number">3.6.</span> <span class="nav-text">3.6 Locale</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Time-Zone"><span class="nav-number">3.6.1.</span> <span class="nav-text">Time Zone</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Header-Resolver"><span class="nav-number">3.6.2.</span> <span class="nav-text">Header Resolver</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie-Resolver"><span class="nav-number">3.6.3.</span> <span class="nav-text">Cookie Resolver</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Session-Resolver"><span class="nav-number">3.6.4.</span> <span class="nav-text">Session Resolver</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Locale-Interceptor"><span class="nav-number">3.6.5.</span> <span class="nav-text">Locale Interceptor</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-7-Themes"><span class="nav-number">3.7.</span> <span class="nav-text">3.7 Themes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Defining-a-theme"><span class="nav-number">3.7.1.</span> <span class="nav-text">Defining a theme</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Resolving-Themes"><span class="nav-number">3.7.2.</span> <span class="nav-text">Resolving Themes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-8-Multipart-Resolver"><span class="nav-number">3.8.</span> <span class="nav-text">3.8 Multipart Resolver</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Apache-FileUpload"><span class="nav-number">3.8.1.</span> <span class="nav-text">Apache FileUpload</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet-3-0"><span class="nav-number">3.8.2.</span> <span class="nav-text">Servlet 3.0</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-9-Logging"><span class="nav-number">3.9.</span> <span class="nav-text">3.9 Logging</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sensitive-Data"><span class="nav-number">3.9.1.</span> <span class="nav-text">Sensitive Data</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-Filters"><span class="nav-number">4.</span> <span class="nav-text">4 Filters</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Form-Data"><span class="nav-number">4.1.</span> <span class="nav-text">Form Data</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Forwarded-Headers"><span class="nav-number">4.2.</span> <span class="nav-text">Forwarded Headers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Shallow-ETag"><span class="nav-number">4.3.</span> <span class="nav-text">Shallow ETag</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

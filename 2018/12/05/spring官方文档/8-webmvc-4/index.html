@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="1 View TechnologiesThe use of view technologies in Spring MVC is pluggable, whether you decide to use Thymeleaf, Groovy Markup Templates, JSPs, or other, is primarily a matter of a configuration chang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8-webmvc-4">
+<meta property="og:url" content="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-4/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="1 View TechnologiesThe use of view technologies in Spring MVC is pluggable, whether you decide to use Thymeleaf, Groovy Markup Templates, JSPs, or other, is primarily a matter of a configuration chang">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-12-05T08:45:00.000Z">
+<meta property="article:modified_time" content="2019-12-23T15:00:52.698Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="Spring官方文档">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>8-webmvc-4 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          8-webmvc-4
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 16:45:00" itemprop="dateCreated datePublished" datetime="2018-12-05T16:45:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-23 23:00:52" itemprop="dateModified" datetime="2019-12-23T23:00:52+08:00">2019-12-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-View-Technologies"><a href="#1-View-Technologies" class="headerlink" title="1 View Technologies"></a>1 View Technologies</h1><p>The use of view technologies in Spring MVC is pluggable, whether you decide to use Thymeleaf, Groovy Markup Templates, JSPs, or other, is primarily a matter of a configuration change. </p>
+<h2 id="1-1-Thymeleaf"><a href="#1-1-Thymeleaf" class="headerlink" title="1.1 Thymeleaf"></a>1.1 Thymeleaf</h2><p>Thymeleaf是现代的服务器端Java模板引擎，它强调自然的HTML模板，可以在浏览器中通过双击预览，这对独立完成UI模板的工作非常有帮助，例如由设计师，而不需要运行的服务器。如果您想替换jsp, Thymeleaf提供了最广泛的一组特性之一，这将使转换更容易。Thymeleaf被积极开发和维护。</p>
+<p>The Thymeleaf integration with Spring MVC is managed by the Thymeleaf project. The configuration involves a few bean declarations such as <code>ServletContextTemplateResolver</code>, <code>SpringTemplateEngine</code>, and <code>ThymeleafViewResolver</code>. See <span class="exturl" data-url="aHR0cDovL3d3dy50aHltZWxlYWYub3JnL2RvY3VtZW50YXRpb24uaHRtbA==" title="http://www.thymeleaf.org/documentation.html">Thymeleaf+Spring<i class="fa fa-external-link"></i></span> for more details.</p>
+<a id="more"></a>
+
+<h2 id="1-2-FreeMarker"><a href="#1-2-FreeMarker" class="headerlink" title="1.2 FreeMarker"></a>1.2 FreeMarker</h2><h3 id="1-2-1-View-config"><a href="#1-2-1-View-config" class="headerlink" title="1.2.1 View config"></a>1.2.1 View config</h3><p>To configure FreeMarker as a view technology:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureViewResolvers</span><span class="params">(ViewResolverRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.freemarker();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Configure FreeMarker...</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> FreeMarkerConfigurer <span class="title">freeMarkerConfigurer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        FreeMarkerConfigurer configurer = <span class="keyword">new</span> FreeMarkerConfigurer();</span><br><span class="line">        configurer.setTemplateLoaderPath(<span class="string">"/WEB-INF/freemarker"</span>);</span><br><span class="line">        <span class="keyword">return</span> configurer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To configure the same in XML:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:annotation-driven</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">mvc:view-resolvers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:freemarker</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:view-resolvers</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- Configure FreeMarker... --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mvc:freemarker-configurer</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:template-loader-path</span> <span class="attr">location</span>=<span class="string">"/WEB-INF/freemarker"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:freemarker-configurer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Or you can also declare the <code>FreeMarkerConfigurer</code> bean for full control over all properties:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"freemarkerConfig"</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"templateLoaderPath"</span> <span class="attr">value</span>=<span class="string">"/WEB-INF/freemarker/"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Your templates need to be stored in the directory specified by the <code>FreeMarkerConfigurer</code> shown above. Given the above configuration if your controller returns the view name “welcome” then the resolver will look for the <code>/WEB-INF/freemarker/welcome.ftl</code> template.</p>
+<h3 id="1-2-2-FreeMarker-config"><a href="#1-2-2-FreeMarker-config" class="headerlink" title="1.2.2 FreeMarker config"></a>1.2.2 FreeMarker config</h3><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtdmlld3MtZnJlZW1hcmtlcg==" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-views-freemarker">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>FreeMarker ‘Settings’ and ‘SharedVariables’ can be passed directly to the FreeMarker <code>Configuration</code> object managed by Spring by setting the appropriate bean properties on the <code>FreeMarkerConfigurer</code> bean. The <code>freemarkerSettings</code> property requires a<code>java.util.Properties</code> object and the <code>freemarkerVariables</code> property requires a <code>java.util.Map</code>.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"freemarkerConfig"</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"templateLoaderPath"</span> <span class="attr">value</span>=<span class="string">"/WEB-INF/freemarker/"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"freemarkerVariables"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"xml_escape"</span> <span class="attr">value-ref</span>=<span class="string">"fmXmlEscape"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"fmXmlEscape"</span> <span class="attr">class</span>=<span class="string">"freemarker.template.utility.XmlEscape"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>See the FreeMarker documentation for details of settings and variables as they apply to the <code>Configuration</code> object.</p>
+<h3 id="1-2-3-Form-handling"><a href="#1-2-3-Form-handling" class="headerlink" title="1.2.3 Form handling"></a>1.2.3 Form handling</h3><p>Spring provides a tag library for use in JSP’s that contains, amongst others, a <code>&lt;spring:bind/&gt;</code> tag. This tag primarily enables forms to display values from form backing objects and to show the results of failed validations from a <code>Validator</code> in the web or business tier. Spring also has support for the same functionality in FreeMarker, with additional convenience macros for generating form input elements themselves.</p>
+<ul>
+<li><strong>The bind macros(宏命令)</strong></li>
+</ul>
+<p>A standard set of macros are maintained within the <code>spring-webmvc.jar</code> file for both languages, so they are always available to a suitably configured application.</p>
+<p>Some of the macros defined in the Spring libraries are considered internal (private) but no such scoping exists in the macro definitions making all macros visible to calling code and user templates. The following sections concentrate only on the macros you need to be directly calling from within your templates. If you wish to view the macro code directly, the file is called <code>spring.ftl</code> in the package <code>org.springframework.web.servlet.view.freemarker</code>.</p>
+<ul>
+<li><strong>Simple binding</strong></li>
+</ul>
+<p>In your HTML forms (vm / ftl templates) which act as a form view for a Spring MVC controller, you can use code similar to the following to bind to field values and display error messages for each input field in similar fashion to the JSP equivalent. Example code is shown below for the <code>personForm</code> view configured earlier:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- freemarker macros have to be imported into a namespace. We strongly</span></span><br><span class="line"><span class="comment">recommend sticking to 'spring' --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">#import</span> "/<span class="attr">spring.ftl</span>" <span class="attr">as</span> <span class="attr">spring</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">""</span> <span class="attr">method</span>=<span class="string">"POST"</span>&gt;</span></span><br><span class="line">        Name:</span><br><span class="line">        <span class="tag">&lt;<span class="name">@spring.bind</span> "<span class="attr">myModelObject.name</span>"/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">name</span>=<span class="string">"$&#123;spring.status.expression&#125;"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">value</span>=<span class="string">"$&#123;spring.status.value?html&#125;"</span>/&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">#list</span> <span class="attr">spring.status.errorMessages</span> <span class="attr">as</span> <span class="attr">error</span>&gt;</span> <span class="tag">&lt;<span class="name">b</span>&gt;</span>$&#123;error&#125;<span class="tag">&lt;/<span class="name">b</span>&gt;</span> <span class="tag">&lt;<span class="name">br</span>&gt;</span> <span class="tag">&lt;/<span class="name">#list</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">        ...</span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"submit"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-3-Groovy-Markup"><a href="#1-3-Groovy-Markup" class="headerlink" title="1.3  Groovy Markup"></a>1.3  Groovy Markup</h2><p><span class="exturl" data-url="aHR0cDovL2dyb292eS1sYW5nLm9yZy90ZW1wbGF0aW5nLmh0bWwjX3RoZV9tYXJrdXB0ZW1wbGF0ZWVuZ2luZQ==" title="http://groovy-lang.org/templating.html#_the_markuptemplateengine">Groovy Markup Template Engine<i class="fa fa-external-link"></i></span> is primarily aimed at generating XML-like markup (XML, XHTML, HTML5, etc) but that can be used to generate any text based content. The Spring Framework has a built-in integration for using Spring MVC with Groovy Markup.</p>
+<ul>
+<li><p>The Groovy Markup Tempalte engine requires Groovy 2.3.1+.</p>
+</li>
+<li><p><strong>Configuration</strong></p>
+</li>
+</ul>
+<p>To configure the Groovy Markup Template Engine:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureViewResolvers</span><span class="params">(ViewResolverRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.groovy();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Configure the Groovy Markup Template Engine...</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> GroovyMarkupConfigurer <span class="title">groovyMarkupConfigurer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        GroovyMarkupConfigurer configurer = <span class="keyword">new</span> GroovyMarkupConfigurer();</span><br><span class="line">        configurer.setResourceLoaderPath(<span class="string">"/WEB-INF/"</span>);</span><br><span class="line">        <span class="keyword">return</span> configurer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To configure the same in XML:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:annotation-driven</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">mvc:view-resolvers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:groovy</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:view-resolvers</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- Configure the Groovy Markup Template Engine... --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mvc:groovy-configurer</span> <span class="attr">resource-loader-path</span>=<span class="string">"/WEB-INF/"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Example</strong></li>
+</ul>
+<p>Unlike traditional template engines, Groovy Markup relies on a DSL that uses a builder syntax. Here is a sample template for an HTML page:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">yieldUnescaped <span class="string">'&lt;!DOCTYPE html&gt;'</span></span><br><span class="line">html(<span class="string">lang:</span><span class="string">'en'</span>) &#123;</span><br><span class="line">    head &#123;</span><br><span class="line">        meta(<span class="string">'http-equiv'</span>:<span class="string">'"Content-Type" content="text/html; charset=utf-8"'</span>)</span><br><span class="line">        title(<span class="string">'My page'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    body &#123;</span><br><span class="line">        p(<span class="string">'This is an example of HTML contents'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-4-Script-Views"><a href="#1-4-Script-Views" class="headerlink" title="1.4 Script Views"></a>1.4 Script Views</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtdmlldy1zY3JpcHQ=" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-view-script">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<h2 id="1-5-JSP-amp-JSTL"><a href="#1-5-JSP-amp-JSTL" class="headerlink" title="1.5 JSP &amp; JSTL"></a>1.5 JSP &amp; JSTL</h2><p>The Spring Framework has a built-in integration for using Spring MVC with JSP and JSTL.</p>
+<ul>
+<li><strong>View resolvers</strong></li>
+</ul>
+<p>When developing with JSPs you can declare a <code>InternalResourceViewResolver</code> or a <code>ResourceBundleViewResolver</code> bean.</p>
+<p><code>ResourceBundleViewResolver</code> relies on a properties file to define the view names mapped to a class and a URL. With a <code>ResourceBundleViewResolver</code> you can mix different types of views using only one resolver. Here is an example:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- the ResourceBundleViewResolver --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"viewResolver"</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.view.ResourceBundleViewResolver"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"basename"</span> <span class="attr">value</span>=<span class="string">"views"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"># And a sample properties file is uses (views.properties in WEB-INF/classes):</span><br><span class="line">welcome.(class)=org.springframework.web.servlet.view.JstlView</span><br><span class="line">welcome.url=/WEB-INF/jsp/welcome.jsp</span><br><span class="line"></span><br><span class="line">productList.(class)=org.springframework.web.servlet.view.JstlView</span><br><span class="line">productList.url=/WEB-INF/jsp/productlist.jsp</span><br></pre></td></tr></table></figure>
+
+<p><code>InternalResourceBundleViewResolver</code> can also be used for JSPs. As a best practice, we strongly encourage placing your JSP files in a directory under the <code>&#39;WEB-INF&#39;</code> directory so there can be no direct access by clients.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"viewResolver"</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.view.InternalResourceViewResolver"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"viewClass"</span> <span class="attr">value</span>=<span class="string">"org.springframework.web.servlet.view.JstlView"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"prefix"</span> <span class="attr">value</span>=<span class="string">"/WEB-INF/jsp/"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"suffix"</span> <span class="attr">value</span>=<span class="string">".jsp"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-6-很多视图解析技术"><a href="#1-6-很多视图解析技术" class="headerlink" title="1.6 很多视图解析技术"></a>1.6 很多视图解析技术</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy12aWV3" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web.html#mvc-view">地址: <i class="fa fa-external-link"></i></span></p>
+<h1 id="2-MVC-Config"><a href="#2-MVC-Config" class="headerlink" title="2 MVC Config"></a>2 MVC Config</h1><h2 id="2-1-Enable-MVC-Config"><a href="#2-1-Enable-MVC-Config" class="headerlink" title="2.1 Enable MVC Config"></a>2.1 Enable MVC Config</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtY29uZmlnLWVuYWJsZQ==" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-config-enable">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>In Java config use the <code>@EnableWebMvc</code> annotation:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In XML use the <code>&lt;mvc:annotation-driven&gt;</code> element:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:mvc</span>=<span class="string">"http://www.springframework.org/schema/mvc"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/mvc</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/mvc/spring-mvc.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:annotation-driven</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>上面注册了一些Spring MVC基础架构bean，这些bean也可以适应类路径上的依赖关系:例如JSON、XML等的有效负载转换器。</p>
+<h2 id="2-2-MVC-Config-API"><a href="#2-2-MVC-Config-API" class="headerlink" title="2.2 MVC Config API"></a>2.2 MVC Config API</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtY29uZmlnLWN1c3RvbWl6ZQ==" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-config-customize">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>In Java config implement <code>WebMvcConfigurer</code> interface:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Implement configuration methods...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In XML check attributes and sub-elements of <code>&lt;mvc:annotation-driven/&gt;</code>.</p>
+<h2 id="2-3-Type-conversion"><a href="#2-3-Type-conversion" class="headerlink" title="2.3 Type conversion"></a>2.3 Type conversion</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtY29uZmlnLWNvbnZlcnNpb24=" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-config-conversion">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>By default formatters for <code>Number</code> and <code>Date</code> types are installed, including support for the <code>@NumberFormat</code> and <code>@DateTimeFormat</code>annotations. Full support for the Joda-Time formatting library is also installed if Joda-Time is present on the classpath.</p>
+<p>In Java config, register custom formatters and converters:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addFormatters</span><span class="params">(FormatterRegistry registry)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In XML, the same:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:mvc</span>=<span class="string">"http://www.springframework.org/schema/mvc"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/mvc</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/mvc/spring-mvc.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:annotation-driven</span> <span class="attr">conversion-service</span>=<span class="string">"conversionService"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"conversionService"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">class</span>=<span class="string">"org.springframework.format.support.FormattingConversionServiceFactoryBean"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"converters"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.example.MyConverter"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"formatters"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.example.MyFormatter"</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.example.MyAnnotationFormatterFactory"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"formatterRegistrars"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.example.MyFormatterRegistrar"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-4-Validation"><a href="#2-4-Validation" class="headerlink" title="2.4 Validation"></a>2.4 Validation</h2><p>By default if <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2NvcmUuaHRtbCN2YWxpZGF0aW9uLWJlYW52YWxpZGF0aW9uLW92ZXJ2aWV3" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/core.html#validation-beanvalidation-overview">Bean Validation<i class="fa fa-external-link"></i></span> is present on the classpath — e.g. Hibernate Validator, the <code>LocalValidatorFactoryBean</code> is registered as a global <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2NvcmUuaHRtbCN2YWxpZGF0b3I=" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/core.html#validator">Validator<i class="fa fa-external-link"></i></span> for use with <code>@Valid</code> and <code>Validated</code> on controller method arguments.</p>
+<p>In Java config, you can customize the global <code>Validator</code> instance:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Validator <span class="title">getValidator</span><span class="params">()</span></span>; &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In XML, the same:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:mvc</span>=<span class="string">"http://www.springframework.org/schema/mvc"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/mvc</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/mvc/spring-mvc.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:annotation-driven</span> <span class="attr">validator</span>=<span class="string">"globalValidator"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Note that you can also register <code>Validator</code>‘s locally:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InitBinder</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initBinder</span><span class="params">(WebDataBinder binder)</span> </span>&#123;</span><br><span class="line">        binder.addValidators(<span class="keyword">new</span> FooValidator());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-5-Interceptors"><a href="#2-5-Interceptors" class="headerlink" title="2.5  Interceptors"></a>2.5  Interceptors</h2><p>In Java config, register interceptors to apply to incoming requests:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addInterceptors</span><span class="params">(InterceptorRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.addInterceptor(<span class="keyword">new</span> LocaleChangeInterceptor());</span><br><span class="line">        registry.addInterceptor(<span class="keyword">new</span> ThemeChangeInterceptor()).addPathPatterns(<span class="string">"/**"</span>).excludePathPatterns(<span class="string">"/admin/**"</span>);</span><br><span class="line">        registry.addInterceptor(<span class="keyword">new</span> SecurityInterceptor()).addPathPatterns(<span class="string">"/secure/*"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In XML, the same:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:interceptors</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.i18n.LocaleChangeInterceptor"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:interceptor</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:mapping</span> <span class="attr">path</span>=<span class="string">"/**"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:exclude-mapping</span> <span class="attr">path</span>=<span class="string">"/admin/**"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.theme.ThemeChangeInterceptor"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mvc:interceptor</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:interceptor</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:mapping</span> <span class="attr">path</span>=<span class="string">"/secure/*"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.example.SecurityInterceptor"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mvc:interceptor</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:interceptors</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-6-Content-Types"><a href="#2-6-Content-Types" class="headerlink" title="2.6 Content Types"></a>2.6 Content Types</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtY29uZmlnLWNvbnRlbnQtbmVnb3RpYXRpb24=" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-config-content-negotiation">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>您可以配置Spring MVC如何从请求中确定所请求的媒体类型。接受标题、URL路径扩展、查询参数等。</p>
+<p>默认情况下，首先检查URL路径扩展——根据类路径依赖关系，使用json、xml、rss和atom注册为已知扩展，然后检查“Accept”标头。</p>
+<p>考虑将这些默认值更改为只接受标头，如果必须使用基于url的内容类型解析，则考虑路径扩展上的查询参数策略。</p>
+<p>In Java config, customize requested content type resolution:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureContentNegotiation</span><span class="params">(ContentNegotiationConfigurer configurer)</span> </span>&#123;</span><br><span class="line">        configurer.mediaType(<span class="string">"json"</span>, MediaType.APPLICATION_JSON);</span><br><span class="line">        configurer.mediaType(<span class="string">"xml"</span>, MediaType.APPLICATION_XML);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In XML, the same:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:annotation-driven</span> <span class="attr">content-negotiation-manager</span>=<span class="string">"contentNegotiationManager"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"contentNegotiationManager"</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.accept.ContentNegotiationManagerFactoryBean"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"mediaTypes"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span></span><br><span class="line">            json=application/json</span><br><span class="line">            xml=application/xml</span><br><span class="line">        <span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-7-Message-Converters"><a href="#2-7-Message-Converters" class="headerlink" title="2.7 Message Converters"></a>2.7 Message Converters</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtY29uZmlnLW1lc3NhZ2UtY29kZWNz" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-config-message-codecs">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>Customization of <code>HttpMessageConverter</code> can be achieved in Java config by overriding <a href="https://docs.spring.io/spring-framework/docs/5.0.8.RELEASE/javadoc-api/org/springframework/web/servlet/config/annotation/WebMvcConfigurer.html#configureMessageConverters-java.util.List-" target="_blank" rel="noopener"><code>configureMessageConverters()</code></a> if you want to replace the default converters created by Spring MVC, or by overriding <a href="https://docs.spring.io/spring-framework/docs/5.0.8.RELEASE/javadoc-api/org/springframework/web/servlet/config/annotation/WebMvcConfigurer.html#extendMessageConverters-java.util.List-" target="_blank" rel="noopener"><code>extendMessageConverters()</code></a> if you just want to customize them or add additional converters to the default ones.</p>
+<p>Below is an example that adds Jackson JSON and XML converters with a customized <code>ObjectMapper</code> instead of default ones:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfiguration</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureMessageConverters</span><span class="params">(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters)</span> </span>&#123;</span><br><span class="line">        Jackson2ObjectMapperBuilder builder = <span class="keyword">new</span> Jackson2ObjectMapperBuilder()</span><br><span class="line">                .indentOutput(<span class="keyword">true</span>)</span><br><span class="line">                .dateFormat(<span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>))</span><br><span class="line">                .modulesToInstall(<span class="keyword">new</span> ParameterNamesModule());</span><br><span class="line">        converters.add(<span class="keyword">new</span> MappingJackson2HttpMessageConverter(builder.build()));</span><br><span class="line">        converters.add(<span class="keyword">new</span> MappingJackson2XmlHttpMessageConverter(builder.createXmlMapper(<span class="keyword">true</span>).build()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>It is also possible to do the same in XML:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:annotation-driven</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:message-converters</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"objectMapper"</span> <span class="attr">ref</span>=<span class="string">"objectMapper"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"objectMapper"</span> <span class="attr">ref</span>=<span class="string">"xmlMapper"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mvc:message-converters</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:annotation-driven</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"objectMapper"</span> <span class="attr">class</span>=<span class="string">"org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"</span></span></span><br><span class="line"><span class="tag">      <span class="attr">p:indentOutput</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">      <span class="attr">p:simpleDateFormat</span>=<span class="string">"yyyy-MM-dd"</span></span></span><br><span class="line"><span class="tag">      <span class="attr">p:modulesToInstall</span>=<span class="string">"com.fasterxml.jackson.module.paramnames.ParameterNamesModule"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"xmlMapper"</span> <span class="attr">parent</span>=<span class="string">"objectMapper"</span> <span class="attr">p:createXmlMapper</span>=<span class="string">"true"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-8-View-Controllers"><a href="#2-8-View-Controllers" class="headerlink" title="2.8 View Controllers"></a>2.8 View Controllers</h2><p>This is a shortcut for defining a <code>ParameterizableViewController</code> that immediately forwards to a view when invoked. Use it in static cases when there is no Java controller logic to execute before the view generates the response.</p>
+<p>An example of forwarding a request for <code>&quot;/&quot;</code> to a view called <code>&quot;home&quot;</code> in Java:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addViewControllers</span><span class="params">(ViewControllerRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.addViewController(<span class="string">"/"</span>).setViewName(<span class="string">"home"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And the same in XML use the <code>&lt;mvc:view-controller&gt;</code> element:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:view-controller</span> <span class="attr">path</span>=<span class="string">"/"</span> <span class="attr">view-name</span>=<span class="string">"home"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-9-View-Resolvers"><a href="#2-9-View-Resolvers" class="headerlink" title="2.9 View Resolvers"></a>2.9 View Resolvers</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtY29uZmlnLXZpZXctcmVzb2x2ZXJz" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-config-view-resolvers">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>The MVC config simplifies the registration of view resolvers.</p>
+<p>The following is a Java config example that configures content negotiation view resolution using JSP and Jackson as a default <code>View</code> for JSON rendering:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureViewResolvers</span><span class="params">(ViewResolverRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.enableContentNegotiation(<span class="keyword">new</span> MappingJackson2JsonView());</span><br><span class="line">        registry.jsp();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>And the same in XML:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:view-resolvers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:content-negotiation</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:default-views</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.view.json.MappingJackson2JsonView"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">mvc:default-views</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mvc:content-negotiation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:jsp</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:view-resolvers</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Note however that FreeMarker, Tiles, Groovy Markup and script templates also require configuration of the underlying view technology.</p>
+<p>The MVC namespace provides dedicated elements. For example with FreeMarker:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:view-resolvers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:content-negotiation</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:default-views</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.view.json.MappingJackson2JsonView"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">mvc:default-views</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mvc:content-negotiation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:freemarker</span> <span class="attr">cache</span>=<span class="string">"false"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:view-resolvers</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">mvc:freemarker-configurer</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:template-loader-path</span> <span class="attr">location</span>=<span class="string">"/freemarker"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:freemarker-configurer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>In Java config simply add the respective “Configurer” bean:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureViewResolvers</span><span class="params">(ViewResolverRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.enableContentNegotiation(<span class="keyword">new</span> MappingJackson2JsonView());</span><br><span class="line">        registry.freeMarker().cache(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> FreeMarkerConfigurer <span class="title">freeMarkerConfigurer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        FreeMarkerConfigurer configurer = <span class="keyword">new</span> FreeMarkerConfigurer();</span><br><span class="line">        configurer.setTemplateLoaderPath(<span class="string">"/freemarker"</span>);</span><br><span class="line">        <span class="keyword">return</span> configurer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-10-Static-Resources"><a href="#2-10-Static-Resources" class="headerlink" title="2.10 Static Resources"></a>2.10 Static Resources</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtY29uZmlnLXN0YXRpYy1yZXNvdXJjZXM=" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-config-static-resources">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>This option provides a convenient way to serve static resources from a list of <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmctZnJhbWV3b3JrL2RvY3MvNS4wLjguUkVMRUFTRS9qYXZhZG9jLWFwaS9vcmcvc3ByaW5nZnJhbWV3b3JrL2NvcmUvaW8vUmVzb3VyY2UuaHRtbA==" title="https://docs.spring.io/spring-framework/docs/5.0.8.RELEASE/javadoc-api/org/springframework/core/io/Resource.html">Resource<i class="fa fa-external-link"></i></span>-based locations.</p>
+<p>In the example below, given a request that starts with <code>&quot;/resources&quot;</code>, the relative path is used to find and serve static resources relative to “/public” under the web application root or on the classpath under <code>&quot;/static&quot;</code>. </p>
+<p>这些资源将在未来一年到期，以确保最大限度地使用浏览器缓存，并减少浏览器发出的HTTP请求。</p>
+<p>The <code>Last-Modified</code> header is also evaluated and if present a <code>304</code> status code is returned.</p>
+<p>In Java config:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addResourceHandlers</span><span class="params">(ResourceHandlerRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.addResourceHandler(<span class="string">"/resources/**"</span>)</span><br><span class="line">            .addResourceLocations(<span class="string">"/public"</span>, <span class="string">"classpath:/static/"</span>)</span><br><span class="line">            .setCachePeriod(<span class="number">31556926</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In XML:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:resources</span> <span class="attr">mapping</span>=<span class="string">"/resources/**"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">location</span>=<span class="string">"/public, classpath:/static/"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">cache-period</span>=<span class="string">"31556926"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>The <code>VersionResourceResolver</code> can be used for versioned resource URLs based on an MD5 hash computed from the content, a fixed application version, or other. </p>
+<p>A <code>ContentVersionStrategy</code> (MD5 hash) is a good choice with some notable exceptions such as JavaScript resources used with a module loader.</p>
+<p>For example in Java config;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addResourceHandlers</span><span class="params">(ResourceHandlerRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.addResourceHandler(<span class="string">"/resources/**"</span>)</span><br><span class="line">                .addResourceLocations(<span class="string">"/public/"</span>)</span><br><span class="line">                .resourceChain(<span class="keyword">true</span>)</span><br><span class="line">                .addResolver(<span class="keyword">new</span> VersionResourceResolver().addContentVersionStrategy(<span class="string">"/**"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In XML, the same:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:resources</span> <span class="attr">mapping</span>=<span class="string">"/resources/**"</span> <span class="attr">location</span>=<span class="string">"/public/"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:resource-chain</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:resource-cache</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mvc:resolvers</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">mvc:version-resolver</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">mvc:content-version-strategy</span> <span class="attr">patterns</span>=<span class="string">"/**"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">mvc:version-resolver</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">mvc:resolvers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mvc:resource-chain</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>You can use <code>ResourceUrlProvider</code> to rewrite URLs and apply the full chain of resolvers and transformers — e.g. to insert versions. </p>
+<p>The MVC config provides a <code>ResourceUrlProvider</code> bean so it can be injected into others. </p>
+<p>You can also make the rewrite transparent with the <code>ResourceUrlEncodingFilter</code> for Thymeleaf, JSPs, FreeMarker, and others with URL tags that rely on <code>HttpServletResponse#encodeURL</code>.</p>
+<p><strong><span class="exturl" data-url="aHR0cDovL3d3dy53ZWJqYXJzLm9yZy9kb2N1bWVudGF0aW9u" title="http://www.webjars.org/documentation">WebJars<i class="fa fa-external-link"></i></span> is also supported via <code>WebJarsResourceResolver</code> and automatically registered when <code>&quot;org.webjars:webjars-locator&quot;</code> is present on the classpath.</strong> </p>
+<p>The resolver can re-write URLs to include the version of the jar and can also match to incoming URLs without versions — e.g. <code>&quot;/jquery/jquery.min.js&quot;</code> to <code>&quot;/jquery/1.2.0/jquery.min.js&quot;</code>.</p>
+<h2 id="2-11-Default-Servlet"><a href="#2-11-Default-Servlet" class="headerlink" title="2.11 Default Servlet"></a>2.11 Default Servlet</h2><p>This allows for mapping the <code>DispatcherServlet</code> to “/“ (thus overriding the mapping of the container’s default Servlet), while still allowing static resource requests to be handled by the container’s default Servlet. It configures a<code>DefaultServletHttpRequestHandler</code> with a URL mapping of “/**” and the lowest priority relative to other URL mappings.</p>
+<p>This handler will forward all requests to the default Servlet.</p>
+<p> Therefore it is important that it remains last in the order of all other URL <code>HandlerMappings</code>. </p>
+<p>That will be the case if you use <code>&lt;mvc:annotation-driven&gt;</code> or alternatively if you are setting up your own customized <code>HandlerMapping</code> instance be sure to set its <code>order</code> property to a value lower than that of the <code>DefaultServletHttpRequestHandler</code>, which is <code>Integer.MAX_VALUE</code>.</p>
+<p>To enable the feature using the default setup use:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureDefaultServletHandling</span><span class="params">(DefaultServletHandlerConfigurer configurer)</span> </span>&#123;</span><br><span class="line">        configurer.enable();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Or in XML:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:default-servlet-handler</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>The caveat to overriding the “/“ Servlet mapping is that the <code>RequestDispatcher</code> for the default Servlet must be retrieved by name rather than by path. The <code>DefaultServletHttpRequestHandler</code> will attempt to auto-detect the default Servlet for the container at startup time, using a list of known names for most of the major Servlet containers (including Tomcat, Jetty, GlassFish, JBoss, Resin, WebLogic, and WebSphere). If the default Servlet has been custom configured with a different name, or if a different Servlet container is being used where the default Servlet name is unknown, then the default Servlet’s name must be explicitly provided as in the following example:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureDefaultServletHandling</span><span class="params">(DefaultServletHandlerConfigurer configurer)</span> </span>&#123;</span><br><span class="line">        configurer.enable(<span class="string">"myCustomDefaultServlet"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Or in XML:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:default-servlet-handler</span> <span class="attr">default-servlet-name</span>=<span class="string">"myCustomDefaultServlet"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-12-Path-Matching"><a href="#2-12-Path-Matching" class="headerlink" title="2.12 Path Matching"></a>2.12 Path Matching</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtY29uZmlnLXBhdGgtbWF0Y2hpbmc=" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-config-path-matching">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p>This allows customizing options related to URL matching and treatment of the URL. For details on the individual options check out the <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmctZnJhbWV3b3JrL2RvY3MvNS4wLjguUkVMRUFTRS9qYXZhZG9jLWFwaS9vcmcvc3ByaW5nZnJhbWV3b3JrL3dlYi9zZXJ2bGV0L2NvbmZpZy9hbm5vdGF0aW9uL1BhdGhNYXRjaENvbmZpZ3VyZXIuaHRtbA==" title="https://docs.spring.io/spring-framework/docs/5.0.8.RELEASE/javadoc-api/org/springframework/web/servlet/config/annotation/PathMatchConfigurer.html">PathMatchConfigurer<i class="fa fa-external-link"></i></span> API.</p>
+<p>Example in Java config:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configurePathMatch</span><span class="params">(PathMatchConfigurer configurer)</span> </span>&#123;</span><br><span class="line">        configurer</span><br><span class="line">            .setUseSuffixPatternMatch(<span class="keyword">true</span>)</span><br><span class="line">            .setUseTrailingSlashMatch(<span class="keyword">false</span>)</span><br><span class="line">            .setUseRegisteredSuffixPatternMatch(<span class="keyword">true</span>)</span><br><span class="line">            .setPathMatcher(antPathMatcher())</span><br><span class="line">            .setUrlPathHelper(urlPathHelper());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> UrlPathHelper <span class="title">urlPathHelper</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> PathMatcher <span class="title">antPathMatcher</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In XML, the same:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:annotation-driven</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:path-matching</span></span></span><br><span class="line"><span class="tag">        <span class="attr">suffix-pattern</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">trailing-slash</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">registered-suffixes-only</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">path-helper</span>=<span class="string">"pathHelper"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">path-matcher</span>=<span class="string">"pathMatcher"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mvc:annotation-driven</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"pathHelper"</span> <span class="attr">class</span>=<span class="string">"org.example.app.MyPathHelper"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"pathMatcher"</span> <span class="attr">class</span>=<span class="string">"org.example.app.MyPathMatcher"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-13-Advanced-Java-Config"><a href="#2-13-Advanced-Java-Config" class="headerlink" title="2.13 Advanced Java Config"></a>2.13 Advanced Java Config</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtY29uZmlnLWFkdmFuY2VkLWphdmE=" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-config-advanced-java">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+<p><code>@EnableWebMvc</code> imports <code>DelegatingWebMvcConfiguration</code> that (1) provides default Spring configuration for Spring MVC applications and (2) detects and delegates to <code>WebMvcConfigurer</code>‘s to customize that configuration.</p>
+<p>For advanced mode, remove <code>@EnableWebMvc</code> and extend directly from <code>DelegatingWebMvcConfiguration</code> instead of implementing <code>WebMvcConfigurer</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfig</span> <span class="keyword">extends</span> <span class="title">DelegatingWebMvcConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>You can keep existing methods in <code>WebConfig</code> but you can now also override bean declarations from the base class and you can still have any number of other <code>WebMvcConfigurer</code>‘s on the classpath.</p>
+<h2 id="2-14-Advanced-XML-Config"><a href="#2-14-Advanced-XML-Config" class="headerlink" title="2.14 Advanced XML Config"></a>2.14 Advanced XML Config</h2><p>The MVC namespace does not have an advanced mode. If you need to customize a property on a bean that you can’t change otherwise, you can use the <code>BeanPostProcessor</code> lifecycle hook of the Spring <code>ApplicationContext</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyPostProcessor</span> <span class="keyword">implements</span> <span class="title">BeanPostProcessor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">postProcessBeforeInitialization</span><span class="params">(Object bean, String name)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Note that <code>MyPostProcessor</code> needs to be declared as a bean either explicitly in XML or detected through a <code>&lt;component-scan/&gt;</code>declaration.</p>
+<h1 id="3-WebSockets"><a href="#3-WebSockets" class="headerlink" title="3 WebSockets"></a>3 WebSockets</h1><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi1yZWFjdGl2ZS5odG1sI3dlYmZsdXgtd2Vic29ja2V0" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-websocket">Same in Spring WebFlux<i class="fa fa-external-link"></i></span></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-4/" title="8-webmvc-4">https://zxucooly.github.io/2018/12/05/spring官方文档/8-webmvc-4/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/" rel="tag"><i class="fa fa-tag"></i> Spring官方文档</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/7-spring%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6/" rel="prev" title="7-Spring测试框架">
+      <i class="fa fa-chevron-left"></i> 7-Spring测试框架
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-3/" rel="next" title="8-webmvc-3">
+      8-webmvc-3 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-View-Technologies"><span class="nav-number">1.</span> <span class="nav-text">1 View Technologies</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-Thymeleaf"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 Thymeleaf</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-FreeMarker"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 FreeMarker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-View-config"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 View config</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-FreeMarker-config"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2 FreeMarker config</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-3-Form-handling"><span class="nav-number">1.2.3.</span> <span class="nav-text">1.2.3 Form handling</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-Groovy-Markup"><span class="nav-number">1.3.</span> <span class="nav-text">1.3  Groovy Markup</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-Script-Views"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 Script Views</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-JSP-amp-JSTL"><span class="nav-number">1.5.</span> <span class="nav-text">1.5 JSP &amp; JSTL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-6-很多视图解析技术"><span class="nav-number">1.6.</span> <span class="nav-text">1.6 很多视图解析技术</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-MVC-Config"><span class="nav-number">2.</span> <span class="nav-text">2 MVC Config</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Enable-MVC-Config"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Enable MVC Config</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-MVC-Config-API"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 MVC Config API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-Type-conversion"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Type conversion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-Validation"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 Validation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-Interceptors"><span class="nav-number">2.5.</span> <span class="nav-text">2.5  Interceptors</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-Content-Types"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 Content Types</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-Message-Converters"><span class="nav-number">2.7.</span> <span class="nav-text">2.7 Message Converters</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-View-Controllers"><span class="nav-number">2.8.</span> <span class="nav-text">2.8 View Controllers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-9-View-Resolvers"><span class="nav-number">2.9.</span> <span class="nav-text">2.9 View Resolvers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-10-Static-Resources"><span class="nav-number">2.10.</span> <span class="nav-text">2.10 Static Resources</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-11-Default-Servlet"><span class="nav-number">2.11.</span> <span class="nav-text">2.11 Default Servlet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-12-Path-Matching"><span class="nav-number">2.12.</span> <span class="nav-text">2.12 Path Matching</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-13-Advanced-Java-Config"><span class="nav-number">2.13.</span> <span class="nav-text">2.13 Advanced Java Config</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-14-Advanced-XML-Config"><span class="nav-number">2.14.</span> <span class="nav-text">2.14 Advanced XML Config</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-WebSockets"><span class="nav-number">3.</span> <span class="nav-text">3 WebSockets</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

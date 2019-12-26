@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="预览 主要是对读SpringJPA官方文档的记录 Spring Data JPA为Java Persistence API (JPA)提供存储库支持。它简化了需要访问JPA数据源的应用程序的开发。   SpringBoot与JPA结合。 Hibernate实现和JPA规范实现。 查询语句封装等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringDataJPA总结">
+<meta property="og:url" content="https://zxucooly.github.io/2018/11/09/spring%E7%9B%B8%E5%85%B3/SpringDataJPA%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="预览 主要是对读SpringJPA官方文档的记录 Spring Data JPA为Java Persistence API (JPA)提供存储库支持。它简化了需要访问JPA数据源的应用程序的开发。   SpringBoot与JPA结合。 Hibernate实现和JPA规范实现。 查询语句封装等。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-11-09T06:36:39.000Z">
+<meta property="article:modified_time" content="2018-11-25T06:08:58.046Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="spring">
+<meta property="article:tag" content="jpa">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2018/11/09/spring%E7%9B%B8%E5%85%B3/SpringDataJPA%E6%80%BB%E7%BB%93/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>SpringDataJPA总结 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/11/09/spring%E7%9B%B8%E5%85%B3/SpringDataJPA%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SpringDataJPA总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-09 14:36:39" itemprop="dateCreated datePublished" datetime="2018-11-09T14:36:39+08:00">2018-11-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2018-11-25 14:08:58" itemprop="dateModified" datetime="2018-11-25T14:08:58+08:00">2018-11-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringData/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringData</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="预览"><a href="#预览" class="headerlink" title="预览"></a>预览</h1><ul>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmctZGF0YS9qcGEvZG9jcy8yLjEuMi5SRUxFQVNFL3JlZmVyZW5jZS9odG1sLw==" title="https://docs.spring.io/spring-data/jpa/docs/2.1.2.RELEASE/reference/html/">主要是对读SpringJPA官方文档的记录<i class="fa fa-external-link"></i></span></li>
+<li>Spring Data JPA为Java Persistence API (JPA)提供存储库支持。它简化了需要访问JPA数据源的应用程序的开发。  </li>
+<li>SpringBoot与JPA结合。</li>
+<li>Hibernate实现和JPA规范实现。</li>
+<li>查询语句封装等。</li>
+</ul>
+<a id="more"></a>
+
+<h1 id="1-简单使用"><a href="#1-简单使用" class="headerlink" title="1 简单使用"></a>1 简单使用</h1><h2 id="1-1-引入jar包"><a href="#1-1-引入jar包" class="headerlink" title="1.1 引入jar包"></a>1.1 引入jar包</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    implementation(<span class="string">'org.springframework.boot:spring-boot-starter-data-jpa'</span>)</span><br><span class="line">    runtimeOnly(<span class="string">'mysql:mysql-connector-java'</span>) <span class="comment">// 高版本MySQL驱动需要注意时区问题</span></span><br><span class="line">    compileOnly(<span class="string">'org.projectlombok:lombok'</span>)</span><br><span class="line">    testImplementation(<span class="string">'org.springframework.boot:spring-boot-starter-test'</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-2-配置文件"><a href="#1-2-配置文件" class="headerlink" title="1.2 配置文件"></a>1.2 配置文件</h2><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.datasource.url</span>=<span class="string">jdbc:mysql://localhost:3306/testforjpa?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true&amp;useSSL=false&amp;serverTimezone=GMT%2B8</span></span><br><span class="line"><span class="meta">spring.datasource.username</span>=<span class="string">root</span></span><br><span class="line"><span class="meta">spring.datasource.password</span>=<span class="string">Gepoint</span></span><br><span class="line"><span class="meta">spring.datasource.driver-class-name</span>=<span class="string">com.mysql.jdbc.Driver</span></span><br><span class="line"><span class="comment"># JPA (JpaBaseConfiguration, HibernateJpaAutoConfiguration)</span></span><br><span class="line"><span class="meta">spring.jpa.hibernate.ddl-auto</span>=<span class="string">update</span></span><br><span class="line"><span class="meta">spring.jpa.database-platform</span>=<span class="string">org.hibernate.dialect.MySQL57Dialect</span></span><br><span class="line"><span class="meta">spring.jpa.show-sql</span>=<span class="string">true</span></span><br><span class="line"><span class="meta">spring.jpa.open-in-view</span>=<span class="string">false</span></span><br><span class="line"><span class="meta">spring.jpa.properties.hibernate.globally_quoted_identifiers</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-3-实体类以及实体类对应Repository"><a href="#1-3-实体类以及实体类对应Repository" class="headerlink" title="1.3 实体类以及实体类对应Repository"></a>1.3 实体类以及实体类对应Repository</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> ZhangXu</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2018-11-12 9:39</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CustomerRepository</span> <span class="keyword">extends</span> <span class="title">PagingAndSortingRepository</span>&lt;<span class="title">Customer</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-4-启动类保存数据"><a href="#1-4-启动类保存数据" class="headerlink" title="1.4 启动类保存数据"></a>1.4 启动类保存数据</h2><p>项目启动时，数据表自动创建。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="comment">// 创建Respository代理对象</span></span><br><span class="line"><span class="meta">@EnableJpaRepositories</span> <span class="comment">// 默认找启动类包及子包下</span></span><br><span class="line"><span class="meta">@EntityScan</span> <span class="comment">// 默认找启动类包及子包下</span></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringdatajpatestApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(SpringdatajpatestApplication<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> CustomerRepository customerRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> CommandLineRunner <span class="title">commandLineRunner</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> args -&gt; &#123;</span><br><span class="line">            <span class="comment">// 保存</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">50</span>; i++) &#123;</span><br><span class="line">                Customer customer = <span class="keyword">new</span> Customer();</span><br><span class="line">                customer.setCustomerName(<span class="string">"张三"</span> + i);</span><br><span class="line">                customerRepository.save(customer);</span><br><span class="line">                log.info(<span class="string">"保存成功"</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 查询</span></span><br><span class="line">            <span class="comment">// 11-20</span></span><br><span class="line">            Page&lt;Customer&gt; all = customerRepository.findAll(PageRequest.of(<span class="number">1</span>, <span class="number">10</span>));</span><br><span class="line">            all.get().forEach(customer -&gt; &#123;</span><br><span class="line">                log.info(customer.getCustomerId() + <span class="string">"::"</span> + customer.getCustomerName());</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所有的数据库操作都依赖Repository,框架自动生成SQL语句。</p>
+<h1 id="2-扩展配置"><a href="#2-扩展配置" class="headerlink" title="2 扩展配置"></a>2 扩展配置</h1><h2 id="2-1-多模块"><a href="#2-1-多模块" class="headerlink" title="2.1 多模块"></a>2.1 多模块</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NoRepositoryBean</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AbstractCustomerRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; <span class="keyword">extends</span> <span class="title">PagingAndSortingRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> customer</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">T <span class="title">findByCustomerName</span><span class="params">(String name)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CustomerRepository</span> <span class="keyword">extends</span> <span class="title">AbstractCustomerRepository</span>&lt;<span class="title">Customer</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 使用</span></span><br><span class="line">Customer customer = customerRepository.findByCustomerName(<span class="string">"张三23"</span>);</span><br><span class="line">log.info(customer.getCustomerId() + <span class="string">"::"</span> + customer.getCustomerName());</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2-领域对象注册"><a href="#2-2-领域对象注册" class="headerlink" title="2.2 领域对象注册"></a>2.2 领域对象注册</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">PersonRepository</span> <span class="keyword">extends</span> <span class="title">Repository</span>&lt;<span class="title">Person</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line"> …</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">UserRepository</span> <span class="keyword">extends</span> <span class="title">Repository</span>&lt;<span class="title">User</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// MongoDB</span></span><br><span class="line"><span class="meta">@Document</span></span><br><span class="line"><span class="meta">@Entity</span> <span class="comment">// 可混合</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">    可以使用interface MyRepository extends JpaRepository&lt;User, Long&gt; &#123; &#125;或@EnableJpaRepository方式</span></span><br><span class="line"><span class="comment">    去识别SpringData Module 的 Repositroy。</span></span><br><span class="line"><span class="comment">    在同一个域类型上使用多个特定于持久性技术的注释是可能的，并且允许跨多个持久性技术重用域类型。然而，Spring数据不再能够确定绑定存储库的唯一模块。</span></span><br><span class="line"><span class="comment">    最后一种区分存储库的方法是确定存储库基础包的范围。基本包定义扫描存储库接口定义的起点，这意味着在适当的包中有存储库定义。默认情况下，注解驱动的配置使用配置类的包。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@EnableJpaRepositories</span>(basePackages = <span class="string">"com.acme.repositories.jpa"</span>)</span><br><span class="line"><span class="meta">@EnableMongoRepositories</span>(basePackages = <span class="string">"com.acme.repositories.mongo"</span>)</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Configuration</span> </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="3-查询方法"><a href="#3-查询方法" class="headerlink" title="3 查询方法"></a>3 查询方法</h1><p>在Repostiory接口中可<strong>根据规则</strong>自定义数据库操作方法:blush:。</p>
+<h2 id="3-1-查询规则"><a href="#3-1-查询规则" class="headerlink" title="3.1 查询规则"></a>3.1 查询规则</h2><p>可在<code>@EnableJpaRepositories(queryLookupStrategy = QueryLookupStrategy.Key.CREATE_IF_NOT_FOUND)</code>配置规则策略模式。</p>
+<ol>
+<li>共有<strong>CREATE,</strong> <strong>USE_DECLARED_QUERY,</strong> <strong>CREATE_IF_NOT_FOUND</strong>三种模式。</li>
+<li>最后一个是默认模式，<code>CREATE</code>是使用自定义数据操作方法。</li>
+</ol>
+<h2 id="3-2-查询方法创建"><a href="#3-2-查询方法创建" class="headerlink" title="3.2 查询方法创建"></a>3.2 查询方法创建</h2><p>The mechanism strips the prefixes find…By, read…By, query…By, count…By, and get…By from the method and starts parsing the rest of it.</p>
+<p>后缀属性就是领域对象的成员变量名(首字母大写)。多条件使用And或Or.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">PersonRepository</span> <span class="keyword">extends</span> <span class="title">Repository</span>&lt;<span class="title">User</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function">List&lt;Person&gt; <span class="title">findByEmailAddressAndLastname</span><span class="params">(EmailAddress emailAddress, String lastname)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Enables the distinct flag for the query</span></span><br><span class="line">  <span class="function">List&lt;Person&gt; <span class="title">findDistinctPeopleByLastnameOrFirstname</span><span class="params">(String lastname, String firstname)</span></span>;</span><br><span class="line">  <span class="function">List&lt;Person&gt; <span class="title">findPeopleDistinctByLastnameOrFirstname</span><span class="params">(String lastname, String firstname)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Enabling ignoring case for an individual property 忽略大小写</span></span><br><span class="line">  <span class="function">List&lt;Person&gt; <span class="title">findByLastnameIgnoreCase</span><span class="params">(String lastname)</span></span>;</span><br><span class="line">  <span class="comment">// Enabling ignoring case for all suitable properties</span></span><br><span class="line">  <span class="function">List&lt;Person&gt; <span class="title">findByLastnameAndFirstnameAllIgnoreCase</span><span class="params">(String lastname, String firstname)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Enabling static ORDER BY for a query 排序</span></span><br><span class="line">  <span class="function">List&lt;Person&gt; <span class="title">findByLastnameOrderByFirstnameAsc</span><span class="params">(String lastname)</span></span>;</span><br><span class="line">  <span class="function">List&lt;Person&gt; <span class="title">findByLastnameOrderByFirstnameDesc</span><span class="params">(String lastname)</span></span>;</span><br><span class="line">    </span><br><span class="line">   </span><br><span class="line">  <span class="comment">// 此外还有很多 比如 findDistinctTop... findFirst..</span></span><br><span class="line">    <span class="function">User <span class="title">findFirstByOrderByLastnameAsc</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function">User <span class="title">findTopByOrderByAgeDesc</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function">Page&lt;User&gt; <span class="title">queryFirst10ByLastname</span><span class="params">(String lastname, Pageable pageable)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function">Slice&lt;User&gt; <span class="title">findTop3ByLastname</span><span class="params">(String lastname, Pageable pageable)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function">List&lt;User&gt; <span class="title">findFirst10ByLastname</span><span class="params">(String lastname, Sort sort)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function">List&lt;User&gt; <span class="title">findTop10ByLastname</span><span class="params">(String lastname, Pageable pageable)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 属性可以是类，消耗时间，分开找</span></span><br><span class="line">    <span class="function">List&lt;Person&gt; <span class="title">findByAddressZipCode</span><span class="params">(ZipCode zipCode)</span></span>;</span><br><span class="line">    <span class="comment">// 也可以这样，但不符合规范</span></span><br><span class="line">    <span class="function">List&lt;Person&gt; <span class="title">findByAddress_ZipCode</span><span class="params">(ZipCode zipCode)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>根据条件分页排序查询</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Page&lt;User&gt; <span class="title">findByLastname</span><span class="params">(String lastname, Pageable pageable)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//A Slice only knows about whether a next Slice is available, which might be sufficient when walking through a larger result set.数据多的时候使用</span></span><br><span class="line"><span class="function">Slice&lt;User&gt; <span class="title">findByLastname</span><span class="params">(String lastname, Pageable pageable)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">List&lt;User&gt; <span class="title">findByLastname</span><span class="params">(String lastname, Sort sort)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">List&lt;User&gt; <span class="title">findByLastname</span><span class="params">(String lastname, Pageable pageable)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询客户名称以2结尾的所有客户并读取第一页</span></span><br><span class="line">customerRepository</span><br><span class="line">.findCustomersByCustomerNameEndsWith(<span class="string">"2"</span>, PageRequest.of(<span class="number">0</span>, <span class="number">10</span>))</span><br><span class="line">    .forEach(customer -&gt; &#123;</span><br><span class="line">                log.info(customer.getCustomerId() + <span class="string">"::"</span> + customer.getCustomerName());</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 按姓名查询排序</span></span><br><span class="line">customerRepository</span><br><span class="line">                    .findCustomersByCustomerNameContains(<span class="string">"2"</span>,</span><br><span class="line"><span class="comment">//                            Sort.by(Sort.DEFAULT_DIRECTION,"customerId"))// 升序</span></span><br><span class="line">                            Sort.by(Sort.Direction.DESC,<span class="string">"customerId"</span>)) <span class="comment">//降序</span></span><br><span class="line">                    .forEach(customer -&gt; &#123;</span><br><span class="line">                log.info(customer.getCustomerId() + <span class="string">"::"</span> + customer.getCustomerName());</span><br><span class="line">            &#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>Java8流查找</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Query</span>(<span class="string">"select u from User u"</span>)</span><br><span class="line"><span class="function">Stream&lt;User&gt; <span class="title">findAllByCustomQueryAndStream</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">Stream&lt;User&gt; <span class="title">readAllByFirstnameNotNull</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Query</span>(<span class="string">"select u from User u"</span>)</span><br><span class="line"><span class="function">Stream&lt;User&gt; <span class="title">streamAllPaged</span><span class="params">(Pageable pageable)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>异步查询</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Async</span></span><br><span class="line"><span class="function">Future&lt;User&gt; <span class="title">findByFirstname</span><span class="params">(String firstname)</span></span>;               </span><br><span class="line"></span><br><span class="line"><span class="meta">@Async</span></span><br><span class="line"><span class="function">CompletableFuture&lt;User&gt; <span class="title">findOneByFirstname</span><span class="params">(String firstname)</span></span>; </span><br><span class="line"></span><br><span class="line"><span class="meta">@Async</span></span><br><span class="line"><span class="function">ListenableFuture&lt;User&gt; <span class="title">findOneByLastname</span><span class="params">(String lastname)</span></span>;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2018/11/09/spring%E7%9B%B8%E5%85%B3/SpringDataJPA%E6%80%BB%E7%BB%93/" title="SpringDataJPA总结">https://zxucooly.github.io/2018/11/09/spring相关/SpringDataJPA总结/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/spring/" rel="tag"><i class="fa fa-tag"></i> spring</a>
+              <a href="/tags/jpa/" rel="tag"><i class="fa fa-tag"></i> jpa</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/28/python%E7%9B%B8%E5%85%B3/python-%E8%B0%83%E8%AF%95%E5%92%8C%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC/" rel="prev" title="python-调试和编码风格">
+      <i class="fa fa-chevron-left"></i> python-调试和编码风格
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/22/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="next" title="Java内存区域">
+      Java内存区域 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#预览"><span class="nav-number">1.</span> <span class="nav-text">预览</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-简单使用"><span class="nav-number">2.</span> <span class="nav-text">1 简单使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-引入jar包"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 引入jar包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-配置文件"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-实体类以及实体类对应Repository"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 实体类以及实体类对应Repository</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-启动类保存数据"><span class="nav-number">2.4.</span> <span class="nav-text">1.4 启动类保存数据</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-扩展配置"><span class="nav-number">3.</span> <span class="nav-text">2 扩展配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-多模块"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 多模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-领域对象注册"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 领域对象注册</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-查询方法"><span class="nav-number">4.</span> <span class="nav-text">3 查询方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-查询规则"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 查询规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-查询方法创建"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 查询方法创建</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="1 Annotations1.1 @BootstrapWith@BootstrapWith is a class-level annotation that is used to configure how the Spring TestContext Framework is bootstrapped. Specifically, @BootstrapWith is used to specif">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7-Spring测试框架">
+<meta property="og:url" content="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/7-spring%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="1 Annotations1.1 @BootstrapWith@BootstrapWith is a class-level annotation that is used to configure how the Spring TestContext Framework is bootstrapped. Specifically, @BootstrapWith is used to specif">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-12-05T08:45:00.000Z">
+<meta property="article:modified_time" content="2019-12-23T15:00:52.103Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="Spring官方文档">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/7-spring%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>7-Spring测试框架 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/7-spring%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          7-Spring测试框架
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 16:45:00" itemprop="dateCreated datePublished" datetime="2018-12-05T16:45:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-23 23:00:52" itemprop="dateModified" datetime="2019-12-23T23:00:52+08:00">2019-12-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-Annotations"><a href="#1-Annotations" class="headerlink" title="1 Annotations"></a>1 Annotations</h1><h2 id="1-1-BootstrapWith"><a href="#1-1-BootstrapWith" class="headerlink" title="1.1 @BootstrapWith"></a>1.1 @BootstrapWith</h2><p><code>@BootstrapWith</code> is a class-level annotation that is used to configure how the <em>Spring TestContext Framework</em> is bootstrapped. Specifically, <code>@BootstrapWith</code> is used to specify a custom <code>TestContextBootstrapper</code>. Consult the <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3Rlc3RpbmcuaHRtbCN0ZXN0Y29udGV4dC1ib290c3RyYXBwaW5n" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/testing.html#testcontext-bootstrapping">Bootstrapping the TestContext framework<i class="fa fa-external-link"></i></span> section for further details.</p>
+<a id="more"></a>
+<h2 id="1-2-ContextConfiguration"><a href="#1-2-ContextConfiguration" class="headerlink" title="1.2 @ContextConfiguration"></a>1.2 @ContextConfiguration</h2><p><code>@ContextConfiguration</code> defines class-level metadata that is used to determine how to load and configure an <code>ApplicationContext</code> for integration tests. Specifically, <code>@ContextConfiguration</code> declares the application context resource <code>locations</code> or the annotated <code>classes</code> that will be used to load the context.</p>
+<p>Resource locations are typically XML configuration files or Groovy scripts located in the classpath; whereas, annotated classes are typically <code>@Configuration</code> classes. However, resource locations can also refer to files and scripts in the file system, and annotated classes can be component classes, etc.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextConfiguration</span>(initializers = CustomContextIntializer<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">ContextInitializerTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ContextConfiguration</span>(locations = <span class="string">"/test-context.xml"</span>, loader = CustomContextLoader<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">CustomLoaderXmlApplicationContextTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-3-WebAppConfiguration"><a href="#1-3-WebAppConfiguration" class="headerlink" title="1.3 @WebAppConfiguration"></a>1.3 @WebAppConfiguration</h2><p><code>@WebAppConfiguration</code> is a class-level annotation that is used to declare that the <code>ApplicationContext</code> loaded for an integration test should be a <code>WebApplicationContext</code>. The mere presence of <code>@WebAppConfiguration</code> on a test class ensures that a<code>WebApplicationContext</code> will be loaded for the test, using the <strong>default</strong> value of <code>&quot;file:src/main/webapp&quot;</code> for the path to the root of the web application (i.e., the <em>resource base path</em>). The resource base path is used behind the scenes to create a<code>MockServletContext</code> which serves as the <code>ServletContext</code> for the test’s <code>WebApplicationContext</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextConfiguration</span></span><br><span class="line"><span class="meta">@WebAppConfiguration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebAppTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To override the default, specify a different base resource path via the <em>implicit</em> <code>value</code> attribute. Both <code>classpath:</code> and <code>file:</code>resource prefixes are supported. If no resource prefix is supplied the path is assumed to be a file system resource.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextConfiguration</span></span><br><span class="line"><span class="meta">@WebAppConfiguration</span>(<span class="string">"classpath:test-web-resources"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebAppTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Note that <code>@WebAppConfiguration</code> must be used in conjunction with <code>@ContextConfiguration</code>, either within a single test class or within a test class hierarchy. See the <code>@WebAppConfiguration</code> javadocs for further details.</p>
+<h2 id="1-4-ContextHierarchy"><a href="#1-4-ContextHierarchy" class="headerlink" title="1.4 @ContextHierarchy"></a>1.4 @ContextHierarchy</h2><p><code>@ContextHierarchy</code> is a class-level annotation that is used to define a hierarchy of <code>ApplicationContext</code>s for integration tests. <code>@ContextHierarchy</code> should be declared with a list of one or more <code>@ContextConfiguration</code> instances, each of which defines a level in the context hierarchy. The following examples demonstrate the use of <code>@ContextHierarchy</code> within a single test class; however, <code>@ContextHierarchy</code> can also be used within a test class hierarchy.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextHierarchy</span>(&#123;</span><br><span class="line">    <span class="meta">@ContextConfiguration</span>(<span class="string">"/parent-config.xml"</span>),</span><br><span class="line">    <span class="meta">@ContextConfiguration</span>(<span class="string">"/child-config.xml"</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ContextHierarchyTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@WebAppConfiguration</span></span><br><span class="line"><span class="meta">@ContextHierarchy</span>(&#123;</span><br><span class="line">    <span class="meta">@ContextConfiguration</span>(classes = AppConfig<span class="class">.<span class="keyword">class</span>),</span></span><br><span class="line"><span class="class">    @<span class="title">ContextConfiguration</span>(<span class="title">classes</span> </span>= WebConfig<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">&#125;)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">WebIntegrationTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-5-ActiveProfiles"><a href="#1-5-ActiveProfiles" class="headerlink" title="1.5 @ActiveProfiles"></a>1.5 @ActiveProfiles</h2><p><code>@ActiveProfiles</code> is a class-level annotation that is used to declare which <em>bean definition profiles</em> should be active when loading an <code>ApplicationContext</code> for an integration test.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextConfiguration</span></span><br><span class="line"><span class="meta">@ActiveProfiles</span>(<span class="string">"dev"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeveloperTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@ContextConfiguration</span></span><br><span class="line"><span class="meta">@ActiveProfiles</span>(&#123;<span class="string">"dev"</span>, <span class="string">"integration"</span>&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeveloperIntegrationTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-6-TestPropertySource"><a href="#1-6-TestPropertySource" class="headerlink" title="1.6 @TestPropertySource"></a>1.6 @TestPropertySource</h2><p><code>@TestPropertySource</code> is a class-level annotation that is used to configure the locations of properties files and inlined properties to be added to the set of <code>PropertySources</code> in the <code>Environment</code> for an <code>ApplicationContext</code> loaded for an integration test.</p>
+<p>测试属性源的优先级高于从操作系统环境或Java系统属性加载的源，以及应用程序通过@PropertySource或编程方式声明添加的属性源。因此，可以使用测试属性源选择性地覆盖系统和应用程序属性源中定义的属性。此外，内联属性的优先级高于从资源位置加载的属性。</p>
+<p>The following example demonstrates how to declare a properties file from the classpath.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextConfiguration</span></span><br><span class="line"><span class="meta">@TestPropertySource</span>(<span class="string">"/test.properties"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyIntegrationTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The following example demonstrates how to declare <em>inlined</em> properties.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextConfiguration</span></span><br><span class="line"><span class="meta">@TestPropertySource</span>(properties = &#123; <span class="string">"timezone = GMT"</span>, <span class="string">"port: 4242"</span> &#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyIntegrationTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-7-DirtiesContext"><a href="#1-7-DirtiesContext" class="headerlink" title="1.7 @DirtiesContext"></a>1.7 @DirtiesContext</h2><p><code>@DirtiesContext</code> indicates that the underlying Spring <code>ApplicationContext</code> has been <em>dirtied</em> during the execution of a test (i.e., modified or corrupted in some manner — for example, by changing the state of a singleton bean) and should be closed. When an application context is marked <em>dirty</em>, it is removed from the testing framework’s cache and closed. As a consequence, the underlying Spring container will be rebuilt for any subsequent test that requires a context with the same configuration metadata.</p>
+<p><code>@DirtiesContext</code> can be used as both a class-level and method-level annotation within the same class or class hierarchy. In such scenarios, the <code>ApplicationContext</code> is marked as <em>dirty</em> before or after any such annotated method as well as before or after the current test class, depending on the configured <code>methodMode</code> and <code>classMode</code>.</p>
+<p>The following examples explain when the context would be dirtied for various configuration scenarios:</p>
+<ul>
+<li><p>Before the current test class, when declared on a class with class mode set to <code>BEFORE_CLASS</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DirtiesContext</span>(classMode = BEFORE_CLASS)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FreshContextTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// some tests that require a new Spring container</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>After the current test class, when declared on a class with class mode set to <code>AFTER_CLASS</code> (i.e., the default class mode).</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DirtiesContext</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ContextDirtyingTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// some tests that result in the Spring container being dirtied</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Before each test method in the current test class, when declared on a class with class mode set to <code>BEFORE_EACH_TEST_METHOD.</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DirtiesContext</span>(classMode = BEFORE_EACH_TEST_METHOD)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FreshContextTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// some tests that require a new Spring container</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>After each test method in the current test class, when declared on a class with class mode set to <code>AFTER_EACH_TEST_METHOD.</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DirtiesContext</span>(classMode = AFTER_EACH_TEST_METHOD)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ContextDirtyingTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// some tests that result in the Spring container being dirtied</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Before the current test, when declared on a method with the method mode set to <code>BEFORE_METHOD</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DirtiesContext</span>(methodMode = BEFORE_METHOD)</span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testProcessWhichRequiresFreshAppCtx</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// some logic that requires a new Spring container</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>After the current test, when declared on a method with the method mode set to <code>AFTER_METHOD</code> (i.e., the default method mode).</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DirtiesContext</span></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testProcessWhichDirtiesAppCtx</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// some logic that results in the Spring container being dirtied</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>If <code>@DirtiesContext</code> is used in a test whose context is configured as part of a context hierarchy via <code>@ContextHierarchy</code>, the <code>hierarchyMode</code> flag can be used to control how the context cache is cleared. By default an <em>exhaustive</em> algorithm will be used that clears the context cache including not only the current level but also all other context hierarchies that share an ancestor context common to the current test; all <code>ApplicationContext</code>s that reside in a sub-hierarchy of the common ancestor context will be removed from the context cache and closed. If the <em>exhaustive</em> algorithm is overkill for a particular use case, the simpler <em>current level</em> algorithm can be specified instead, as seen below.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextHierarchy</span>(&#123;</span><br><span class="line">    <span class="meta">@ContextConfiguration</span>(<span class="string">"/parent-config.xml"</span>),</span><br><span class="line">    <span class="meta">@ContextConfiguration</span>(<span class="string">"/child-config.xml"</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExtendedTests</span> <span class="keyword">extends</span> <span class="title">BaseTests</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="meta">@DirtiesContext</span>(hierarchyMode = CURRENT_LEVEL)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// some logic that results in the child context being dirtied</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>For further details regarding the <code>EXHAUSTIVE</code> and <code>CURRENT_LEVEL</code> algorithms see the <code>DirtiesContext.HierarchyMode</code> javadocs.</p>
+<h2 id="1-8-TestExecutionListeners"><a href="#1-8-TestExecutionListeners" class="headerlink" title="1.8 @TestExecutionListeners"></a>1.8 @TestExecutionListeners</h2><p><code>@TestExecutionListeners</code> defines class-level metadata for configuring the <code>TestExecutionListener</code> implementations that should be registered with the <code>TestContextManager</code>. Typically, <code>@TestExecutionListeners</code> is used in conjunction with<code>@ContextConfiguration</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ContextConfiguration</span></span><br><span class="line"><span class="meta">@TestExecutionListeners</span>(&#123;CustomTestExecutionListener<span class="class">.<span class="keyword">class</span>, <span class="title">AnotherTestExecutionListener</span>.<span class="title">class</span>&#125;)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">CustomTestExecutionListenerTests</span> </span>&#123;</span><br><span class="line">    <span class="comment">// class body...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>@TestExecutionListeners</code> supports <em>inherited</em> listeners by default. See the javadocs for an example and further details.</p>
+<h2 id="1-9-Commit"><a href="#1-9-Commit" class="headerlink" title="1.9 @Commit"></a>1.9 @Commit</h2><p><code>@Commit</code> indicates that the transaction for a transactional test method should be <em>committed</em> after the test method has completed. <code>@Commit</code> can be used as a direct replacement for <code>@Rollback(false)</code> in order to more explicitly convey the intent of the code. Analogous to <code>@Rollback</code>, <code>@Commit</code> may also be declared as a class-level or method-level annotation.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Commit</span></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testProcessWithoutRollback</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-10-Rollback"><a href="#1-10-Rollback" class="headerlink" title="1.10 @Rollback"></a>1.10 @Rollback</h2><p><code>@Rollback</code> indicates whether the transaction for a transactional test method should be <em>rolled back</em> after the test method has completed. If <code>true</code>, the transaction is rolled back; otherwise, the transaction is committed (see also <code>@Commit</code>). Rollback semantics for integration tests in the Spring TestContext Framework default to <code>true</code> even if <code>@Rollback</code> is not explicitly declared.</p>
+<p>When declared as a class-level annotation, <code>@Rollback</code> defines the default rollback semantics for all test methods within the test class hierarchy. When declared as a method-level annotation, <code>@Rollback</code> defines rollback semantics for the specific test method, potentially overriding class-level <code>@Rollback</code> or <code>@Commit</code> semantics.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Rollback</span>(<span class="keyword">false</span>)</span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testProcessWithoutRollback</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-11-BeforeTransaction"><a href="#1-11-BeforeTransaction" class="headerlink" title="1.11 @BeforeTransaction"></a>1.11 @BeforeTransaction</h2><p><code>@BeforeTransaction</code> indicates that the annotated <code>void</code> method should be executed <em>before</em> a transaction is started for test methods configured to run within a transaction via Spring’s <code>@Transactional</code> annotation. As of Spring Framework 4.3,<code>@BeforeTransaction</code> methods are not required to be <code>public</code> and may be declared on Java 8 based interface default methods.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@BeforeTransaction</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">beforeTransaction</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// logic to be executed before a transaction is started</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-12-AfterTransaction"><a href="#1-12-AfterTransaction" class="headerlink" title="1.12 @AfterTransaction"></a>1.12 @AfterTransaction</h2><p><code>@AfterTransaction</code> indicates that the annotated <code>void</code> method should be executed <em>after</em> a transaction is ended for test methods configured to run within a transaction via Spring’s <code>@Transactional</code> annotation. As of Spring Framework 4.3, <code>@AfterTransaction</code>methods are not required to be <code>public</code> and may be declared on Java 8 based interface default methods.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AfterTransaction</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">afterTransaction</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// logic to be executed after a transaction has ended</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-13-Sql"><a href="#1-13-Sql" class="headerlink" title="1.13 @Sql"></a>1.13 @Sql</h2><p><code>@Sql</code> is used to annotate a test class or test method to configure SQL scripts to be executed against a given database during integration tests.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@Sql</span>(&#123;<span class="string">"/test-schema.sql"</span>, <span class="string">"/test-user-data.sql"</span>&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> userTest &#123;</span><br><span class="line">    <span class="comment">// execute code that relies on the test schema and test data</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3Rlc3RpbmcuaHRtbCN0ZXN0Y29udGV4dC1leGVjdXRpbmctc3FsLWRlY2xhcmF0aXZlbHk=" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/testing.html#testcontext-executing-sql-declaratively">Executing SQL scripts declaratively with @Sql<i class="fa fa-external-link"></i></span> for further details.</p>
+<h2 id="1-14-SqlConfig"><a href="#1-14-SqlConfig" class="headerlink" title="1.14 @SqlConfig"></a>1.14 @SqlConfig</h2><p><code>@SqlConfig</code> defines metadata that is used to determine how to parse and execute SQL scripts configured via the <code>@Sql</code>annotation.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@Sql</span>(</span><br><span class="line">    scripts = <span class="string">"/test-user-data.sql"</span>,</span><br><span class="line">    config = <span class="meta">@SqlConfig</span>(commentPrefix = <span class="string">"`"</span>, separator = <span class="string">"@@"</span>)</span><br><span class="line">)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> userTest &#123;</span><br><span class="line">    <span class="comment">// execute code that relies on the test data</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-15-SqlGroup"><a href="#1-15-SqlGroup" class="headerlink" title="1.15 @SqlGroup"></a>1.15 @SqlGroup</h2><p><code>@SqlGroup</code> is a container annotation that aggregates several <code>@Sql</code> annotations. <code>@SqlGroup</code> can be used natively, declaring several nested <code>@Sql</code> annotations, or it can be used in conjunction with Java 8’s support for repeatable annotations, where <code>@Sql</code>can simply be declared several times on the same class or method, implicitly generating this container annotation.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@SqlGroup</span>(&#123;</span><br><span class="line">    <span class="meta">@Sql</span>(scripts = <span class="string">"/test-schema.sql"</span>, config = <span class="meta">@SqlConfig</span>(commentPrefix = <span class="string">"`"</span>)),</span><br><span class="line">    <span class="meta">@Sql</span>(<span class="string">"/test-user-data.sql"</span>)</span><br><span class="line">)&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> userTest &#123;</span><br><span class="line">    <span class="comment">// execute code that uses the test schema and test data</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-16-Standard-Annotation-Support"><a href="#1-16-Standard-Annotation-Support" class="headerlink" title="1.16 Standard Annotation Support"></a>1.16 Standard Annotation Support</h2><p>The following annotations are supported with standard semantics for all configurations of the Spring TestContext Framework. Note that these annotations are not specific to tests and can be used anywhere in the Spring Framework.</p>
+<ul>
+<li><code>@Autowired</code></li>
+<li><code>@Qualifier</code></li>
+<li><code>@Resource</code> (javax.annotation) <em>if JSR-250 is present</em></li>
+<li><code>@ManagedBean</code> (javax.annotation) <em>if JSR-250 is present</em></li>
+<li><code>@Inject</code> (javax.inject) <em>if JSR-330 is present</em></li>
+<li><code>@Named</code> (javax.inject) <em>if JSR-330 is present</em></li>
+<li><code>@PersistenceContext</code> (javax.persistence) <em>if JPA is present</em></li>
+<li><code>@PersistenceUnit</code> (javax.persistence) <em>if JPA is present</em></li>
+<li><code>@Required</code></li>
+<li><code>@Transactional</code></li>
+</ul>
+<h2 id="1-17-Spring-JUnit-4-Testing-Annotations"><a href="#1-17-Spring-JUnit-4-Testing-Annotations" class="headerlink" title="1.17 Spring JUnit 4 Testing Annotations"></a>1.17 Spring JUnit 4 Testing Annotations</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3Rlc3RpbmcuaHRtbCNpbnRlZ3JhdGlvbi10ZXN0aW5nLWFubm90YXRpb25zLWp1bml0NA==" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/testing.html#integration-testing-annotations-junit4">https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/testing.html#integration-testing-annotations-junit4<i class="fa fa-external-link"></i></span></p>
+<h2 id="1-18-Spring-JUnit-Jupiter-Testing-Annotations"><a href="#1-18-Spring-JUnit-Jupiter-Testing-Annotations" class="headerlink" title="1.18 Spring JUnit Jupiter Testing Annotations"></a>1.18 Spring JUnit Jupiter Testing Annotations</h2><p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3Rlc3RpbmcuaHRtbCNpbnRlZ3JhdGlvbi10ZXN0aW5nLWFubm90YXRpb25zLWp1bml0LWp1cGl0ZXI=" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/testing.html#integration-testing-annotations-junit-jupiter">https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/testing.html#integration-testing-annotations-junit-jupiter<i class="fa fa-external-link"></i></span></p>
+<h2 id="1-19-Meta-Annotation-Support-for-Testing"><a href="#1-19-Meta-Annotation-Support-for-Testing" class="headerlink" title="*1.19 Meta-Annotation Support for Testing"></a>*1.19 Meta-Annotation Support for Testing</h2><p>It is possible to use most test-related annotations as <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2NvcmUuaHRtbCNiZWFucy1tZXRhLWFubm90YXRpb25z" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/core.html#beans-meta-annotations">meta-annotations<i class="fa fa-external-link"></i></span> in order to create custom <em>composed annotations</em> and reduce configuration duplication across a test suite.</p>
+<p>Each of the following may be used as meta-annotations in conjunction with the <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3Rlc3RpbmcuaHRtbCN0ZXN0Y29udGV4dC1mcmFtZXdvcms=" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/testing.html#testcontext-framework">TestContext framework<i class="fa fa-external-link"></i></span>.</p>
+<ul>
+<li><code>@BootstrapWith</code></li>
+<li><code>@ContextConfiguration</code></li>
+<li><code>@ContextHierarchy</code></li>
+<li><code>@ActiveProfiles</code></li>
+<li><code>@TestPropertySource</code></li>
+<li><code>@DirtiesContext</code></li>
+<li><code>@WebAppConfiguration</code></li>
+<li><code>@TestExecutionListeners</code></li>
+<li><code>@Transactional</code></li>
+<li><code>@BeforeTransaction</code></li>
+<li><code>@AfterTransaction</code></li>
+<li><code>@Commit</code></li>
+<li><code>@Rollback</code></li>
+<li><code>@Sql</code></li>
+<li><code>@SqlConfig</code></li>
+<li><code>@SqlGroup</code></li>
+<li><code>@Repeat</code> <em>(only supported on JUnit 4)</em></li>
+<li><code>@Timed</code> <em>(only supported on JUnit 4)</em></li>
+<li><code>@IfProfileValue</code> <em>(only supported on JUnit 4)</em></li>
+<li><code>@ProfileValueSourceConfiguration</code> <em>(only supported on JUnit 4)</em></li>
+<li><code>@SpringJUnitConfig</code> <em>(only supported on JUnit Jupiter)</em></li>
+<li><code>@SpringJUnitWebConfig</code> <em>(only supported on JUnit Jupiter)</em></li>
+<li><code>@EnabledIf</code> <em>(only supported on JUnit Jupiter)</em></li>
+<li><code>@DisabledIf</code> <em>(only supported on JUnit Jupiter)</em></li>
+</ul>
+<p>For example, if we discover that we are repeating the following configuration across our <em>JUnit 4</em> based test suite…</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">ContextConfiguration</span>(</span>&#123;<span class="string">"/app-config.xml"</span>, <span class="string">"/test-data-access-config.xml"</span>&#125;)</span><br><span class="line"><span class="meta">@ActiveProfiles</span>(<span class="string">"dev"</span>)</span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderRepositoryTests</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RunWith</span>(SpringRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">ContextConfiguration</span>(</span>&#123;<span class="string">"/app-config.xml"</span>, <span class="string">"/test-data-access-config.xml"</span>&#125;)</span><br><span class="line"><span class="meta">@ActiveProfiles</span>(<span class="string">"dev"</span>)</span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserRepositoryTests</span> </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>We can reduce the above duplication by introducing a custom <em>composed annotation</em> that centralizes the common test configuration for Spring like this:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@ContextConfiguration</span>(&#123;<span class="string">"/app-config.xml"</span>, <span class="string">"/test-data-access-config.xml"</span>&#125;)</span><br><span class="line"><span class="meta">@ActiveProfiles</span>(<span class="string">"dev"</span>)</span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> TransactionalDevTestConfig &#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Then we can use our custom <code>@TransactionalDevTestConfig</code> annotation to simplify the configuration of individual JUnit 4 based test classes as follows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">TransactionalDevTestConfig</span></span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">OrderRepositoryTests</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RunWith</span>(SpringRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">TransactionalDevTestConfig</span></span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">UserRepositoryTests</span> </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果我们使用JUnit Jupiter编写测试，我们可以进一步减少代码重复，因为JUnit 5中的注释也可以用作元注释。例如，如果我们发现我们正在通过基于JUnit Jupiter的测试套件重复下面的配置……</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ExtendWith</span>(SpringExtension<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">ContextConfiguration</span>(</span>&#123;<span class="string">"/app-config.xml"</span>, <span class="string">"/test-data-access-config.xml"</span>&#125;)</span><br><span class="line"><span class="meta">@ActiveProfiles</span>(<span class="string">"dev"</span>)</span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OrderRepositoryTests</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ExtendWith</span>(SpringExtension<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">ContextConfiguration</span>(</span>&#123;<span class="string">"/app-config.xml"</span>, <span class="string">"/test-data-access-config.xml"</span>&#125;)</span><br><span class="line"><span class="meta">@ActiveProfiles</span>(<span class="string">"dev"</span>)</span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserRepositoryTests</span> </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>We can reduce the above duplication by introducing a custom <em>composed annotation</em> that centralizes the common test configuration for Spring and JUnit Jupiter like this:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@ExtendWith</span>(SpringExtension<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">ContextConfiguration</span>(</span>&#123;<span class="string">"/app-config.xml"</span>, <span class="string">"/test-data-access-config.xml"</span>&#125;)</span><br><span class="line"><span class="meta">@ActiveProfiles</span>(<span class="string">"dev"</span>)</span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> TransactionalDevTestConfig &#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Then we can use our custom <code>@TransactionalDevTestConfig</code> annotation to simplify the configuration of individual JUnit Jupiter based test classes as follows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@TransactionalDevTestConfig</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OrderRepositoryTests</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@TransactionalDevTestConfig</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserRepositoryTests</span> </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Since JUnit Jupiter supports the use of <code>@Test</code>, <code>@RepeatedTest</code>, <code>ParameterizedTest</code>, etc. as meta-annotations, it is also possible to create custom composed annotations at the test method level. For example, if we wish to create a <em>composed annotation</em> that combines the <code>@Test</code> and <code>@Tag</code> annotations from JUnit Jupiter with the <code>@Transactional</code> annotation from Spring, we could create an <code>@TransactionalIntegrationTest</code> annotation as follows.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.METHOD)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="meta">@Tag</span>(<span class="string">"integration-test"</span>) <span class="comment">// org.junit.jupiter.api.Tag</span></span><br><span class="line"><span class="meta">@Test</span> <span class="comment">// org.junit.jupiter.api.Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> TransactionalIntegrationTest &#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Then we can use our custom <code>@TransactionalIntegrationTest</code> annotation to simplify the configuration of individual JUnit Jupiter based test methods as follows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@TransactionalIntegrationTest</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">saveOrder</span><span class="params">()</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@TransactionalIntegrationTest</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">deleteOrder</span><span class="params">()</span> </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>For further details, consult the <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2NvcmUuaHRtbCNhbm5vdGF0aW9uLXByb2dyYW1taW5nLW1vZGVs" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/core.html#annotation-programming-model">Spring Annotation Programming Model<i class="fa fa-external-link"></i></span>.</p>
+<h1 id="2-Spring-MVC-Test-Framework"><a href="#2-Spring-MVC-Test-Framework" class="headerlink" title="2 Spring MVC Test Framework"></a>2 Spring MVC Test Framework</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringJUnitWebConfig</span>(locations = <span class="string">"test-servlet-context.xml"</span>)</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ExampleTests</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> MockMvc mockMvc;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@BeforeEach</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">(WebApplicationContext wac)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">getAccount</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mockMvc.perform(get(<span class="string">"/accounts/1"</span>)</span><br><span class="line">                .accept(MediaType.parseMediaType(<span class="string">"application/json;charset=UTF-8"</span>)))</span><br><span class="line">            .andExpect(status().isOk())</span><br><span class="line">            .andExpect(content().contentType(<span class="string">"application/json"</span>))</span><br><span class="line">            .andExpect(jsonPath(<span class="string">"$.name"</span>).value(<span class="string">"Lee"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-1-Setup-Features"><a href="#2-1-Setup-Features" class="headerlink" title="2.1 Setup Features"></a>2.1 Setup Features</h2><p>No matter which MockMvc builder you use all <code>MockMvcBuilder</code> implementations provide some common and very useful features. For example you can declare an <code>Accept</code> header for all requests and expect a status of 200 as well as a <code>Content-Type</code>header in all responses as follows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// static import of MockMvcBuilders.standaloneSetup</span></span><br><span class="line"></span><br><span class="line">MockMvc mockMvc = standaloneSetup(<span class="keyword">new</span> MusicController())</span><br><span class="line">        .defaultRequest(get(<span class="string">"/"</span>).accept(MediaType.APPLICATION_JSON))</span><br><span class="line">        .alwaysExpect(status().isOk())</span><br><span class="line">        .alwaysExpect(content().contentType(<span class="string">"application/json;charset=UTF-8"</span>))</span><br><span class="line">        .build();</span><br></pre></td></tr></table></figure>
+
+<p>In addition 3rd party frameworks (and applications) may pre-package setup instructions like the ones through a <code>MockMvcConfigurer</code>. The Spring Framework has one such built-in implementation that helps to save and re-use the HTTP session across requests. It can be used as follows:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// static import of SharedHttpSessionConfigurer.sharedHttpSession</span></span><br><span class="line"></span><br><span class="line">MockMvc mockMvc = MockMvcBuilders.standaloneSetup(<span class="keyword">new</span> TestController())</span><br><span class="line">        .apply(sharedHttpSession())</span><br><span class="line">        .build();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Use mockMvc to perform requests...</span></span><br></pre></td></tr></table></figure>
+
+<p>See <code>ConfigurableMockMvcBuilder</code> for a list of all MockMvc builder features or use the IDE to explore the available options.</p>
+<h2 id="2-2-Performing-Requests"><a href="#2-2-Performing-Requests" class="headerlink" title="2.2 Performing Requests"></a>2.2 Performing Requests</h2><p>It’s easy to perform requests using any HTTP method:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mockMvc.perform(post(<span class="string">"/hotels/&#123;id&#125;"</span>, <span class="number">42</span>).accept(MediaType.APPLICATION_JSON));</span><br></pre></td></tr></table></figure>
+
+<p>You can also perform file upload requests that internally use <code>MockMultipartHttpServletRequest</code> so that there is no actual parsing of a multipart request but rather you have to set it up:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mockMvc.perform(multipart(<span class="string">"/doc"</span>).file(<span class="string">"a1"</span>, <span class="string">"ABC"</span>.getBytes(<span class="string">"UTF-8"</span>)));</span><br></pre></td></tr></table></figure>
+
+<p>You can specify query parameters in URI template style:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mockMvc.perform(get(<span class="string">"/hotels?foo=&#123;foo&#125;"</span>, <span class="string">"bar"</span>));</span><br></pre></td></tr></table></figure>
+
+<p>Or you can add Servlet request parameters representing either query of form parameters:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mockMvc.perform(get(<span class="string">"/hotels"</span>).param(<span class="string">"foo"</span>, <span class="string">"bar"</span>));</span><br></pre></td></tr></table></figure>
+
+<p>If application code relies on Servlet request parameters and doesn’t check the query string explicitly (as is most often the case) then it doesn’t matter which option you use. Keep in mind however that query params provided with the URI template will be decoded while request parameters provided through the <code>param(…)</code> method are expected to already be decoded.</p>
+<p>In most cases it’s preferable to leave out the context path and the Servlet path from the request URI. If you must test with the full request URI, be sure to set the <code>contextPath</code> and <code>servletPath</code> accordingly so that request mappings will work:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mockMvc.perform(get(<span class="string">"/app/main/hotels/&#123;id&#125;"</span>).contextPath(<span class="string">"/app"</span>).servletPath(<span class="string">"/main"</span>))</span><br></pre></td></tr></table></figure>
+
+<p>Looking at the above example, it would be cumbersome to set the contextPath and servletPath with every performed request. Instead you can set up default request properties:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWebTests</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> MockMvc mockMvc;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Before</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mockMvc = standaloneSetup(<span class="keyword">new</span> AccountController())</span><br><span class="line">            .defaultRequest(get(<span class="string">"/"</span>)</span><br><span class="line">            .contextPath(<span class="string">"/app"</span>).servletPath(<span class="string">"/main"</span>)</span><br><span class="line">            .accept(MediaType.APPLICATION_JSON)).build();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>The above properties will affect every request performed through the <code>MockMvc</code> instance. If the same property is also specified on a given request, it overrides the default value. That is why the HTTP method and URI in the default request don’t matter since they must be specified on every request.</p>
+<h2 id="2-3-Defining-Expectations"><a href="#2-3-Defining-Expectations" class="headerlink" title="2.3 Defining Expectations"></a>2.3 Defining Expectations</h2><p>Expectations can be defined by appending one or more <code>.andExpect(..)</code> calls after performing a request:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mockMvc.perform(get(<span class="string">"/accounts/1"</span>)).andExpect(status().isOk());</span><br></pre></td></tr></table></figure>
+
+<p><code>MockMvcResultMatchers.*</code> provides a number of expectations, some of which are further nested with more detailed expectations.</p>
+<p>Expectations fall in two general categories. The first category of assertions verifies properties of the response: for example, the response status, headers, and content. These are the most important results to assert.</p>
+<p>The second category of assertions goes beyond the response. These assertions allow one to inspect Spring MVC specific aspects such as which controller method processed the request, whether an exception was raised and handled, what the content of the model is, what view was selected, what flash attributes were added, and so on. They also allow one to inspect Servlet specific aspects such as request and session attributes.</p>
+<p>The following test asserts that binding or validation failed:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mockMvc.perform(post(<span class="string">"/persons"</span>))</span><br><span class="line">    .andExpect(status().isOk())</span><br><span class="line">    .andExpect(model().attributeHasErrors(<span class="string">"person"</span>));</span><br></pre></td></tr></table></figure>
+
+<p>Many times when writing tests, it’s useful to <em>dump</em> the results of the performed request. This can be done as follows, where <code>print()</code> is a static import from <code>MockMvcResultHandlers</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mockMvc.perform(post(<span class="string">"/persons"</span>))</span><br><span class="line">    .andDo(print())</span><br><span class="line">    .andExpect(status().isOk())</span><br><span class="line">    .andExpect(model().attributeHasErrors(<span class="string">"person"</span>));</span><br></pre></td></tr></table></figure>
+
+<p>As long as request processing does not cause an unhandled exception, the <code>print()</code> method will print all the available result data to <code>System.out</code>. Spring Framework 4.2 introduced a <code>log()</code> method and two additional variants of the <code>print()</code> method, one that accepts an <code>OutputStream</code> and one that accepts a <code>Writer</code>. For example, invoking <code>print(System.err)</code> will print the result data to <code>System.err</code>; while invoking <code>print(myWriter)</code> will print the result data to a custom writer. If you would like to have the result data <em>logged</em> instead of printed, simply invoke the <code>log()</code> method which will log the result data as a single <code>DEBUG</code> message under the <code>org.springframework.test.web.servlet.result</code> logging category.</p>
+<p>In some cases, you may want to get direct access to the result and verify something that cannot be verified otherwise. This can be achieved by appending <code>.andReturn()</code> after all other expectations:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MvcResult mvcResult = mockMvc.perform(post(<span class="string">"/persons"</span>)).andExpect(status().isOk()).andReturn();</span><br><span class="line"><span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
+
+<p>If all tests repeat the same expectations you can set up common expectations once when building the <code>MockMvc</code> instance:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">standaloneSetup(<span class="keyword">new</span> SimpleController())</span><br><span class="line">    .alwaysExpect(status().isOk())</span><br><span class="line">    .alwaysExpect(content().contentType(<span class="string">"application/json;charset=UTF-8"</span>))</span><br><span class="line">    .build()</span><br></pre></td></tr></table></figure>
+
+<p>Note that common expectations are <em>always</em> applied and cannot be overridden without creating a separate <code>MockMvc</code> instance.</p>
+<p>When JSON response content contains hypermedia links created with <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3NwcmluZy1wcm9qZWN0cy9zcHJpbmctaGF0ZW9hcw==" title="https://github.com/spring-projects/spring-hateoas">Spring HATEOAS<i class="fa fa-external-link"></i></span>, the resulting links can be verified using JsonPath expressions:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mockMvc.perform(get(<span class="string">"/people"</span>).accept(MediaType.APPLICATION_JSON))</span><br><span class="line">    .andExpect(jsonPath(<span class="string">"$.links[?(@.rel == 'self')].href"</span>).value(<span class="string">"http://localhost:8080/people"</span>));</span><br></pre></td></tr></table></figure>
+
+<p>When XML response content contains hypermedia links created with <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3NwcmluZy1wcm9qZWN0cy9zcHJpbmctaGF0ZW9hcw==" title="https://github.com/spring-projects/spring-hateoas">Spring HATEOAS<i class="fa fa-external-link"></i></span>, the resulting links can be verified using XPath expressions:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; ns = Collections.singletonMap(<span class="string">"ns"</span>, <span class="string">"http://www.w3.org/2005/Atom"</span>);</span><br><span class="line">mockMvc.perform(get(<span class="string">"/handle"</span>).accept(MediaType.APPLICATION_XML))</span><br><span class="line">    .andExpect(xpath(<span class="string">"/person/ns:link[@rel='self']/@href"</span>, ns).string(<span class="string">"http://localhost:8080/people"</span>));</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-4-Filter-Registrations"><a href="#2-4-Filter-Registrations" class="headerlink" title="2.4 Filter Registrations"></a>2.4 Filter Registrations</h2><p>When setting up a <code>MockMvc</code> instance, you can register one or more Servlet <code>Filter</code> instances:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mockMvc = standaloneSetup(<span class="keyword">new</span> PersonController()).addFilters(<span class="keyword">new</span> CharacterEncodingFilter()).build();</span><br></pre></td></tr></table></figure>
+
+<p>Registered filters will be invoked through via the <code>MockFilterChain</code> from <code>spring-test</code>, and the last filter will delegate to the <code>DispatcherServlet</code>.</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/7-spring%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6/" title="7-Spring测试框架">https://zxucooly.github.io/2018/12/05/spring官方文档/7-spring测试框架/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/" rel="tag"><i class="fa fa-tag"></i> Spring官方文档</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/3-%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A%E3%80%81%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" rel="prev" title="3-数据验证、数据绑定、类型转换">
+      <i class="fa fa-chevron-left"></i> 3-数据验证、数据绑定、类型转换
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/8-webmvc-4/" rel="next" title="8-webmvc-4">
+      8-webmvc-4 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Annotations"><span class="nav-number">1.</span> <span class="nav-text">1 Annotations</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-BootstrapWith"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 @BootstrapWith</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-ContextConfiguration"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 @ContextConfiguration</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-WebAppConfiguration"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 @WebAppConfiguration</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-ContextHierarchy"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 @ContextHierarchy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-ActiveProfiles"><span class="nav-number">1.5.</span> <span class="nav-text">1.5 @ActiveProfiles</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-6-TestPropertySource"><span class="nav-number">1.6.</span> <span class="nav-text">1.6 @TestPropertySource</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-7-DirtiesContext"><span class="nav-number">1.7.</span> <span class="nav-text">1.7 @DirtiesContext</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-8-TestExecutionListeners"><span class="nav-number">1.8.</span> <span class="nav-text">1.8 @TestExecutionListeners</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-9-Commit"><span class="nav-number">1.9.</span> <span class="nav-text">1.9 @Commit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-10-Rollback"><span class="nav-number">1.10.</span> <span class="nav-text">1.10 @Rollback</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-11-BeforeTransaction"><span class="nav-number">1.11.</span> <span class="nav-text">1.11 @BeforeTransaction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-12-AfterTransaction"><span class="nav-number">1.12.</span> <span class="nav-text">1.12 @AfterTransaction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-13-Sql"><span class="nav-number">1.13.</span> <span class="nav-text">1.13 @Sql</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-14-SqlConfig"><span class="nav-number">1.14.</span> <span class="nav-text">1.14 @SqlConfig</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-15-SqlGroup"><span class="nav-number">1.15.</span> <span class="nav-text">1.15 @SqlGroup</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-16-Standard-Annotation-Support"><span class="nav-number">1.16.</span> <span class="nav-text">1.16 Standard Annotation Support</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-17-Spring-JUnit-4-Testing-Annotations"><span class="nav-number">1.17.</span> <span class="nav-text">1.17 Spring JUnit 4 Testing Annotations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-18-Spring-JUnit-Jupiter-Testing-Annotations"><span class="nav-number">1.18.</span> <span class="nav-text">1.18 Spring JUnit Jupiter Testing Annotations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-19-Meta-Annotation-Support-for-Testing"><span class="nav-number">1.19.</span> <span class="nav-text">*1.19 Meta-Annotation Support for Testing</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-Spring-MVC-Test-Framework"><span class="nav-number">2.</span> <span class="nav-text">2 Spring MVC Test Framework</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Setup-Features"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Setup Features</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-Performing-Requests"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Performing Requests</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-Defining-Expectations"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Defining Expectations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-Filter-Registrations"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 Filter Registrations</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

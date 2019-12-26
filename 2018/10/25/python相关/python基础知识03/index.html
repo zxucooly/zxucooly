@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="文件操作打开文件在python，使用open函数，可以打开一个已经存在的文件，或者创建一个新文件 open(文件名，访问模式) 示例如下： 12f &#x3D; open(&#39;test.txt&#39;, &#39;w&#39;)# def open(file, mode&#x3D;&#39;r&#39;, buffering&#x3D;None, encoding&#x3D;None, errors&#x3D;None, newline&#x3D;None, closefd&#x3D;True):">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python基础知识03">
+<meta property="og:url" content="https://zxucooly.github.io/2018/10/25/python%E7%9B%B8%E5%85%B3/python%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%8603/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="文件操作打开文件在python，使用open函数，可以打开一个已经存在的文件，或者创建一个新文件 open(文件名，访问模式) 示例如下： 12f &#x3D; open(&#39;test.txt&#39;, &#39;w&#39;)# def open(file, mode&#x3D;&#39;r&#39;, buffering&#x3D;None, encoding&#x3D;None, errors&#x3D;None, newline&#x3D;None, closefd&#x3D;True):">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-25T00:50:34.000Z">
+<meta property="article:modified_time" content="2018-11-25T07:19:58.081Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="python-base">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2018/10/25/python%E7%9B%B8%E5%85%B3/python%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%8603/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>python基础知识03 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/10/25/python%E7%9B%B8%E5%85%B3/python%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%8603/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          python基础知识03
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-25 08:50:34" itemprop="dateCreated datePublished" datetime="2018-10-25T08:50:34+08:00">2018-10-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2018-11-25 15:19:58" itemprop="dateModified" datetime="2018-11-25T15:19:58+08:00">2018-11-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h1><h2 id="打开文件"><a href="#打开文件" class="headerlink" title="打开文件"></a>打开文件</h2><p>在python，使用open函数，可以打开一个已经存在的文件，或者创建一个新文件</p>
+<p>open(文件名，访问模式)</p>
+<p>示例如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">f = open(<span class="string">'test.txt'</span>, <span class="string">'w'</span>)</span><br><span class="line"><span class="comment"># def open(file, mode='r', buffering=None, encoding=None, errors=None, newline=None, closefd=True):</span></span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+<p>说明:</p>
+<table>
+<thead>
+<tr>
+<th>访问模式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>r</td>
+<td>以只读方式打开文件。文件的指针将会放在文件的开头。这是默认模式。</td>
+</tr>
+<tr>
+<td>w</td>
+<td>打开一个文件只用于写入。如果该文件已存在则将其覆盖。如果该文件不存在，创建新文件。</td>
+</tr>
+<tr>
+<td>a</td>
+<td>打开一个文件用于追加。如果该文件已存在，文件指针将会放在文件的结尾。也就是说，新的内容将会被写入到已有内容之后。如果该文件不存在，创建新文件进行写入。</td>
+</tr>
+<tr>
+<td>rb</td>
+<td>以二进制格式打开一个文件用于只读。文件指针将会放在文件的开头。这是默认模式。</td>
+</tr>
+<tr>
+<td>wb</td>
+<td>以二进制格式打开一个文件只用于写入。如果该文件已存在则将其覆盖。如果该文件不存在，创建新文件。</td>
+</tr>
+<tr>
+<td>ab</td>
+<td>以二进制格式打开一个文件用于追加。如果该文件已存在，文件指针将会放在文件的结尾。也就是说，新的内容将会被写入到已有内容之后。如果该文件不存在，创建新文件进行写入。</td>
+</tr>
+<tr>
+<td>r+</td>
+<td>打开一个文件用于读写。文件指针将会放在文件的开头。</td>
+</tr>
+<tr>
+<td>w+</td>
+<td>打开一个文件用于读写。如果该文件已存在则将其覆盖。如果该文件不存在，创建新文件。</td>
+</tr>
+<tr>
+<td>a+</td>
+<td>打开一个文件用于读写。如果该文件已存在，文件指针将会放在文件的结尾。文件打开时会是追加模式。如果该文件不存在，创建新文件用于读写。</td>
+</tr>
+<tr>
+<td>rb+</td>
+<td>以二进制格式打开一个文件用于读写。文件指针将会放在文件的开头。</td>
+</tr>
+<tr>
+<td>wb+</td>
+<td>以二进制格式打开一个文件用于读写。如果该文件已存在则将其覆盖。如果该文件不存在，创建新文件。</td>
+</tr>
+<tr>
+<td>ab+</td>
+<td>以二进制格式打开一个文件用于追加。如果该文件已存在，文件指针将会放在文件的结尾。如果该文件不存在，创建新文件用于读写。</td>
+</tr>
+</tbody></table>
+<h2 id="关闭文件"><a href="#关闭文件" class="headerlink" title="关闭文件"></a>关闭文件</h2><p>close( )</p>
+<p>示例如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新建一个文件，文件名为:test.txt</span></span><br><span class="line">f = open(<span class="string">'test.txt'</span>, <span class="string">'w'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭这个文件</span></span><br><span class="line">f.close()</span><br></pre></td></tr></table></figure>
+
+<h2 id="文件操作方法"><a href="#文件操作方法" class="headerlink" title="文件操作方法"></a>文件操作方法</h2><p>fileObject.</p>
+<pre><code>buffer         encoding       isatty()       newlines       readlines()    truncate()
+close()        errors         line_buffering read()         seek()         writable()
+closed         fileno()       mode           readable()     seekable()     write()
+detach()       flush()        name           readline()     tell()         writelines()</code></pre><h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><table>
+<thead>
+<tr>
+<th>序号</th>
+<th>方法及描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>file.close()  关闭文件。关闭后文件不能再进行读写操作。</td>
+</tr>
+<tr>
+<td>2</td>
+<td>file.flush()  刷新文件内部缓冲，直接把内部缓冲区的数据立刻写入文件, 而不是被动的等待输出缓冲区写入。</td>
+</tr>
+<tr>
+<td>3</td>
+<td>file.fileno())  返回一个整型的文件描述符(file descriptor FD 整型), 可以用在如os模块的read方法等一些底层操作上。</td>
+</tr>
+<tr>
+<td>4</td>
+<td>file.isatty()  如果文件连接到一个终端设备返回 True，否则返回 False。</td>
+</tr>
+<tr>
+<td>5</td>
+<td>file.next()  返回文件下一行。</td>
+</tr>
+<tr>
+<td>6</td>
+<td>file.read([size])  从文件读取指定的字节数，如果未给定或为负则读取所有。<strong>（一个汉字也是1，虽然一个汉字占3个字节）</strong></td>
+</tr>
+<tr>
+<td>7</td>
+<td>file.readline([size])  读取整行，<strong>包括 “\n” 字符</strong>。</td>
+</tr>
+<tr>
+<td>8</td>
+<td>file.readlines(sizeint)  读取所有行并返回<strong>列表</strong>，若给定sizeint&gt;0，返回总和大约为sizeint字节的行, 实际读取值可能比sizhint较大, 因为需要填充缓冲区。</td>
+</tr>
+<tr>
+<td>9</td>
+<td>file.seek(offset[, whence])  设置文件当前位置。</td>
+</tr>
+<tr>
+<td>10</td>
+<td>file.tell()  返回文件当前位置。</td>
+</tr>
+<tr>
+<td>11</td>
+<td>file.truncate([size])  截取文件，截取的字节通过size指定，默认为当前文件位置。<strong>截取文件，其余的删除，无size，截取全部并删除。</strong></td>
+</tr>
+<tr>
+<td>12</td>
+<td>file.write(str)  将字符串写入文件，没有返回值。</td>
+</tr>
+<tr>
+<td>13</td>
+<td>file.writelines(sequence)  向文件写入一个序列<strong>字符串列表</strong>，如果需要换行则要自己加入每行的换行符。</td>
+</tr>
+</tbody></table>
+<h4 id="seek-方法"><a href="#seek-方法" class="headerlink" title="seek() 方法"></a>seek() 方法</h4><ul>
+<li><strong>offset</strong> – 开始的偏移量，也就是代表需要移动偏移的字节数</li>
+<li><strong>whence：</strong>可选，默认值为 0。给offset参数一个定义，表示要从哪个位置开始偏移；0代表从文件开头开始算起，1代表从当前位置开始算起，2代表从文件末尾算起。</li>
+<li>把位置设置为：从文件开头，偏移5个字节</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取文件</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'dis_test.py'</span>,<span class="string">'r'</span>) <span class="keyword">as</span> fr:</span><br><span class="line">	<span class="comment"># 查找当前的位置</span></span><br><span class="line">	read_val = fr.read(<span class="number">10</span>)</span><br><span class="line">	print(<span class="string">"当前文件的位置: &#123;:d&#125;"</span>.format(fr.tell()))</span><br><span class="line">	print(<span class="string">"读取的内容是: &#123;0&#125;"</span>.format(read_val))</span><br><span class="line">	<span class="comment"># 重新设置位置</span></span><br><span class="line">	fr.seek(<span class="number">5</span>,<span class="number">0</span>) <span class="comment"># f.seek(-3,2)  # 离文件末尾，3字节处，打开文件必须是以二进制打开 'rb'</span></span><br><span class="line">	print(<span class="string">"当前文件的位置: &#123;:d&#125;"</span>.format(fr.tell()))</span><br><span class="line">	print(<span class="string">"读取的内容是: &#123;0&#125;"</span>.format(fr.read(<span class="number">5</span>)))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 结果</span></span><br><span class="line">当前文件的位置: <span class="number">10</span></span><br><span class="line">读取的内容是: <span class="function"><span class="keyword">def</span> <span class="title">outer</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">当前文件的位置: <span class="number">5</span></span></span></span><br><span class="line"><span class="function"><span class="params">读取的内容是: uter<span class="params">(</span></span></span></span><br></pre></td></tr></table></figure>
+<h2 id="案列："><a href="#案列：" class="headerlink" title="案列："></a>案列：</h2><ul>
+<li>读取一个文件，显示除了以井号(#)开头的行以外的所有行并保存到一个文件中.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">	old_file = <span class="string">'test.py'</span></span><br><span class="line">	new_file = <span class="string">'dis_test.py'</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">with</span> open(old_file, <span class="string">'r'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:</span><br><span class="line">		lines = f.readlines()</span><br><span class="line">		<span class="comment"># print(lines)</span></span><br><span class="line">		fw = open(new_file, <span class="string">'w'</span>)</span><br><span class="line">		<span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line">			<span class="keyword">if</span> <span class="keyword">not</span> line.lstrip().startswith(<span class="string">'#'</span>) <span class="keyword">and</span> <span class="keyword">not</span> line.isspace():</span><br><span class="line">				print(type(line))</span><br><span class="line">				fw.writelines(line)</span><br><span class="line">		fw.close()</span><br><span class="line">		f.close()</span><br></pre></td></tr></table></figure>
+
+<h2 id="文件的重命名、删除"><a href="#文件的重命名、删除" class="headerlink" title="文件的重命名、删除"></a>文件的重命名、删除</h2><p>有些时候，需要对文件进行重命名、删除等一些操作，python的os模块中都有这么功能</p>
+<h3 id="lt-1-gt-文件重命名"><a href="#lt-1-gt-文件重命名" class="headerlink" title="&lt;1&gt;文件重命名"></a>&lt;1&gt;文件重命名</h3><p>os模块中的rename()可以完成对文件的重命名操作</p>
+<p>rename(需要修改的文件名, 新的文件名)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.rename(<span class="string">"毕业论文.txt"</span>, <span class="string">"毕业论文-最终版.txt"</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="lt-2-gt-删除文件"><a href="#lt-2-gt-删除文件" class="headerlink" title="&lt;2&gt;删除文件"></a>&lt;2&gt;删除文件</h3><p>os模块中的remove()可以完成对文件的删除操作</p>
+<p>remove(待删除的文件名)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.remove(<span class="string">"毕业论文.txt"</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="文件夹的相关操作"><a href="#文件夹的相关操作" class="headerlink" title="文件夹的相关操作"></a>文件夹的相关操作</h2><p>实际开发中，有时需要用程序的方式对文件夹进行一定的操作，比如创建、删除等</p>
+<p>就像对文件操作需要os模块一样，如果要操作文件夹，同样需要os模块</p>
+<h3 id="lt-1-gt-创建文件夹"><a href="#lt-1-gt-创建文件夹" class="headerlink" title="&lt;1&gt;创建文件夹"></a>&lt;1&gt;创建文件夹</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.mkdir(<span class="string">"张三"</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="lt-2-gt-获取当前目录"><a href="#lt-2-gt-获取当前目录" class="headerlink" title="&lt;2&gt;获取当前目录"></a>&lt;2&gt;获取当前目录</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.getcwd()</span><br></pre></td></tr></table></figure>
+
+<h3 id="lt-3-gt-改变默认目录"><a href="#lt-3-gt-改变默认目录" class="headerlink" title="&lt;3&gt;改变默认目录"></a>&lt;3&gt;改变默认目录</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.chdir(<span class="string">"../"</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="lt-4-gt-获取目录列表"><a href="#lt-4-gt-获取目录列表" class="headerlink" title="&lt;4&gt;获取目录列表"></a>&lt;4&gt;获取目录列表</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.listdir(<span class="string">"./"</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="lt-5-gt-删除文件夹"><a href="#lt-5-gt-删除文件夹" class="headerlink" title="&lt;5&gt;删除文件夹"></a>&lt;5&gt;删除文件夹</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.rmdir(<span class="string">"张三"</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="案列"><a href="#案列" class="headerlink" title="案列"></a>案列</h2><h3 id="批量修改文件名"><a href="#批量修改文件名" class="headerlink" title="批量修改文件名"></a>批量修改文件名</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="comment"># 利用rename(旧名字，新名字)</span></span><br><span class="line">	<span class="keyword">for</span> name <span class="keyword">in</span> os.listdir():</span><br><span class="line">		<span class="keyword">if</span> name.endswith(<span class="string">'.py'</span>):</span><br><span class="line">			<span class="comment"># print(name)</span></span><br><span class="line">			<span class="keyword">if</span> name[<span class="number">0</span>].isdigit():</span><br><span class="line">				<span class="comment"># print(name)</span></span><br><span class="line">				new_name = name[:<span class="number">2</span>] + <span class="string">'-'</span> + name[<span class="number">2</span>:]</span><br><span class="line">				<span class="comment"># print(new_name)</span></span><br><span class="line">				os.rename(name, new_name)</span><br></pre></td></tr></table></figure>
+
+<h3 id="学生管理系统（文件版）"><a href="#学生管理系统（文件版）" class="headerlink" title="学生管理系统（文件版）"></a>学生管理系统（文件版）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 增加学生信息，文件有重复不添加</span></span><br><span class="line">stus = []</span><br><span class="line"><span class="comment"># 添加一个学生信息</span></span><br><span class="line"><span class="comment"># stu_info_default = &#123;'name': 'zhangsan', 'age': 21, 'addr': 'anhui'&#125;</span></span><br><span class="line"><span class="comment"># stus.append(stu_info_default)</span></span><br><span class="line">file_name = <span class="string">'stu.txt'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_stu</span><span class="params">()</span>:</span></span><br><span class="line">	name = input(<span class="string">'输入姓名: '</span>)</span><br><span class="line">	age = int(input(<span class="string">'输入年龄: '</span>))</span><br><span class="line">	addr = input(<span class="string">'输入地址: '</span>)</span><br><span class="line">	<span class="keyword">global</span> stus</span><br><span class="line">	stus.append(&#123;<span class="string">'name'</span>: name, <span class="string">'age'</span>: age, <span class="string">'addr'</span>: addr&#125;)</span><br><span class="line">	print(<span class="string">'内存保存学生的列表 '</span>, stus)</span><br><span class="line">	<span class="keyword">for</span> stu <span class="keyword">in</span> stus:</span><br><span class="line">		stu_name = stu[<span class="string">'name'</span>]</span><br><span class="line">		stu_age = str(stu[<span class="string">'age'</span>])</span><br><span class="line">		stu_addr = stu[<span class="string">'addr'</span>]</span><br><span class="line">		info = stu_name + <span class="string">'\t\t'</span> + stu_age + <span class="string">'\t\t'</span> + stu_addr + <span class="string">'\n'</span></span><br><span class="line">		<span class="comment"># print('默认',info)</span></span><br><span class="line">		<span class="comment"># 当添加的信息相同时，不再添加到文件</span></span><br><span class="line">		<span class="comment"># print('--', is_read(stu_name, stu_age, stu_addr))</span></span><br><span class="line">		<span class="keyword">if</span> is_read(stu_name, int(stu_age), stu_addr):</span><br><span class="line">			write_stu(info)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			print(<span class="string">'信息重复'</span>)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">is_read</span><span class="params">(stu_name, stu_age, stu_addr)</span>:</span></span><br><span class="line">	fr = open(file_name, encoding=<span class="string">'utf-8'</span>)</span><br><span class="line">	<span class="comment"># 除去文本的第一行</span></span><br><span class="line">	fr.readline()</span><br><span class="line">	readlines = fr.readlines()</span><br><span class="line">	print(<span class="string">'读取的每一行 '</span>, readlines)</span><br><span class="line">	<span class="comment"># 判断是否添加重复</span></span><br><span class="line">	is_rep = <span class="literal">False</span></span><br><span class="line">	<span class="keyword">for</span> stu <span class="keyword">in</span> readlines:</span><br><span class="line">		name = stu.split()[<span class="number">0</span>]</span><br><span class="line">		age = int(stu.split()[<span class="number">1</span>])</span><br><span class="line">		addr = stu.split()[<span class="number">2</span>]</span><br><span class="line">		print(<span class="string">'从文件中读取的学生信息'</span>)</span><br><span class="line">		print(<span class="string">'name '</span>, name, <span class="string">'age '</span>,<span class="string">'age类型'</span>,type(age), age, <span class="string">'addr '</span>, addr)</span><br><span class="line">		<span class="keyword">if</span> stu_name == name <span class="keyword">and</span> stu_age == age <span class="keyword">and</span> stu_addr == addr:</span><br><span class="line">			print(<span class="string">'error'</span>)</span><br><span class="line">			is_rep = <span class="literal">False</span></span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			is_rep = <span class="literal">True</span></span><br><span class="line">	fr.close()</span><br><span class="line">	<span class="keyword">return</span> is_rep</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_stu</span><span class="params">(info=<span class="string">'姓名\t\t年龄\t\t地址\n'</span>)</span>:</span></span><br><span class="line">	<span class="string">"""写文件中"""</span></span><br><span class="line">	<span class="keyword">with</span> open(file_name, <span class="string">'a+'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> fw:</span><br><span class="line">		fw.write(str(info))</span><br><span class="line">		fw.flush()</span><br><span class="line">		print(<span class="string">'写入成功'</span>)</span><br><span class="line">		fw.close()</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2018/10/25/python%E7%9B%B8%E5%85%B3/python%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%8603/" title="python基础知识03">https://zxucooly.github.io/2018/10/25/python相关/python基础知识03/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+              <a href="/tags/python-base/" rel="tag"><i class="fa fa-tag"></i> python-base</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/25/python%E7%9B%B8%E5%85%B3/python%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%8602/" rel="prev" title="python基础知识02">
+      <i class="fa fa-chevron-left"></i> python基础知识02
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/10/25/python%E7%9B%B8%E5%85%B3/python%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%8604/" rel="next" title="python基础知识04">
+      python基础知识04 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#文件操作"><span class="nav-number">1.</span> <span class="nav-text">文件操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#打开文件"><span class="nav-number">1.1.</span> <span class="nav-text">打开文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关闭文件"><span class="nav-number">1.2.</span> <span class="nav-text">关闭文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件操作方法"><span class="nav-number">1.3.</span> <span class="nav-text">文件操作方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常用方法"><span class="nav-number">1.3.1.</span> <span class="nav-text">常用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#seek-方法"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">seek() 方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#案列："><span class="nav-number">1.4.</span> <span class="nav-text">案列：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件的重命名、删除"><span class="nav-number">1.5.</span> <span class="nav-text">文件的重命名、删除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lt-1-gt-文件重命名"><span class="nav-number">1.5.1.</span> <span class="nav-text">&lt;1&gt;文件重命名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lt-2-gt-删除文件"><span class="nav-number">1.5.2.</span> <span class="nav-text">&lt;2&gt;删除文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件夹的相关操作"><span class="nav-number">1.6.</span> <span class="nav-text">文件夹的相关操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lt-1-gt-创建文件夹"><span class="nav-number">1.6.1.</span> <span class="nav-text">&lt;1&gt;创建文件夹</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lt-2-gt-获取当前目录"><span class="nav-number">1.6.2.</span> <span class="nav-text">&lt;2&gt;获取当前目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lt-3-gt-改变默认目录"><span class="nav-number">1.6.3.</span> <span class="nav-text">&lt;3&gt;改变默认目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lt-4-gt-获取目录列表"><span class="nav-number">1.6.4.</span> <span class="nav-text">&lt;4&gt;获取目录列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lt-5-gt-删除文件夹"><span class="nav-number">1.6.5.</span> <span class="nav-text">&lt;5&gt;删除文件夹</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#案列"><span class="nav-number">1.7.</span> <span class="nav-text">案列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#批量修改文件名"><span class="nav-number">1.7.1.</span> <span class="nav-text">批量修改文件名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#学生管理系统（文件版）"><span class="nav-number">1.7.2.</span> <span class="nav-text">学生管理系统（文件版）</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

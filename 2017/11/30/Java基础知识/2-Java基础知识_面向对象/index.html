@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="面向对象对象：在现实生活中存在具体的一个事物。 类：实际就是对某种类型事物的共性属性与行为的抽取。  面向对象与面向过程： ​    狗.吃（粑粑）； &#x2F;&#x2F; 面向对象 ​    吃（狗，粑粑）； &#x2F;&#x2F; 面向过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java基础知识-面向对象">
+<meta property="og:url" content="https://zxucooly.github.io/2017/11/30/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/2-Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86_%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="面向对象对象：在现实生活中存在具体的一个事物。 类：实际就是对某种类型事物的共性属性与行为的抽取。  面向对象与面向过程： ​    狗.吃（粑粑）； &#x2F;&#x2F; 面向对象 ​    吃（狗，粑粑）； &#x2F;&#x2F; 面向过程">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-11-30T01:26:45.000Z">
+<meta property="article:modified_time" content="2018-11-29T00:47:27.018Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="java基础知识">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2017/11/30/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/2-Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86_%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>java基础知识-面向对象 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2017/11/30/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/2-Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86_%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java基础知识-面向对象
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-11-30 09:26:45" itemprop="dateCreated datePublished" datetime="2017-11-30T09:26:45+08:00">2017-11-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2018-11-29 08:47:27" itemprop="dateModified" datetime="2018-11-29T08:47:27+08:00">2018-11-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h1><p><strong>对象</strong>：在现实生活中存在具体的一个事物。</p>
+<p><strong>类：</strong>实际就是对某种类型事物的共性属性与行为的抽取。 </p>
+<p>面向对象与面向过程：</p>
+<p>​    狗.吃（粑粑）； // 面向对象</p>
+<p>​    吃（狗，粑粑）； // 面向过程</p>
+<a id="more"></a>
+
+<h2 id="成员变量和局部变量"><a href="#成员变量和局部变量" class="headerlink" title="成员变量和局部变量"></a>成员变量和局部变量</h2><p>成员变量：定义在类中的变量，随类的创建而创建，随类消失而消失。</p>
+<p>局部变量：定义在方法中的变量，使用完就释放。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>.    存储位置  成员变量属于对象，它存储在堆内，堆内的实体，当没有引用指向其时，才垃圾回收清理 局部变量存在栈内存中，当不在使用时，马上就会被释放。</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>.    初始值 </span><br><span class="line"></span><br><span class="line">  成员变量它存储在堆中，如果没有赋初值，它有默认值。</span><br><span class="line">      <span class="number">1</span>.  整数<span class="keyword">byte</span>、<span class="keyword">short</span>、<span class="keyword">int</span>、<span class="keyword">long</span> =<span class="number">0</span>；</span><br><span class="line">      <span class="number">2</span>.  <span class="keyword">char</span>=<span class="string">'\u0000'</span>； <span class="comment">// char a = '';</span></span><br><span class="line">      <span class="number">3</span>.  <span class="keyword">boolean</span> =<span class="keyword">false</span>；</span><br><span class="line">      <span class="number">4</span>.  String =<span class="keyword">null</span>;</span><br><span class="line">      <span class="number">5</span>.  类类型 =<span class="keyword">null</span>；</span><br><span class="line">      <span class="number">6</span>.  数组 =<span class="keyword">null</span>；</span><br><span class="line"></span><br><span class="line"> 局部变量，如果要想使用必须手动初始化.</span><br><span class="line">	 <span class="number">1</span>. 方法中，参数列表中，语句中。</span><br><span class="line">	 <span class="number">2</span>. 必须给初始化值，没有初始值，不能使用</span><br><span class="line">	 <span class="number">3</span>. 在栈内存中</span><br><span class="line">	 </span><br><span class="line">	 	<span class="keyword">char</span> a = <span class="string">'\u0000'</span>;</span><br><span class="line">		<span class="keyword">char</span> b[] = <span class="keyword">null</span>;</span><br><span class="line">		System.out.println(a);  <span class="comment">// 空</span></span><br><span class="line">		System.out.println((<span class="keyword">int</span>)a);  <span class="comment">// 0</span></span><br><span class="line">		System.out.println(b);  <span class="comment">// error  java.lang.NullPointerException</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="反编译"><a href="#反编译" class="headerlink" title="反编译"></a>反编译</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">疑问：创建对象时，jvm就会调用到对应的构造方法，那么我们以前没有学构造方法，那么</span><br><span class="line">以前创建对象时，jvm是否 也会调用构造方法呢？如果有？构造方法从何而来呢？</span><br><span class="line">				</span><br><span class="line">			会调用， java编译器在编译的时候给加上去的。</span><br><span class="line">jdk提供了一个java开发工具(javap.exe)给我们进行反编译的。</span><br><span class="line">javap 反编译工具的使用格式：</span><br><span class="line">		javap -c -l -<span class="keyword">private</span> 类名</span><br></pre></td></tr></table></figure>
+
+<h2 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h2><p>构造函数要注意的细节：</p>
+<pre><code>1. 构造函数是没有返回值类型的。
+2. 构造函数的函数名必须要与类名一致。
+3. 构造函数并不是由我们手动调用的，而是在创建对应的对象时，jvm就会主动调用到对应的构造函数。
+4. 如果一个类没有显式的写上一个构造方法时，那么java编译器会为该类添加一个无参的构造函数的。
+5. 如果一个类已经显式的写上一个构造方法时,那么java编译器则不会再为该类添加一个无参的构造方法。
+6. 构造函数是可以在一个类中以函数重载 的形式存在多个的。</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">构造函数与普通函数的区别：	</span><br><span class="line">	<span class="number">1</span>. 返回值类型的区别：</span><br><span class="line">		<span class="number">1</span>. 构造函数是没有返回值类型的，</span><br><span class="line">		<span class="number">2</span>. 普通函数是有返回值类型的，即使函数没有返回值，返回值类型也要写上<span class="keyword">void</span>。</span><br><span class="line">	<span class="number">2</span>. 函数名的区别：</span><br><span class="line">		<span class="number">1</span>. 构造函数的函数名必须要与类名一致，</span><br><span class="line">		<span class="number">2</span>. 普通函数的函数名只要符合标识符的命名规则即可。</span><br><span class="line">	<span class="number">3</span>. 调用方式的区别：</span><br><span class="line">		<span class="number">1</span>. 构造函数是 在创建对象的时候由jvm调用的。</span><br><span class="line">		<span class="number">2</span>. 普通函数是由我们使用对象调用的，一个对象可以对象多次普通 的函数，</span><br><span class="line">	<span class="number">4</span>. 作用上的区别：</span><br><span class="line">		<span class="number">1</span>. 构造函数 的作用用于初始化一个对象。</span><br><span class="line">		<span class="number">2</span>. 普通函数是用于描述一类事物的公共行为的。</span><br></pre></td></tr></table></figure>
+
+<p>疑问： java编译器添加 的无参构造方法的权限修饰符是 什么？</p>
+<p>​    与类的权限修饰是一致的。</p>
+<h2 id="类访问权限修饰符"><a href="#类访问权限修饰符" class="headerlink" title="类访问权限修饰符"></a>类访问权限修饰符</h2><p>java中访问修饰符public,private,protected,以及默认（default）时的区别： </p>
+<table>
+<thead>
+<tr>
+<th>修饰符</th>
+<th>当前类</th>
+<th>同 包</th>
+<th>子 类</th>
+<th>其他包</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>public</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>protected</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td>×</td>
+</tr>
+<tr>
+<td>default</td>
+<td>√</td>
+<td>√</td>
+<td>×</td>
+<td>×</td>
+</tr>
+<tr>
+<td>private</td>
+<td>√</td>
+<td>×</td>
+<td>×</td>
+<td>×</td>
+</tr>
+</tbody></table>
+<p>类的成员不写访问修饰时默认为default。默认对于同一个包中的其他类相当于公开（public），对于不是同一个包中的其他类相当于私有（private）。受保护（protected）对子类相当于公开，对不是同一包中的没有父子关系的类相当于私有。Java中，外部类的修饰符只能是public或默认，类的成员（包括内部类）的修饰符可以是以上四种。</p>
+<p>总结：</p>
+<p>同包可以访问的有，public、protected，但protected只能是父子关系才可以访问。default同一个包中相当于public。</p>
+<ol>
+<li>public 一个类中，同一包中，子类中，不同包中 </li>
+<li>protected  一个类中，同一包中，子类中(可以不同包)</li>
+<li>default 一个类中，同一包中</li>
+<li>private 一个类中</li>
+</ol>
+<p><strong>在该类包外的子类中能“看到“的只是子类自己继承来的protected 方法和属性，它是不能“看到“它的父类对象的protected方法和属性的。</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> a;</span><br><span class="line"> <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">int</span> a;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> b;</span><br><span class="line"><span class="keyword">import</span> a.A;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span></span><br><span class="line"><span class="function">   </span>&#123;</span><br><span class="line">      B b = <span class="keyword">new</span> B();</span><br><span class="line">      b.a = <span class="number">1</span>; <span class="comment">//这句是可以通过编译，并能正确执行的</span></span><br><span class="line">     A a = <span class="keyword">new</span> A();</span><br><span class="line">      a.a = <span class="number">1</span>; <span class="comment">//这句是不能通过编译的</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="private和protected不能修饰外部类的原因"><a href="#private和protected不能修饰外部类的原因" class="headerlink" title="private和protected不能修饰外部类的原因"></a>private和protected不能修饰外部类的原因</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">大家都知道类的成员变量和方法可以使用<span class="keyword">private</span>和<span class="keyword">protected</span>修饰。</span><br><span class="line"></span><br><span class="line">使用<span class="keyword">private</span>修饰，表示该类的成员只能在类的内部访问。</span><br><span class="line"></span><br><span class="line">使用<span class="keyword">protected</span>修饰，表示该类的成员可以被类的内部、同包下的其它类以及该类的子类访问。</span><br><span class="line"></span><br><span class="line">从组织结构来分析：</span><br><span class="line"></span><br><span class="line">类的成员（包过变量、方法、内部类等）的上层结构是类，而类的上层结构是包。</span><br><span class="line"></span><br><span class="line">如果类可以使用<span class="keyword">private</span>来修饰，表示该包下的这个类不能被其它类访问，那么该类也失去了存在的意义，所以不能使用<span class="keyword">private</span>来修饰类。</span><br><span class="line"></span><br><span class="line">如果类可以使用<span class="keyword">protected</span>来修饰，表示该类所在的包的其它类可以访问该类；该类所在的包的子包的类可以访问该类，但是包没有继承的概念，所以后一句是不对。所以用<span class="keyword">protected</span>来修饰类也是没有意义的。</span><br><span class="line"></span><br><span class="line">综上，类只有<span class="keyword">public</span>和<span class="keyword">default</span>修饰。</span><br></pre></td></tr></table></figure>
+
+<h2 id="构造代码块"><a href="#构造代码块" class="headerlink" title="构造代码块"></a>构造代码块</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">构造代码块：</span><br><span class="line"></span><br><span class="line">构造代码块的作用：给对象进行统一的初始化。</span><br><span class="line"></span><br><span class="line">构造函数的作用： 给对应的对象进行初始化。</span><br><span class="line">构造代码块的格式：</span><br><span class="line">	&#123;</span><br><span class="line">		构造代码块</span><br><span class="line">	&#125;</span><br><span class="line">注意： 构造代码块的大括号必须位于成员 位置上。</span><br><span class="line">代码块的类别：</span><br><span class="line">	<span class="number">1</span>. 构造代码块。</span><br><span class="line">	<span class="number">2</span>. 局部代码块.   大括号位于方法之内。  作用：缩短局部 变量 的生命周期，节省一点点内存。</span><br><span class="line">	<span class="number">3</span>. 静态代码块  <span class="keyword">static</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">构造代码块要注意的事项：</span></span><br><span class="line"><span class="comment">	1. java编译器编译一个java源文件的时候，会把成员变量的声明语句提前至一个类的最前端。</span></span><br><span class="line"><span class="comment">	2. 成员变量的初始化工作其实都在在构造函数中执行的。</span></span><br><span class="line"><span class="comment">	3. 一旦经过java编译器编译后，那么构造代码块的代码块就会被移动构造函数中执行，是在构造函数之前执行的，构造函数的中代码是最后执行的。</span></span><br><span class="line"><span class="comment">	4. 成员变量的显示初始化与构造代码块的代码是按照当前代码的顺序执行的。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo5</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">	<span class="comment">//构造函数</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Demo5</span><span class="params">()</span></span>&#123;   <span class="comment">//构造函数</span></span><br><span class="line">		i = <span class="number">300000000</span>;	</span><br><span class="line">	&#125;	</span><br><span class="line">	<span class="comment">//构造代码块   //构造代码块的初始化</span></span><br><span class="line">	&#123;</span><br><span class="line">		i = <span class="number">200000000</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">100000000</span>;	 <span class="comment">//成员变量的显初始化	</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		Demo5 d = <span class="keyword">new</span> Demo5();</span><br><span class="line">		System.out.println(<span class="string">"i = "</span>+d.i); <span class="comment">//    300000000</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="this关键字"><a href="#this关键字" class="headerlink" title="this关键字"></a>this关键字</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>关键字：</span><br><span class="line"></span><br><span class="line"><span class="keyword">this</span>关键字代表了所属函数的调用者对象。</span><br><span class="line"></span><br><span class="line"><span class="keyword">this</span>关键字作用：</span><br><span class="line">	<span class="number">1</span>. 如果存在同名成员变量与局部变量时，在方法内部默认是访问局部变量的数据，可以通过<span class="keyword">this</span>关键字指定访问成员变量的数据。</span><br><span class="line">	<span class="number">2</span>. 在一个构造函数中可以调用另外一个构造函数初始化对象。</span><br><span class="line"></span><br><span class="line"><span class="keyword">this</span>关键字调用其他的构造函数要注意的事项：</span><br><span class="line">	<span class="number">1</span>. <span class="keyword">this</span>关键字调用其他的构造函数时，<span class="keyword">this</span>关键字必须要位于构造函数中的第一个语句。</span><br><span class="line">	<span class="number">2</span>. <span class="keyword">this</span>关键字在构造函数中不能出现相互调用的情况，因为是一个死循环。</span><br><span class="line"></span><br><span class="line"><span class="keyword">this</span>关键字要注意事项：</span><br><span class="line">	<span class="number">1</span>. 存在同名的成员变量与局部变量时，在方法的内部访问的是局部变量(java 采取的是“就近原则”的机制访问的。)</span><br><span class="line">	<span class="number">2</span>. 如果在一个方法中访问了一个变量，该变量只存在成员变量的情况下，那么java编译器会在该变量的前面添加<span class="keyword">this</span>关键字。</span><br></pre></td></tr></table></figure>
+
+<h2 id="static修饰符"><a href="#static修饰符" class="headerlink" title="static修饰符"></a>static修饰符</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>. <span class="keyword">static</span>修饰成员变量 ：如果有数据需要被共享给所有对象使用时，那么就可以使用<span class="keyword">static</span>修饰。	</span><br><span class="line">		静态成员变量的访问方式：	</span><br><span class="line">				方式<span class="number">1</span>： 可以使用对象进行访问。</span><br><span class="line">					格式： 对象.变量名。</span><br><span class="line">				</span><br><span class="line">				方式二： 可以使用类名进行访问。</span><br><span class="line">					格式： 类名.变量名;</span><br><span class="line">		注意： </span><br><span class="line">		<span class="number">1</span>. 非静态的成员变量只能使用对象进行访问，不能使用类名进行访问。</span><br><span class="line">		<span class="number">2</span>. 千万不要为了方便访问数据而使用<span class="keyword">static</span>修饰成员变量，只有成员变量的数据是真正需要被共享的时候才使用<span class="keyword">static</span>修饰。</span><br><span class="line">			</span><br><span class="line">	<span class="keyword">static</span>修饰成员变量的应用场景： 如果一个数据需要被所有对象共享使用的时候，这时候即可好实用<span class="keyword">static</span>修饰。</span><br><span class="line"><span class="number">2</span>. <span class="keyword">static</span>修饰成员函数:</span><br></pre></td></tr></table></figure>
+
+<p>静态的成员变量与非静态的成员变量的区别：</p>
+<pre><code>1. 作用上的区别：
+    1. 静态的成员变量的作用共享一个 数据给所有的对象使用。
+    2. 非静态的成员变量的作用是描述一类事物的公共属性。
+2. 数量与存储位置上的区别：
+    1. 静态成员变量是存储方法 区内存中，而且只会存在一份数据。
+    2. 非静态的成员变量是存储在堆内存中，有n个对象就有n份数据。
+3. 生命周期的区别：
+    1. 静态的成员变量数据是随着类的加载而存在，随着类文件的消失而消失。
+    2.非静态的成员数据是随着对象的创建而存在，随着对象被垃圾回收器回收而消失。</code></pre><p>静态函数要注意的事项：</p>
+<pre><code>1. 静态函数是可以调用类名或者对象进行调用的，而非静态函数只能使用对象进行调用。
+2. 静态的函数可以直接访问静态的成员，但是不能直接访问非静态的成员。    
+    原因：静态函数是可以使用类名直接调用的，这时候可能还没有存在对象，
+    而非静态的成员数据是随着对象的存在而存在的。
+
+3. 非静态的函数是可以直接访问静态与非静态的成员。
+    原因：非静态函数只能由对象调用，当对象存在的时候，静态数据老早就已经存在了，而非静态
+    数据也随着对象的创建而存在了。
+
+4. 静态函数不能出现this或者super关键字。
+    原因：因为静态的函数是可以使用类名调用的，一旦使用类名调用这时候不存在对象，而this
+    关键字是代表了一个函数的调用者对象，这时候产生了冲突。</code></pre><p>静态的数据的生命周期：静态的成员变量数据是优先于对象存在的。</p>
+<h2 id="单列设计模式"><a href="#单列设计模式" class="headerlink" title="单列设计模式"></a>单列设计模式</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 饿汉式</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Single</span></span>&#123;</span><br><span class="line">    <span class="function">pirvate <span class="title">Single</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="keyword">private</span> Single s = <span class="keyword">new</span> Single();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Single <span class="title">getSingle</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 懒汉式</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Single</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Single</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">private</span> Single s;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Single <span class="title">getSingle</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(s == <span class="keyword">null</span>)&#123;</span><br><span class="line">            s = <span class="keyword">new</span> Single();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h1><p>继承特点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>：描述类和类之间的关系</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>：降低类和类之间的重复代码</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>：降低对象和对象之间的代码重复使用静态变量</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>：降低类和类之间的代码重复使用就继承</span><br></pre></td></tr></table></figure>
+
+<p>继承要注意的事项：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>. 千万不要为了减少重复代码而去继承，只有真正存在着继承关系的时候才去继承。</span><br><span class="line"><span class="number">2</span>. 父类私有的成员不能被继承。</span><br><span class="line"><span class="number">3</span>. 父类的构造函数不能被继承。</span><br><span class="line"><span class="number">4</span>. 创建子类对象时默认会先调用父类无参的构造函数。</span><br></pre></td></tr></table></figure>
+<h2 id="super关键字"><a href="#super关键字" class="headerlink" title="super关键字"></a>super关键字</h2><p>super关键字代表了父类空间的引用。</p>
+<p><strong>super关键字的作用：</strong><br>    1. 子父类存在着同名的成员时，在子类中默认是访问子类的成员，可以通过super关键字指定访问父类的成员。<br>    2. 创建子类对象时，默认会先调用父类无参的构造方法，可以通过super关键字指定调用父类的构造方法。</p>
+<p><strong>super关键字调用父类构造方法要注意的事项：</strong><br>    1. 如果在子类的构造方法上没有指定调用父类的构造方法，那么java编译器会在子类的构造方法上面加super()语句。<br>    2. super关键字调用父类的构造函数时，该语句必须要是子类构造函数中的第一个语句。<br>    3. super与this关键字不能同时出现在同一个构造函数中调用其他的构造函数。因为两个语句都需要第一个句。</p>
+<p><strong>super关键字与this关键字的区别：</strong><br>    1. 代表的事物不一致。<br>            1. super关键字代表的是父类空间的引用。<br>            2. this关键字代表的是所属函数的调用者对象。<br>    2. 使用前提不一致。<br>            1. super关键字必须要有继承关系才能使用。<br>            2. this关键字不需要存在继承关系也可使用。<br>    3. 调用构造函数的区别：<br>            1. super关键字是调用父类的构造函数。<br>            2. this关键字是调用本类的构造函数。</p>
+<ul>
+<li><p><strong>super语句，和this语句为什么不能同时存在，super为什么要定义在第一行？</strong></p>
+<p>不能同时出现，是因为this和super都要定义在第一行，所以只能有一个；<br>那么为什么要定义在第一行呢？<br>​    先说super，因为子类继承了父类的属性和方法，所以在先初始化父类的属性和方法，这样子类才可以初始化自己特有的，因为java中不允许调用没有初始化的成员。<br>​    this就是调用本类的其他构造函数，在其他构造函数中也有默认的super()，或者自定义了带参的super，这样就初始化了父类的成员了，所以写了this的构造函数不能再写super了，因为实例化一个对象运行两super是不安全的。</p>
+<p>​    this放在第一行，也是因为要先初始化父类和this代表的构造函数先，因为当前构造函数可能用到那些成员，所以那些成员得要先初始化。</p>
+</li>
+</ul>
+<h2 id="重写和重载"><a href="#重写和重载" class="headerlink" title="重写和重载"></a>重写和重载</h2><p>目前的问题：父类的功能无法满足子类的需求。</p>
+<p>方法重写的前提： 必须要存在<strong>继承</strong>的关系。</p>
+<p>方法的重写: 子父类出了同名的函数，这个我们就称作为方法的重写。</p>
+<p>什么是时候要使用方法的重写：父类的功能无法满足子类的需求时。</p>
+<p><strong>方法重写要注意的事项：</strong><br>    1.方法重写时， 方法名与形参列表必须一致。<br>    2.方法重写时，子类的权限修饰符必须要大于或者等于父类的权限修饰符。<br>    3.方法重写时，子类的返回值类型必须要小于或者 等于父类的返回值类型。<br>    4.方法重写时， 子类抛出的异常类型要小于或者等于父类抛出的异常类型。<br>            Exception(最坏)<br>            RuntimeException(小坏)</p>
+<p>方法的重载：在一个类中存在两个或者两个 以上的同名函数,称作为方法重载。</p>
+<p><strong>方法重载的要求:</strong><br>    1. 函数名要一致。<br>    2. 形参列表不一致（形参的个数或形参 的类型不一致）<br>    3. 与返回值类型无关。</p>
+<h2 id="子类的实例化过程"><a href="#子类的实例化过程" class="headerlink" title="子类的实例化过程"></a>子类的实例化过程</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>.JVM先找指定的类字节码并加载进内存，并会先加载父类的字节码进内存；</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>.在堆内开辟内存空间，分配内存地址；</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>.在对象的内存空间中对对象的属性进行默认初始化；</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>.调用对应的构造方法初始化；</span><br><span class="line"></span><br><span class="line"><span class="number">5</span>.在构造方法中第一行先调用父类的构造方法对父类进行初始化；（如果不显示指定父类构造方法，默认为<span class="keyword">super</span>()）;</span><br><span class="line"></span><br><span class="line"><span class="number">6</span>. 父类初始化完毕后，再对子类属性进行显式初始化；</span><br><span class="line"></span><br><span class="line"><span class="number">7</span>.再进行子类构造方法的特定初始化；</span><br><span class="line"></span><br><span class="line"><span class="number">8</span>.初始化完毕后，将对象的引（分配的内存地址）用返回。</span><br></pre></td></tr></table></figure>
+
+<h2 id="instanceof-关键字"><a href="#instanceof-关键字" class="headerlink" title="instanceof 关键字"></a>instanceof 关键字</h2><p>​       1：属于比较运算符：</p>
+<p>​       2：instanceof关键字：该关键字用来判断一个对象是否是指定类的对象。</p>
+<p>​       3：用法：</p>
+<p>​               对象 instanceof 类;  </p>
+<p>​       该表达式是一个比较运算符，返回的结果是boolea类型  true|false</p>
+<p>   注意：使用instanceof关键字做判断时，两个类之间必须有关系。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Person p=<span class="keyword">new</span> Person();</span><br><span class="line">		System.out.println( p <span class="keyword">instanceof</span> Person);</span><br></pre></td></tr></table></figure>
+
+<h2 id="final-关键字"><a href="#final-关键字" class="headerlink" title="final 关键字"></a>final 关键字</h2><p>final关键字的用法：</p>
+<pre><code>1. final关键字修饰一个基本类型的变量时，该变量不能重新赋值，第一次的值为最终的。
+2. fianl关键字修饰一个引用类型变量时，该变量不能重新指向新的对象。
+3. final关键字修饰一个函数的时候，该函数不能被重写。
+4. final关键字修饰一个类的时候，该类不能被继承。</code></pre><p>常量 的修饰符一般为： public static final </p>
+<h1 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h1><p>当描述一个类的时候，如果不能确定功能函数如何定义，那么该类就可以定义为抽象类，功能函数应该描述为抽象函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">	String color;</span><br><span class="line">	<span class="function"><span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">shout</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span> <span class="keyword">extends</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">shout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"旺旺"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bird</span> <span class="keyword">extends</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">shout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"叽叽喳喳"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="抽象类的特点"><a href="#抽象类的特点" class="headerlink" title="抽象类的特点"></a>抽象类的特点</h2><p>​          1：有抽象函数的类，该类一定是抽象类。</p>
+<p>​          2：抽象类中不一定要有抽象函数。</p>
+<p>​          3：抽象类不能使用new创建对象</p>
+<p>​              1：创建对象，使用对象的功能，抽象类的方法，没有方法体。</p>
+<p>​          4：抽象类主要为了提高代码的复用性，让子类继承来使用。</p>
+<p>​          5：编译器强制子类实现抽象类父类的未实现的方法。</p>
+<p>​              1：<strong>可以不实现，前提是子类的也要声明为抽象的。</strong></p>
+<h2 id="抽象类的优点"><a href="#抽象类的优点" class="headerlink" title="抽象类的优点"></a>抽象类的优点</h2><p>1：提高代码复用性</p>
+<p>​              2：强制子类实现父类中没有实现的功能</p>
+<p>2：提高代码的扩展性，便于后期的代码维护</p>
+<h2 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h2><p>抽象类一定有构造函数，子类继承抽象父类，初始化父类成员，并实现抽象方法。</p>
+<p><strong>final</strong>和abstract 不同同时使用，</p>
+<p>​    因为final修饰的类不能被继承，抽象类的出现就是为了子类来实现父类中没有实现的方法，所以不能同时使用。</p>
+<p><strong>static</strong> 和abstract 不同同时使用，</p>
+<p>​        static修饰的方法可以用类名调用，</p>
+<p>​                对于abstract修饰的方法没有具体的方法实现，所有不能直接调用，</p>
+<p>​               也就是说不可以与static共存。</p>
+<p><strong>private</strong>和abstract 不同同时使用，</p>
+<p>​               private修饰的只能在本类中使用，</p>
+<p>​               abstract方法是用来被子类进行重写的，有矛盾</p>
+<p>​               所有不能共存.</p>
+<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><p>接口的定义格式：<br>​    </p>
+<pre><code>interface 接口名{}</code></pre><p>接口要注意的事项 ：<br>    1. 接口是一个特殊的类。<br>    2. 接口的成员变量默认的修饰符为： public static final 。那么也就是说接口中的成员变量都是常量。<br>    3. 接口中的方法都是抽象的方法，默认的修饰符为： public abstract。<br>    4. 接口不能创建对象。<br>    5. 接口是没有构造方法的。<br>    6. 接口是给类去实现使用的，非抽象类实现一个接口的时候，必须要把接口中所有方法全部实现。</p>
+<p>实现接口的格式：</p>
+<pre><code>class  类名 implements 接口名{}</code></pre><p>接口的作用：</p>
+<pre><code>1. 程序的解耦。  （低耦合）
+2. 定义约束规范。
+3. 拓展功能。</code></pre><h1 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h1><p>面向对象的三大特征：</p>
+<pre><code>1. 封装
+2. 继承。
+3. 多态</code></pre><p>多态：一个对象具备多种形态。(父类的引用类型变量指向了子类的对象)</p>
+<p>（或者是接口的引用类型变量指向了接口实现类的对象)</p>
+<p><strong>多态的前提：必须存在继承或者实现关系。</strong></p>
+<pre><code>动物  a  = new   狗();</code></pre><p><strong>多态要注意的细节：</strong><br>    1.  多态情况下，子父类存在同名的成员变量时，访问的是父类的成员变量。（静态和非静态都是）<br>    2.  多态情况下，子父类存在同名的非静态的成员函数时，访问的是子类的成员函数。<br>    3.  多态情况下，子父类存在同名的静态的成员函数时，访问的是父类的成员函数。<br>    4.  多态情况下，不能访问子类特有的成员。</p>
+<p><strong>总结：</strong></p>
+<p>​    多态情况下，子父类存在同名的成员时，访问的都是父类的成员，除了在同名非静态函数时才是访问子类的。</p>
+<p>​    编译看左边，运行不一定看右边。</p>
+<p>​    编译看左边：java编译器在编译的时候，会检查引用类型变量所属的类是否具备指定的成员，如果不具备马上编译报错。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Animal a = <span class="keyword">new</span> Cat();</span><br><span class="line"></span><br><span class="line">a.sha();  <span class="comment">// 编译时，看Animal类是否有sha()函数，没有报错。</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>多态的好处：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">	<span class="comment">//需求1： 定义一个函数可以接收任意类型的图形对象，并且打印图形面积与周长。</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(MyShape s)</span></span>&#123; <span class="comment">// MyShpe s = new Circle(4.0);      // 多态用于形参</span></span><br><span class="line">		s.getArea();</span><br><span class="line">		s.getLength();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 需求2： 定义一个函数可以返回任意类型的图形对象。</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> MyShape  <span class="title">getShape</span><span class="params">(<span class="keyword">int</span> i)</span></span>&#123;   <span class="comment">// 多态用与返回值</span></span><br><span class="line">		<span class="keyword">if</span> (i==<span class="number">0</span>)&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">new</span> Circle(<span class="number">4.0</span>);</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">new</span> Rect(<span class="number">3</span>,<span class="number">4</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">多态的应用： </span><br><span class="line">	<span class="number">1</span>.多态用于形参类型的时候，可以接收更多类型的数据</span><br><span class="line">	<span class="number">2</span>.多态用于返回值类型的时候，可以返回更多类型的数据.</span><br></pre></td></tr></table></figure>
+
+<h1 id="内部类"><a href="#内部类" class="headerlink" title="内部类"></a>内部类</h1><h2 id="成员内部类"><a href="#成员内部类" class="headerlink" title="成员内部类"></a>成员内部类</h2><ol>
+<li><p>内部类可以直接访问外部类的成员属性。(孙悟空相当于内部类飞到牛魔王的肚子里面去)。</p>
+</li>
+<li><p>内部类需要访问内部类的成员属性时需要创建内部类的对象。</p>
+<ol>
+<li><p>在外部类的成员函数中创建内部类的对象，通过内部类对象对象直接访问内部类的成员。</p>
+</li>
+<li><p>在其他类中直接创建内部类的对象。</p>
+<p>Outer.Inner inner = new Outer().new Inner();</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="私有成员内部类"><a href="#私有成员内部类" class="headerlink" title="私有成员内部类"></a>私有成员内部类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//外部类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Outer</span></span>&#123;</span><br><span class="line">	<span class="comment">//成员变量</span></span><br><span class="line">	<span class="keyword">int</span> x = <span class="number">100</span>; <span class="comment">// Outer.class文件被加载到内存的时候存在内存中。  静态的成员数据是不需要对象存在才访问。</span></span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">9</span>;</span><br><span class="line">	<span class="comment">//成员内部类</span></span><br><span class="line">	<span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;      	</span><br><span class="line">		<span class="keyword">int</span> i = <span class="number">10</span>;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;</span><br><span class="line">			System.out.println(<span class="string">"这个是成员内部类的print方法！"</span>+i);</span><br><span class="line">            System.out.println(<span class="string">"这个是成员内部类的print方法！"</span>+Outer.<span class="keyword">this</span>.x); <span class="comment">// 内部类访问同名外部类变量</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//在外部的方法中创建了内部类的对象，然后调用内部方法。内部类私有时，只能在外部类创建内部类对象访问部类成员</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">instance</span><span class="params">()</span></span>&#123;</span><br><span class="line">		Inner inner = <span class="keyword">new</span> Inner();</span><br><span class="line">		inner.print();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//其他类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo4</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span></span><br><span class="line"><span class="function">	</span>&#123;		</span><br><span class="line">		<span class="comment">// System.out.println(Outer.Inner.i);</span></span><br><span class="line">		<span class="comment">// Outer.Inner in = new Outer().new Inner();  // 私有内部类，其他类不可以访问</span></span><br><span class="line">		<span class="comment">// System.out.println(in.i);</span></span><br><span class="line">		Outer out = <span class="keyword">new</span> Outer();</span><br><span class="line">		System.out.println(out.i);	</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="静态成员内部类"><a href="#静态成员内部类" class="headerlink" title="静态成员内部类"></a>静态成员内部类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Outer</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">int</span> i = <span class="number">19</span>;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo4</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String... args)</span></span>&#123;</span><br><span class="line">        Outer.Inner in = <span class="keyword">new</span> Outer.Inner();</span><br><span class="line">        System.out.println(in.i); <span class="comment">// 19</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>总结：成员内部类成员属性、成员方法特点</p>
+<ol>
+<li><strong>私有的成员内部类</strong></li>
+</ol>
+<p>​              特点：不能在其他类中直接创建内部类对象来访问</p>
+<ol start="2">
+<li><strong>静态的成员内部类</strong></li>
+</ol>
+<p>​               特点：如果内部类中包含有静态成员，那么java规定内部类必须声明为静的</p>
+<p>​                        访问静态内部类的形式：</p>
+<p>​                        Outer.Inner in = new Outer.Inner();</p>
+<h2 id="局部内部类"><a href="#局部内部类" class="headerlink" title="局部内部类"></a>局部内部类</h2><p><strong>局部内部类概述：</strong>包含在外部类的<strong>函数中</strong>的内部类称之为局部内部类。</p>
+<p><strong>访问：</strong>可以在包含局部内部类的方法中直接创建局部内部类的对象调用局部内部类的成员。</p>
+<p><strong>注意：</strong>局部内部类只能访问所在函数的final属性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span>  <span class="title">Outer</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	String name= <span class="string">"外部类的name"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="comment">//局部变量</span></span><br><span class="line">		<span class="keyword">final</span>	<span class="keyword">int</span> y =<span class="number">100</span>;  <span class="comment">// y 什么时候从内存中消失？ 方法执行完毕之后y消失。</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">//局部内部类</span></span><br><span class="line">		<span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;     <span class="comment">/*</span></span><br><span class="line"><span class="comment">							当test方法执行完毕之后，那么y马上从内存中消失，而Inner对象在方法</span></span><br><span class="line"><span class="comment">							执行完毕的时候还没有从内存中消失，而inner对象的print方法还在访问着</span></span><br><span class="line"><span class="comment">							y变量，这时候的y变量已经消失了，那么就给人感觉y的生命变量已经被延长了</span></span><br><span class="line"><span class="comment">							解决方案： 如果一个局部内部类访问一个局部变量的时候，那么就让该局部内类</span></span><br><span class="line"><span class="comment">							访问这个局部 变量 的复制品。				</span></span><br><span class="line"><span class="comment">						*/</span></span><br><span class="line">			<span class="keyword">int</span> x = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;</span><br><span class="line">				System.out.println(<span class="string">"这个是局部内部类的print方法.."</span>+y);</span><br><span class="line">			&#125;	</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		Inner inner = <span class="keyword">new</span> Inner();  <span class="comment">//这个inner对象什么时候消失？  Inner对象的生命周期比局部变量y的生命周期要长。</span></span><br><span class="line">		inner.print();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo5</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		Outer outer = <span class="keyword">new</span> Outer();</span><br><span class="line">		outer.test();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<pre><code>内部类要注意的细节：
+    1. 如果外部类与内部类存在同名的成员变量时，在内部类中默认情况下是访问内部类的成员变量。
+    可以通过&quot;外部类.this.成员变量名&quot; 指定访问外部类的 成员。
+    2. 私有的成员内部类只能在外部类提供一个方法创建内部类的对象进行访问，不能在其他类创建对了。
+    3. 成员内部类一旦出现了静态的成员，那么该类也必须 使用static修饰。</code></pre><h2 id="匿名内部类"><a href="#匿名内部类" class="headerlink" title="匿名内部类"></a>匿名内部类</h2><p>匿名内部类：就是没有类名字的内部类。</p>
+<p>匿名内部类作用：简化内部类书写。</p>
+<p>匿名内部类的前提:必须继承一个父类或者是实现一个接口。</p>
+<p>匿名内部类的格式： </p>
+<p>​        new父类或者接口(){ 执行代码….};</p>
+<p>内部类的写法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//实现关系下匿名内部类</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Dao</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Outer</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="comment">//创建一个匿名内部类的对象</span></span><br><span class="line">		<span class="keyword">new</span> Dao()&#123;   <span class="comment">//不是接口不能创建对象吗？怎么现在又可以了? // 创建的时匿名对象，借用了接口名字 </span></span><br><span class="line">			 <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span></span>&#123;</span><br><span class="line">				System.out.println(<span class="string">"添加成功"</span>);</span><br><span class="line">			 &#125;</span><br><span class="line">		&#125;.add();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo7</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		test(<span class="keyword">new</span> Dao()&#123;</span><br><span class="line">			</span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span></span>&#123;</span><br><span class="line">				System.out.println(<span class="string">"添加员工成功"</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//调用这个方法...</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span>  <span class="title">test</span><span class="params">(Dao d)</span></span>&#123;  <span class="comment">//形参类型是一个接口引用..</span></span><br><span class="line">		d.add();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="异常"><a href="#异常" class="headerlink" title="异常"></a>异常</h1><p>现实生活中的很多病况从面向对象的角度考虑也是一类事物，可以定义为类。      </p>
+<p>java中可以通过类对这一类不正常的现象进行描述，并封装为对象。</p>
+<ol>
+<li><p>java的异常体系包含在java.lang这个包默认不需要导入。</p>
+</li>
+<li><p>java异常体系</p>
+</li>
+</ol>
+<p>​          |——Throwable  （实现类描述java的错误和异常）</p>
+<p>​              |——Error （错误）一般不通过代码去处理。</p>
+<p>​              |——Exception （异常）</p>
+<p>​                 |——RuntimeException （运行时异常）</p>
+<p>​                 |——非运行时异常</p>
+<h2 id="Throwable类"><a href="#Throwable类" class="headerlink" title="Throwable类"></a>Throwable类</h2><ol>
+<li><p>toString() 输出该异常的类名。</p>
+</li>
+<li><p>getMessage() 输出异常的信息，需要通过构造方法传入异常信息（例如病态信息）。</p>
+</li>
+<li><p>printStackTrace() 打印栈信息。</p>
+<p>   人生病：流鼻涕，感冒，呼吸道感染，肺炎。。。最后体现的是肺炎。</p>
+<p>   医生要处理需要获知这些信息。从外到里处理。最后找病源</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo6</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// Throwable able=new Throwable();</span></span><br><span class="line">		Throwable able = <span class="keyword">new</span> Throwable(<span class="string">"想吐。。。"</span>);</span><br><span class="line">		System.out.println(able.toString()); <span class="comment">// 输出该异常的类名</span></span><br><span class="line">		System.out.println(able.getMessage()); <span class="comment">// 输出异常的信息</span></span><br><span class="line">		able.printStackTrace(); <span class="comment">// 打印栈信息</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>异常的体系：<br>———-| Throwable  所以异常或者错误类的超类<br>————–|Error  错误   错误一般是用于jvm或者是硬件引发的问题，所以我们一般不会通过代码去处理错误的。<br>————–|Exception 异常   是需要通过代码去处理的。</p>
+<p>如何区分错误与异常呢：<br>    如果程序出现了不正常的信息，如果不正常的信息的类名是以Error结尾的，那么肯定是一个错误。<br>    如果是以Exception结尾的，那么肯定就是一个异常。</p>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><h2 id="捕获处理"><a href="#捕获处理" class="headerlink" title="捕获处理"></a>捕获处理</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">异常的处理：</span><br><span class="line"></span><br><span class="line">	 方式一：捕获处理</span><br><span class="line"></span><br><span class="line">	  捕获处理的格式：</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">try</span>&#123;</span><br><span class="line">				可能发生异常的代码；</span><br><span class="line"></span><br><span class="line">			&#125;<span class="keyword">catch</span>(捕获的异常类型 变量名)&#123;</span><br><span class="line">				处理异常的代码....</span><br><span class="line">			&#125;</span><br><span class="line">		</span><br><span class="line">		捕获处理要注意的细节：</span><br><span class="line">			<span class="number">1</span>. 如果<span class="keyword">try</span>块中代码出了异常经过了处理之后，那么<span class="keyword">try</span>-<span class="keyword">catch</span>块外面的代码可以正常执行。</span><br><span class="line">			<span class="number">2</span>. 如果<span class="keyword">try</span>块中出了异常的代码，那么在<span class="keyword">try</span>块中出现异常代码后面的代码是不会执行了。</span><br><span class="line">			<span class="number">3</span>. 一个<span class="keyword">try</span>块后面是可以跟有多个<span class="keyword">catch</span>块的，也就是一个<span class="keyword">try</span>块可以捕获多种异常的类型。</span><br><span class="line">			<span class="number">4</span>. 一个<span class="keyword">try</span>块可以捕获多种异常的类型,但是捕获的异常类型必须从小到大进行捕获，否则编译报错。</span><br><span class="line"></span><br><span class="line">疑问一 : 异常的处理感觉没有多大作用，因为都是输出一个话而已?</span><br><span class="line">		异常处理非常有用，只不过是由于我们目前所接触的知识点太过于局限而已。</span><br><span class="line"></span><br><span class="line">疑问二： 以后捕获处理 的时候是否就是捕获Exception即可？</span><br><span class="line">	错的，因为我们在现实开发中遇到不同的异常类型的时候，我往往会有不同 的处理方式。</span><br><span class="line">	所以要分开不同的异常类型处理。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo10</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">int</span>[] arr = <span class="keyword">null</span>;</span><br><span class="line">		div(<span class="number">4</span>,<span class="number">0</span>,arr);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">div</span><span class="params">(<span class="keyword">int</span> a , <span class="keyword">int</span> b,<span class="keyword">int</span>[] arr)</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span> c = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">try</span>&#123;</span><br><span class="line">			c = a/b;  <span class="comment">//jvm在这句话的时候发现了不正常的情况，那么就会创建一个对应的异常对象。</span></span><br><span class="line">			System.out.println(<span class="string">"数组的长度："</span>+ arr.length);</span><br><span class="line">		&#125;<span class="keyword">catch</span>(ArithmeticException e)&#123;</span><br><span class="line">			<span class="comment">//处理异常的代码....</span></span><br><span class="line">			System.out.println(<span class="string">"异常处理了...."</span>);</span><br><span class="line">			System.out.println(<span class="string">"toString:"</span>+ e.toString());</span><br><span class="line">		&#125;<span class="keyword">catch</span>(NullPointerException e)&#123;</span><br><span class="line">			System.out.println(<span class="string">"出现了空指针异常...."</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span>(Exception e)&#123;  </span><br><span class="line">			System.out.println(<span class="string">"我是急诊室，包治百病！"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(<span class="string">"c="</span>+c);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>多个catch语句之间的执行顺序。</strong></p>
+<ol>
+<li><p>是进行顺序执行，从上到下。</p>
+</li>
+<li><p>如果多个catch 内的异常有子父类关系。</p>
+<pre><code>1.  子类异常在上，父类在最下。编译通过运行没有问题
+
+2.  父类异常在上，子类在下，编译不通过。(因为父类可以将子类的异常处理，子类的catch处理不到)。
+
+3.  多个异常要按照子类和父类顺序进行catch</code></pre></li>
+</ol>
+<h2 id="抛出处理"><a href="#抛出处理" class="headerlink" title="抛出处理"></a>抛出处理</h2><p>定义一个功能，进行除法运算例如（div(int x,int y)）如果除数为0，进行处理。</p>
+<p>功能内部不想处理，或者处理不了。就抛出使用throw new Exception(“除数不能为0”); 进行抛出。抛出后需要在函数上进行声明，告知调用函数者，我有异常，你需要处理如果函数上不进行throws 声明，编译会报错。例如：未报告的异常 java.lang.Exception；必须对其进行捕捉或声明以便抛出throw  new Exception(“除数不能为0”);</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">div</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> <span class="keyword">throws</span> Exception </span>&#123; <span class="comment">// 声明异常，通知方法调用者。</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (y == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"除数为0"</span>); <span class="comment">// throw关键字后面接受的是具体的异常的对象</span></span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(x / y);</span><br><span class="line">		System.out.println(<span class="string">"除法运算"</span>);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>throw和throws的区别</p>
+<ol>
+<li><p>相同：都是用于做异常的抛出处理的。</p>
+</li>
+<li><p>不同点：</p>
+<pre><code>1.  使用的位置: throws 使用在函数上，throw使用在函数内</code></pre></li>
+<li><p>后面接受的内容的个数不同: </p>
+</li>
+<li><p>throws 后跟的是异常类，可以跟多个，用逗号隔开。</p>
+<ol start="2">
+<li>throw 后跟异常对象。</li>
+</ol>
+</li>
+</ol>
+<p>抛出处理应注意的细节：</p>
+<ol>
+<li>如果方法内抛出一个编译时异常，那么该方法必须声明抛出。</li>
+<li>如果调用了一个抛出编译时异常的方法，那么调用者必须要处理</li>
+<li>如果一个方法抛出了一个异常对象，那么该方法也会马上停止，</li>
+<li>在一种情况下只能抛出一种异常对象。</li>
+</ol>
+<p><strong>总结</strong></p>
+<ol>
+<li>try语句不能单独存在，可以和catch、finally组成 try…catch…finally、try…catch、try…finally三种结构。</li>
+</ol>
+<ol start="2">
+<li>catch语句可以有一个或多个，finally语句最多一个，try、catch、finally这三个关键字均不能单独使用。</li>
+</ol>
+<ol start="3">
+<li>try、catch、finally三个代码块中变量的作用域分别独立而不能相互访问。如果要在三个块中都可以访问，则要将变量定义到这些块的外面。</li>
+<li>多个catch块时候，Java虚拟机会匹配其中一个异常类或其子类，就执行这个catch块，而不会再执行别catch块。（子类在上，父类在下）。</li>
+<li>throw语句后不允许有紧跟其他语句，因为这些没有机会执行。</li>
+<li>如果一个方法调用了另外一个声明抛出异常的方法，那么这个方法要么处理异常，要么声明抛出。</li>
+</ol>
+<h2 id="自定义异常"><a href="#自定义异常" class="headerlink" title="自定义异常"></a>自定义异常</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NoMoneyException</span> <span class="keyword">extends</span> <span class="title">Exception</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	NoMoneyException() &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	NoMoneyException(String message) &#123;</span><br><span class="line">		<span class="keyword">super</span>(message);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo11</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		System.out.println();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			eat(<span class="number">0</span>);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (NoMoneyException e) &#123;</span><br><span class="line">			System.out.println(<span class="string">"跟我干活吧。"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">eat</span><span class="params">(<span class="keyword">double</span> money)</span> <span class="keyword">throws</span> NoMoneyException </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (money &lt; <span class="number">10</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> NoMoneyException(<span class="string">"钱不够"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(<span class="string">"吃桂林米粉"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="运行时异常和编译时异常"><a href="#运行时异常和编译时异常" class="headerlink" title="运行时异常和编译时异常"></a>运行时异常和编译时异常</h2><p>运行时异常：Runtime Exception或其子类 都是远行时异常。</p>
+<p>编译时异常： 除了运行时异常都是编译时异常，编译器有强制要求。</p>
+<p>运行时异常都是可以通过良好的程序避免的，Java编译器没有过多的要求。</p>
+<p>编译时异常，避免不了（文件读取，磁盘坏了）</p>
+<h2 id="异常在子父类覆盖中的体现"><a href="#异常在子父类覆盖中的体现" class="headerlink" title="异常在子父类覆盖中的体现"></a>异常在子父类覆盖中的体现</h2><p>1，子类在覆盖父类时，如果父类的方法抛出异常，那么子类的覆盖方法，只能抛出父类的异常或者该异常的子类。<br>2，如果父类方法抛出多个异常，那么子类在覆盖该方法时，只能抛出父类异常的子集。<br>3，如果父类或者接口的方法中没有异常抛出，那么子类在覆盖方法时，也不可以抛出异常。</p>
+<pre><code>如果子类方法发生了异常。就必须要进行try处理。绝对不能抛。</code></pre>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2017/11/30/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/2-Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86_%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" title="java基础知识-面向对象">https://zxucooly.github.io/2017/11/30/Java基础知识/2-Java基础知识_面向对象/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag"><i class="fa fa-tag"></i> java基础知识</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/11/29/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/1-Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="prev" title="java基础知识">
+      <i class="fa fa-chevron-left"></i> java基础知识
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/12/01/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/3-Java%E5%B8%B8%E7%94%A8%E5%AF%B9%E8%B1%A1api/" rel="next" title="java基础知识-常用API">
+      java基础知识-常用API <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#面向对象"><span class="nav-number">1.</span> <span class="nav-text">面向对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#成员变量和局部变量"><span class="nav-number">1.1.</span> <span class="nav-text">成员变量和局部变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反编译"><span class="nav-number">1.2.</span> <span class="nav-text">反编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构造方法"><span class="nav-number">1.3.</span> <span class="nav-text">构造方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类访问权限修饰符"><span class="nav-number">1.4.</span> <span class="nav-text">类访问权限修饰符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#private和protected不能修饰外部类的原因"><span class="nav-number">1.4.1.</span> <span class="nav-text">private和protected不能修饰外部类的原因</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构造代码块"><span class="nav-number">1.5.</span> <span class="nav-text">构造代码块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#this关键字"><span class="nav-number">1.6.</span> <span class="nav-text">this关键字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#static修饰符"><span class="nav-number">1.7.</span> <span class="nav-text">static修饰符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单列设计模式"><span class="nav-number">1.8.</span> <span class="nav-text">单列设计模式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#继承"><span class="nav-number">2.</span> <span class="nav-text">继承</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#super关键字"><span class="nav-number">2.1.</span> <span class="nav-text">super关键字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重写和重载"><span class="nav-number">2.2.</span> <span class="nav-text">重写和重载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#子类的实例化过程"><span class="nav-number">2.3.</span> <span class="nav-text">子类的实例化过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#instanceof-关键字"><span class="nav-number">2.4.</span> <span class="nav-text">instanceof 关键字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final-关键字"><span class="nav-number">2.5.</span> <span class="nav-text">final 关键字</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽象类"><span class="nav-number">3.</span> <span class="nav-text">抽象类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象类的特点"><span class="nav-number">3.1.</span> <span class="nav-text">抽象类的特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象类的优点"><span class="nav-number">3.2.</span> <span class="nav-text">抽象类的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注意点"><span class="nav-number">3.3.</span> <span class="nav-text">注意点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#接口"><span class="nav-number">4.</span> <span class="nav-text">接口</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多态"><span class="nav-number">5.</span> <span class="nav-text">多态</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内部类"><span class="nav-number">6.</span> <span class="nav-text">内部类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#成员内部类"><span class="nav-number">6.1.</span> <span class="nav-text">成员内部类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#私有成员内部类"><span class="nav-number">6.1.1.</span> <span class="nav-text">私有成员内部类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态成员内部类"><span class="nav-number">6.1.2.</span> <span class="nav-text">静态成员内部类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#局部内部类"><span class="nav-number">6.2.</span> <span class="nav-text">局部内部类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#匿名内部类"><span class="nav-number">6.3.</span> <span class="nav-text">匿名内部类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#异常"><span class="nav-number">7.</span> <span class="nav-text">异常</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Throwable类"><span class="nav-number">7.1.</span> <span class="nav-text">Throwable类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异常处理"><span class="nav-number">7.2.</span> <span class="nav-text">异常处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#捕获处理"><span class="nav-number">7.3.</span> <span class="nav-text">捕获处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抛出处理"><span class="nav-number">7.4.</span> <span class="nav-text">抛出处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义异常"><span class="nav-number">7.5.</span> <span class="nav-text">自定义异常</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行时异常和编译时异常"><span class="nav-number">7.6.</span> <span class="nav-text">运行时异常和编译时异常</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异常在子父类覆盖中的体现"><span class="nav-number">7.7.</span> <span class="nav-text">异常在子父类覆盖中的体现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

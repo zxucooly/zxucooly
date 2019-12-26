@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="调试pdbpdb是基于命令行的调试工具，非常类似gnu的gdb（调试c&#x2F;c++）。    命令 简写命令 作用    break b 设置断点   continue c 继续执行程序   list l 查看当前行的代码段   step s 进入函数   return r 执行代码直到从当前函数返回   quit q 中止并退出   next n 执行下一行   print p 打印变量的值   h">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python-调试和编码风格">
+<meta property="og:url" content="https://zxucooly.github.io/2018/10/28/python%E7%9B%B8%E5%85%B3/python-%E8%B0%83%E8%AF%95%E5%92%8C%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="调试pdbpdb是基于命令行的调试工具，非常类似gnu的gdb（调试c&#x2F;c++）。    命令 简写命令 作用    break b 设置断点   continue c 继续执行程序   list l 查看当前行的代码段   step s 进入函数   return r 执行代码直到从当前函数返回   quit q 中止并退出   next n 执行下一行   print p 打印变量的值   h">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-28T00:46:39.000Z">
+<meta property="article:modified_time" content="2018-11-25T07:20:54.881Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="python-base">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2018/10/28/python%E7%9B%B8%E5%85%B3/python-%E8%B0%83%E8%AF%95%E5%92%8C%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>python-调试和编码风格 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/10/28/python%E7%9B%B8%E5%85%B3/python-%E8%B0%83%E8%AF%95%E5%92%8C%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          python-调试和编码风格
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-28 08:46:39" itemprop="dateCreated datePublished" datetime="2018-10-28T08:46:39+08:00">2018-10-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2018-11-25 15:20:54" itemprop="dateModified" datetime="2018-11-25T15:20:54+08:00">2018-11-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h1><h2 id="pdb"><a href="#pdb" class="headerlink" title="pdb"></a>pdb</h2><p>pdb是基于命令行的调试工具，非常类似gnu的gdb（调试c/c++）。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>简写命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>break</td>
+<td>b</td>
+<td>设置断点</td>
+</tr>
+<tr>
+<td>continue</td>
+<td>c</td>
+<td>继续执行程序</td>
+</tr>
+<tr>
+<td>list</td>
+<td>l</td>
+<td>查看当前行的代码段</td>
+</tr>
+<tr>
+<td>step</td>
+<td>s</td>
+<td>进入函数</td>
+</tr>
+<tr>
+<td>return</td>
+<td>r</td>
+<td>执行代码直到从当前函数返回</td>
+</tr>
+<tr>
+<td>quit</td>
+<td>q</td>
+<td>中止并退出</td>
+</tr>
+<tr>
+<td>next</td>
+<td>n</td>
+<td>执行下一行</td>
+</tr>
+<tr>
+<td>print</td>
+<td>p</td>
+<td>打印变量的值</td>
+</tr>
+<tr>
+<td>help</td>
+<td>h</td>
+<td>帮助</td>
+</tr>
+<tr>
+<td>args</td>
+<td>a</td>
+<td>查看传入参数</td>
+</tr>
+<tr>
+<td></td>
+<td>回车</td>
+<td>重复上一条命令</td>
+</tr>
+<tr>
+<td>break</td>
+<td>b</td>
+<td>显示所有断点</td>
+</tr>
+<tr>
+<td>break lineno</td>
+<td>b lineno</td>
+<td>在指定行设置断点</td>
+</tr>
+<tr>
+<td>break file:lineno</td>
+<td>b file:lineno</td>
+<td>在指定文件的行设置断点</td>
+</tr>
+<tr>
+<td>clear num</td>
+<td></td>
+<td>删除指定断点</td>
+</tr>
+<tr>
+<td>bt</td>
+<td></td>
+<td>查看函数调用栈帧</td>
+</tr>
+</tbody></table>
+<a id="more"></a>
+
+<h3 id="执行时调试"><a href="#执行时调试" class="headerlink" title="执行时调试"></a>执行时调试</h3><p>程序启动，停止在第一行等待单步调试。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m pdb some.py</span><br></pre></td></tr></table></figure>
+
+<h3 id="交互调试"><a href="#交互调试" class="headerlink" title="交互调试"></a>交互调试</h3><p>进入python或ipython解释器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pdb</span><br><span class="line">pdb.run(<span class="string">'testfun(args)'</span>) <span class="comment">#此时会打开pdb调试，注意：先使用s跳转到这个testfun函数中，然后就可以使用l看到代码了</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="程序里埋点"><a href="#程序里埋点" class="headerlink" title="程序里埋点"></a>程序里埋点</h3><p>当程序执行到pdb.set_trace() 位置时停下来调试</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">代码上下文</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> pdb </span><br><span class="line">pdb.set_trace()</span><br></pre></td></tr></table></figure>
+
+<h2 id="日志调试"><a href="#日志调试" class="headerlink" title="日志调试"></a>日志调试</h2><h2 id="print大法好"><a href="#print大法好" class="headerlink" title="print大法好"></a>print大法好</h2><p>使用pdb调试的5个demo</p>
+<h3 id="demo-1"><a href="#demo-1" class="headerlink" title="demo 1"></a>demo 1</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pdb </span><br><span class="line">a = <span class="string">"aaa"</span></span><br><span class="line">pdb.set_trace()</span><br><span class="line">b = <span class="string">"bbb"</span></span><br><span class="line">c = <span class="string">"ccc"</span></span><br><span class="line">final = a + b + c </span><br><span class="line"><span class="keyword">print</span> final</span><br><span class="line"></span><br><span class="line"><span class="comment">#调试方法</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 《1 显示代码》</span></span><br><span class="line"><span class="comment"># l----&gt;能够显示当前调试过程中的代码，其实l表示list列出的意思</span></span><br><span class="line">  <span class="comment">#如下，途中，-&gt; 指向的地方表示要将要执行的位置</span></span><br><span class="line">  <span class="comment"># 2      a = "aaa"</span></span><br><span class="line">  <span class="comment"># 3      pdb.set_trace()</span></span><br><span class="line">  <span class="comment"># 4      b = "bbb"</span></span><br><span class="line">  <span class="comment"># 5      c = "ccc"</span></span><br><span class="line">  <span class="comment"># 6      pdb.set_trace()</span></span><br><span class="line">  <span class="comment"># 7  -&gt;    final = a + b + c</span></span><br><span class="line">  <span class="comment"># 8      print final</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 《2 执行下一行代码》</span></span><br><span class="line"><span class="comment"># n----&gt;能够向下执行一行代码，然后停止运行等待继续调试 n表示next的意思</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 《3 查看变量的值》</span></span><br><span class="line"><span class="comment"># p----&gt;能够查看变量的值，p表示prit打印输出的意思</span></span><br><span class="line">    <span class="comment">#例如：</span></span><br><span class="line">    <span class="comment"># p name 表示查看变量name的值</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="demo-2"><a href="#demo-2" class="headerlink" title="demo 2"></a>demo 2</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pdb </span><br><span class="line">a = <span class="string">"aaa"</span></span><br><span class="line">pdb.set_trace()</span><br><span class="line">b = <span class="string">"bbb"</span></span><br><span class="line">c = <span class="string">"ccc"</span></span><br><span class="line">pdb.set_trace()</span><br><span class="line">final = a + b + c </span><br><span class="line"><span class="keyword">print</span> final</span><br><span class="line"></span><br><span class="line"><span class="comment"># 《4 将程序继续运行》</span></span><br><span class="line"><span class="comment"># c-----&gt;让程序继续向下执行，与n的区别是n只会执行下面的一行代码，而c会像python xxxx.py一样 继续执行不会停止；c表示continue的意思</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 《5 set_trace()》</span></span><br><span class="line"><span class="comment"># 如果程序中有多个set_trace()，那么能够让程序在使用c的时候停留在下一个set_trace()位置处</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="demo-3"><a href="#demo-3" class="headerlink" title="demo 3"></a>demo 3</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> pdb </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">combine</span><span class="params">(s1,s2)</span>:</span></span><br><span class="line">    s3 = s1 + s2 + s1</span><br><span class="line">    s3 = <span class="string">'"'</span> + s3 +<span class="string">'"'</span></span><br><span class="line">    <span class="keyword">return</span> s3</span><br><span class="line"></span><br><span class="line">a = <span class="string">"aaa"</span></span><br><span class="line">pdb.set_trace() </span><br><span class="line">b = <span class="string">"bbb"</span></span><br><span class="line">c = <span class="string">"ccc"</span></span><br><span class="line">final = combine(a,b)</span><br><span class="line"><span class="keyword">print</span> final</span><br><span class="line"></span><br><span class="line"><span class="comment"># 《6 设置断点》</span></span><br><span class="line"><span class="comment"># b----&gt;设置断点，即当使用c的时候，c可以在遇到set_trace()的时候停止，也可以在遇到标记有断点的地方停止；b表示break的意思</span></span><br><span class="line">    <span class="comment">#例如：</span></span><br><span class="line">    <span class="comment">#b 11 在第11行设置断点，注意这个11可以使用l来得到</span></span><br><span class="line">    <span class="comment"># (Pdb) l</span></span><br><span class="line">    <span class="comment">#   4          s3 = s1 + s2 + s1</span></span><br><span class="line">    <span class="comment">#   5          s3 = '"' + s3 +'"'</span></span><br><span class="line">    <span class="comment">#   6          return s3</span></span><br><span class="line">    <span class="comment">#   7      a = "aaa"</span></span><br><span class="line">    <span class="comment">#   8      pdb.set_trace()</span></span><br><span class="line">    <span class="comment">#   9  -&gt;    b = "bbb"</span></span><br><span class="line">    <span class="comment">#  10      c = "ccc"</span></span><br><span class="line">    <span class="comment">#  11      final = combine(a,b)</span></span><br><span class="line">    <span class="comment">#  12      print final</span></span><br><span class="line">    <span class="comment"># [EOF]</span></span><br><span class="line">    <span class="comment"># (Pdb) b 11</span></span><br><span class="line">    <span class="comment"># Breakpoint 1 at /Users/wangmingdong/Desktop/test3.py:11</span></span><br><span class="line">    <span class="comment"># (Pdb) c</span></span><br><span class="line">    <span class="comment"># &gt; /Users/wangmingdong/Desktop/test3.py(11)&lt;module&gt;()</span></span><br><span class="line">    <span class="comment"># -&gt; final = combine(a,b)</span></span><br><span class="line">    <span class="comment"># (Pdb) l</span></span><br><span class="line">    <span class="comment">#   6          return s3</span></span><br><span class="line">    <span class="comment">#   7      a = "aaa"</span></span><br><span class="line">    <span class="comment">#   8      pdb.set_trace()</span></span><br><span class="line">    <span class="comment">#   9      b = "bbb"</span></span><br><span class="line">    <span class="comment">#  10      c = "ccc"</span></span><br><span class="line">    <span class="comment">#  11 B-&gt;    final = combine(a,b)</span></span><br><span class="line">    <span class="comment">#  12      print final</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 《7 进入函数继续调试》</span></span><br><span class="line"><span class="comment"># s----&gt;进入函数里面继续调试，如果使用n表示把一个函数的调用当做一条语句执行过去，而使用s的话，会进入到这个函数 并且停止</span></span><br><span class="line">    <span class="comment">#例如</span></span><br><span class="line">    <span class="comment"># (Pdb) l</span></span><br><span class="line">    <span class="comment">#   6          return s3</span></span><br><span class="line">    <span class="comment">#   7      a = "aaa"</span></span><br><span class="line">    <span class="comment">#   8      pdb.set_trace()</span></span><br><span class="line">    <span class="comment">#   9      b = "bbb"</span></span><br><span class="line">    <span class="comment">#  10      c = "ccc"</span></span><br><span class="line">    <span class="comment">#  11 B-&gt;    final = combine(a,b)</span></span><br><span class="line">    <span class="comment">#  12      print final</span></span><br><span class="line">    <span class="comment"># [EOF]</span></span><br><span class="line">    <span class="comment"># (Pdb) s</span></span><br><span class="line">    <span class="comment"># --Call--</span></span><br><span class="line">    <span class="comment"># &gt; /Users/wangmingdong/Desktop/test3.py(3)combine()</span></span><br><span class="line">    <span class="comment"># -&gt; def combine(s1,s2):</span></span><br><span class="line">    <span class="comment"># (Pdb) l</span></span><br><span class="line">    <span class="comment">#   1      import pdb</span></span><br><span class="line">    <span class="comment">#   2</span></span><br><span class="line">    <span class="comment">#   3  -&gt;    def combine(s1,s2):</span></span><br><span class="line">    <span class="comment">#   4          s3 = s1 + s2 + s1</span></span><br><span class="line">    <span class="comment">#   5          s3 = '"' + s3 +'"'</span></span><br><span class="line">    <span class="comment">#   6          return s3</span></span><br><span class="line">    <span class="comment">#   7      a = "aaa"</span></span><br><span class="line">    <span class="comment">#   8      pdb.set_trace()</span></span><br><span class="line">    <span class="comment">#   9      b = "bbb"</span></span><br><span class="line">    <span class="comment">#  10      c = "ccc"</span></span><br><span class="line">    <span class="comment">#  11 B    final = combine(a,b)</span></span><br><span class="line">    <span class="comment"># (Pdb)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 《8 查看传递到函数中的变量》</span></span><br><span class="line"><span class="comment"># a----&gt;调用一个函数时，可以查看传递到这个函数中的所有的参数；a表示arg的意思</span></span><br><span class="line">    <span class="comment">#例如：</span></span><br><span class="line">    <span class="comment"># (Pdb) l</span></span><br><span class="line">    <span class="comment">#   1      #coding=utf-8</span></span><br><span class="line">    <span class="comment">#   2      import pdb</span></span><br><span class="line">    <span class="comment">#   3</span></span><br><span class="line">    <span class="comment">#   4  -&gt;    def combine(s1,s2):</span></span><br><span class="line">    <span class="comment">#   5          s3 = s1 + s2 + s1</span></span><br><span class="line">    <span class="comment">#   6          s3 = '"' + s3 +'"'</span></span><br><span class="line">    <span class="comment">#   7          return s3</span></span><br><span class="line">    <span class="comment">#   8</span></span><br><span class="line">    <span class="comment">#   9      a = "aaa"</span></span><br><span class="line">    <span class="comment">#  10      pdb.set_trace()</span></span><br><span class="line">    <span class="comment">#  11      b = "bbb"</span></span><br><span class="line">    <span class="comment"># (Pdb) a</span></span><br><span class="line">    <span class="comment"># s1 = aaa</span></span><br><span class="line">    <span class="comment"># s2 = bbb</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 《9 执行到函数的最后一步》</span></span><br><span class="line"><span class="comment"># r-----&gt;如果在函数中不想一步步的调试了，只是想到这个函数的最后一条语句那个位置，比如return语句，那么就可以使用r；r表示return的意思</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="demo-4"><a href="#demo-4" class="headerlink" title="demo 4"></a>demo 4</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="function"><span class="keyword">def</span> <span class="title">pdb_test</span><span class="params">(arg)</span>:</span></span><br><span class="line">   ...:     <span class="keyword">for</span> i <span class="keyword">in</span> range(arg):</span><br><span class="line">   ...:         print(i)</span><br><span class="line">   ...:     <span class="keyword">return</span> arg</span><br><span class="line">   ...:</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: <span class="comment">#在python交互模式中，如果想要调试这个函数，那么可以</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: <span class="comment">#采用，pdb.run的方式，如下：</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: <span class="keyword">import</span> pdb</span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: pdb.run(<span class="string">"pdb_test(10)"</span>)</span><br><span class="line">&gt; &lt;string&gt;(<span class="number">1</span>)&lt;module&gt;()</span><br><span class="line">(Pdb) s</span><br><span class="line">--Call--</span><br><span class="line">&gt; &lt;ipython-input<span class="number">-1</span>-ef4d08b8cc81&gt;(<span class="number">1</span>)pdb_test()</span><br><span class="line">-&gt; def pdb_test(arg):</span><br><span class="line">(Pdb) l</span><br><span class="line">  1  -&gt;    def pdb_test(arg):</span><br><span class="line">  <span class="number">2</span>          <span class="keyword">for</span> i <span class="keyword">in</span> range(arg):</span><br><span class="line">  <span class="number">3</span>              print(i)</span><br><span class="line">  <span class="number">4</span>          <span class="keyword">return</span> arg</span><br><span class="line">[EOF]</span><br><span class="line">(Pdb) n</span><br><span class="line">&gt; &lt;ipython-input<span class="number">-1</span>-ef4d08b8cc81&gt;(<span class="number">2</span>)pdb_test()</span><br><span class="line">-&gt; for i in range(arg):</span><br><span class="line">(Pdb) l</span><br><span class="line">  <span class="number">1</span>      <span class="function"><span class="keyword">def</span> <span class="title">pdb_test</span><span class="params">(arg)</span>:</span></span><br><span class="line">  2  -&gt;        for i in range(arg):</span><br><span class="line">  <span class="number">3</span>              print(i)</span><br><span class="line">  <span class="number">4</span>          <span class="keyword">return</span> arg</span><br><span class="line">[EOF]</span><br><span class="line">(Pdb) n</span><br><span class="line">&gt; &lt;ipython-input<span class="number">-1</span>-ef4d08b8cc81&gt;(<span class="number">3</span>)pdb_test()</span><br><span class="line">-&gt; print(i)</span><br><span class="line">(Pdb)</span><br><span class="line"><span class="number">0</span></span><br><span class="line">&gt; &lt;ipython-input<span class="number">-1</span>-ef4d08b8cc81&gt;(<span class="number">2</span>)pdb_test()</span><br><span class="line">-&gt; for i in range(arg):</span><br><span class="line">(Pdb)</span><br><span class="line">&gt; &lt;ipython-input<span class="number">-1</span>-ef4d08b8cc81&gt;(<span class="number">3</span>)pdb_test()</span><br><span class="line">-&gt; print(i)</span><br><span class="line">(Pdb)</span><br><span class="line"><span class="number">1</span></span><br><span class="line">&gt; &lt;ipython-input<span class="number">-1</span>-ef4d08b8cc81&gt;(<span class="number">2</span>)pdb_test()</span><br><span class="line">-&gt; for i in range(arg):</span><br><span class="line">(Pdb)</span><br></pre></td></tr></table></figure>
+
+<h3 id="demo-5"><a href="#demo-5" class="headerlink" title="demo 5"></a>demo 5</h3><ul>
+<li>运行过程中使用pdb修改变量的值</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">7</span>]: pdb.run(<span class="string">"pdb_test(1)"</span>)</span><br><span class="line">&gt; &lt;string&gt;(<span class="number">1</span>)&lt;module&gt;()</span><br><span class="line">(Pdb) s</span><br><span class="line">--Call--</span><br><span class="line">&gt; &lt;ipython-input<span class="number">-1</span>-ef4d08b8cc81&gt;(<span class="number">1</span>)pdb_test()</span><br><span class="line">-&gt; def pdb_test(arg):</span><br><span class="line">(Pdb) a</span><br><span class="line">arg = <span class="number">1</span></span><br><span class="line">(Pdb) l</span><br><span class="line">  1  -&gt;    def pdb_test(arg):</span><br><span class="line">  <span class="number">2</span>          <span class="keyword">for</span> i <span class="keyword">in</span> range(arg):</span><br><span class="line">  <span class="number">3</span>              print(i)</span><br><span class="line">  <span class="number">4</span>          <span class="keyword">return</span> arg</span><br><span class="line">[EOF]</span><br><span class="line">(Pdb) !arg = <span class="number">100</span>  <span class="comment">#!!!这里是修改变量的方法</span></span><br><span class="line">(Pdb) n</span><br><span class="line">&gt; &lt;ipython-input<span class="number">-1</span>-ef4d08b8cc81&gt;(<span class="number">2</span>)pdb_test()</span><br><span class="line">-&gt; for i in range(arg):</span><br><span class="line">(Pdb) l</span><br><span class="line">  <span class="number">1</span>      <span class="function"><span class="keyword">def</span> <span class="title">pdb_test</span><span class="params">(arg)</span>:</span></span><br><span class="line">  2  -&gt;        for i in range(arg):</span><br><span class="line">  <span class="number">3</span>              print(i)</span><br><span class="line">  <span class="number">4</span>          <span class="keyword">return</span> arg</span><br><span class="line">[EOF]</span><br><span class="line">(Pdb) p arg</span><br><span class="line"><span class="number">100</span></span><br><span class="line">(Pdb)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>练一练:请使用所学的pdb调试技巧对其进行调试出bug</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> pdb </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add3Nums</span><span class="params">(a1,a2,a3)</span>:</span></span><br><span class="line">    result = a1+a2+a3</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get3NumsAvarage</span><span class="params">(s1,s2)</span>:</span></span><br><span class="line">    s3 = s1 + s2 + s1</span><br><span class="line">    result = <span class="number">0</span></span><br><span class="line">    result = add3Nums(s1,s2,s3)/<span class="number">3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line">    a = <span class="number">11</span></span><br><span class="line">    <span class="comment"># pdb.set_trace() </span></span><br><span class="line">    b = <span class="number">12</span></span><br><span class="line">    final = get3NumsAvarage(a,b)</span><br><span class="line">    <span class="keyword">print</span> final</span><br></pre></td></tr></table></figure>
+
+<p>pdb 调试有个明显的缺陷就是对于多线程，远程调试等支持得不够好，同时没有较为直观的界面显示，不太适合大型的 python 项目。而在较大的 python 项目中，这些调试需求比较常见，因此需要使用更为高级的调试工具。</p>
+<h1 id="编码风格"><a href="#编码风格" class="headerlink" title="编码风格"></a>编码风格</h1><h2 id="错误认知"><a href="#错误认知" class="headerlink" title="错误认知"></a>错误认知</h2><ul>
+<li>这很浪费时间</li>
+<li>我是个艺术家</li>
+<li>所有人都能穿的鞋不会合任何人的脚</li>
+<li>我善长制定编码规范</li>
+</ul>
+<h2 id="正确认知"><a href="#正确认知" class="headerlink" title="正确认知"></a>正确认知</h2><ul>
+<li>促进团队合作</li>
+<li>减少bug处理</li>
+<li>提高可读性，降低维护成本</li>
+<li>有助于代码审查</li>
+<li>养成习惯，有助于程序员自身的成长</li>
+</ul>
+<h2 id="pep8-编码规范"><a href="#pep8-编码规范" class="headerlink" title="pep8 编码规范"></a>pep8 编码规范</h2><p>Python Enhancement Proposals ：python改进方案</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly93d3cucHl0aG9uLm9yZy9kZXYvcGVwcy8=" title="https://www.python.org/dev/peps/">https://www.python.org/dev/peps/<i class="fa fa-external-link"></i></span></p>
+<p>pep8 官网规范地址</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly93d3cucHl0aG9uLm9yZy9kZXYvcGVwcy9wZXAtMDAwOC8=" title="https://www.python.org/dev/peps/pep-0008/">https://www.python.org/dev/peps/pep-0008/<i class="fa fa-external-link"></i></span></p>
+<p>Guido的关键点之一是：代码更多是用来读而不是写。编码规范旨在改善Python代码的可读性。</p>
+<p>风格指南强调一致性。项目、模块或函数保持一致都很重要。</p>
+<blockquote>
+<p> 每级缩进用4个空格。</p>
+</blockquote>
+<p>括号中使用垂直隐式缩进或使用悬挂缩进。后者应该注意第一行要没有参数，后续行要有缩进。</p>
+<ul>
+<li>Yes</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 对准左括号</span></span><br><span class="line">foo = long_function_name(var_one, var_two,</span><br><span class="line">                         var_three, var_four)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不对准左括号，但加多一层缩进，以和后面内容区别。</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">long_function_name</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        var_one, var_two, var_three,</span></span></span><br><span class="line"><span class="function"><span class="params">        var_four)</span>:</span></span><br><span class="line">    print(var_one)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 悬挂缩进必须加多一层缩进.</span></span><br><span class="line">foo = long_function_name(</span><br><span class="line">    var_one, var_two,</span><br><span class="line">    var_three, var_four)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>No</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不使用垂直对齐时，第一行不能有参数。</span></span><br><span class="line">foo = long_function_name(var_one, var_two,</span><br><span class="line">    var_three, var_four)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 参数的缩进和后续内容缩进不能区别。</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">long_function_name</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    var_one, var_two, var_three,</span></span></span><br><span class="line"><span class="function"><span class="params">    var_four)</span>:</span></span><br><span class="line">    print(var_one)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> 4个空格的规则是对续行可选的。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 悬挂缩进不一定是4个空格</span></span><br><span class="line">foo = long_function_name(</span><br><span class="line">  var_one, var_two,</span><br><span class="line">  var_three, var_four)</span><br><span class="line"><span class="keyword">if</span>语句跨行时，两个字符关键字(比如<span class="keyword">if</span>)加上一个空格，再加上左括号构成了很好的缩进。后续行暂时没有规定，至少有如下三种格式，建议使用第<span class="number">3</span>种。</span><br><span class="line"></span><br><span class="line"><span class="comment"># 没有额外缩进，不是很好看，个人不推荐.</span></span><br><span class="line"><span class="keyword">if</span> (this_is_one_thing <span class="keyword">and</span></span><br><span class="line">    that_is_another_thing):</span><br><span class="line">    do_something()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加注释</span></span><br><span class="line"><span class="keyword">if</span> (this_is_one_thing <span class="keyword">and</span></span><br><span class="line">    that_is_another_thing):</span><br><span class="line">    <span class="comment"># Since both conditions are true, we can frobnicate.</span></span><br><span class="line">    do_something()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 额外添加缩进,推荐。</span></span><br><span class="line"><span class="comment"># Add some extra indentation on the conditional continuation line.</span></span><br><span class="line"><span class="keyword">if</span> (this_is_one_thing</span><br><span class="line">        <span class="keyword">and</span> that_is_another_thing):</span><br><span class="line">    do_something()</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> 右边括号也可以另起一行。有两种格式，建议第2种。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 右括号不回退，个人不推荐</span></span><br><span class="line">my_list = [</span><br><span class="line">    <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>,</span><br><span class="line">    <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>,</span><br><span class="line">    ]</span><br><span class="line">result = some_function_that_takes_arguments(</span><br><span class="line">    <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>,</span><br><span class="line">    <span class="string">'d'</span>, <span class="string">'e'</span>, <span class="string">'f'</span>,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="comment"># 右括号回退</span></span><br><span class="line">my_list = [</span><br><span class="line">    <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>,</span><br><span class="line">    <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>,</span><br><span class="line">]</span><br><span class="line">result = some_function_that_takes_arguments(</span><br><span class="line">    <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>,</span><br><span class="line">    <span class="string">'d'</span>, <span class="string">'e'</span>, <span class="string">'f'</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> 空格或Tab</p>
+</blockquote>
+<ul>
+<li>空格是首选的缩进方法。</li>
+<li>Tab仅仅在已经使用tab缩进的代码中为了保持一致性而使用。</li>
+<li>Python 3中不允许混合使用Tab和空格缩进。</li>
+<li>Python 2的包含空格与Tab和空格缩进的应该全部转为空格缩进。</li>
+</ul>
+<blockquote>
+<p>最大行宽</p>
+</blockquote>
+<ul>
+<li>限制所有行的最大行宽为79字符。</li>
+<li>文本长块，比如文档字符串或注释，行长度应限制为72个字符。</li>
+</ul>
+<blockquote>
+<p>两行空行分割顶层函数和类的定义。</p>
+</blockquote>
+<ul>
+<li>类的方法定义用单个空行分割。</li>
+<li>额外的空行可以必要的时候用于分割不同的函数组，但是要尽量节约使用。</li>
+<li>额外的空行可以必要的时候在函数中用于分割不同的逻辑块，但是要尽量节约使用。</li>
+<li>在核心Python发布的代码应该总是使用UTF-8(ASCII在Python 2)。</li>
+<li>Python 3(默认UTF-8)不应有编码声明。</li>
+</ul>
+<blockquote>
+<p>导入在单独行</p>
+</blockquote>
+<ul>
+<li><p>Yes：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> subprocess <span class="keyword">import</span> Popen, PIPE</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>No:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys, os</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>导入始终在文件的顶部，在模块注释和文档字符串之后，在模块全局变量和常量之前。</p>
+</li>
+<li><p>导入顺序如下：标准库进口,相关的第三方库，本地库。各组的导入之间要有空行。</p>
+</li>
+</ul>
+<blockquote>
+<p>禁止使用通配符导入。</p>
+</blockquote>
+<p>通配符导入(from import *)应该避免，因为它不清楚命名空间有哪些名称存，混淆读者和许多自动化的工具。</p>
+<blockquote>
+<p>字符串引用</p>
+</blockquote>
+<ul>
+<li>Python中单引号字符串和双引号字符串都是相同的。注意尽量避免在字符串中的反斜杠以提高可读性。</li>
+<li>根据PEP 257, 三个引号都使用双引号。</li>
+</ul>
+<blockquote>
+<p>括号里边避免空格</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 括号里边避免空格</span></span><br><span class="line"><span class="comment"># Yes</span></span><br><span class="line">spam(ham[<span class="number">1</span>], &#123;eggs: <span class="number">2</span>&#125;)</span><br><span class="line"><span class="comment"># No</span></span><br><span class="line">spam( ham[ <span class="number">1</span> ], &#123; eggs: <span class="number">2</span> &#125; )</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>逗号，冒号，分号之前避免空格</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 逗号，冒号，分号之前避免空格</span></span><br><span class="line"><span class="comment"># Yes</span></span><br><span class="line"><span class="keyword">if</span> x == <span class="number">4</span>: <span class="keyword">print</span> x, y; x, y = y, x</span><br><span class="line"><span class="comment"># No</span></span><br><span class="line"><span class="keyword">if</span> x == <span class="number">4</span> : <span class="keyword">print</span> x , y ; x , y = y , x</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>索引操作中的冒号当作操作符处理前后要有同样的空格(一个空格或者没有空格，个人建议是没有。)</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Yes</span></span><br><span class="line">ham[<span class="number">1</span>:<span class="number">9</span>], ham[<span class="number">1</span>:<span class="number">9</span>:<span class="number">3</span>], ham[:<span class="number">9</span>:<span class="number">3</span>], ham[<span class="number">1</span>::<span class="number">3</span>], ham[<span class="number">1</span>:<span class="number">9</span>:]</span><br><span class="line">ham[lower:upper], ham[lower:upper:], ham[lower::step]</span><br><span class="line">ham[lower+offset : upper+offset]</span><br><span class="line">ham[: upper_fn(x) : step_fn(x)], ham[:: step_fn(x)]</span><br><span class="line">ham[lower + offset : upper + offset]</span><br><span class="line"><span class="comment"># No</span></span><br><span class="line">ham[lower + offset:upper + offset]</span><br><span class="line">ham[<span class="number">1</span>: <span class="number">9</span>], ham[<span class="number">1</span> :<span class="number">9</span>], ham[<span class="number">1</span>:<span class="number">9</span> :<span class="number">3</span>]</span><br><span class="line">ham[lower : : upper]</span><br><span class="line">ham[ : upper]</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>函数调用的左括号之前不能有空格</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Yes</span></span><br><span class="line">spam(<span class="number">1</span>)</span><br><span class="line">dct[<span class="string">'key'</span>] = lst[index]</span><br><span class="line"></span><br><span class="line"><span class="comment"># No</span></span><br><span class="line">spam (<span class="number">1</span>)</span><br><span class="line">dct [<span class="string">'key'</span>] = lst [index]</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>赋值等操作符前后不能因为对齐而添加多个空格</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Yes</span></span><br><span class="line">x = <span class="number">1</span></span><br><span class="line">y = <span class="number">2</span></span><br><span class="line">long_variable = <span class="number">3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># No</span></span><br><span class="line">x             = <span class="number">1</span></span><br><span class="line">y             = <span class="number">2</span></span><br><span class="line">long_variable = <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>二元运算符两边放置一个空格</p>
+</blockquote>
+<p>涉及 =、符合操作符 ( += , -=等)、比较( == , &lt; , &gt; , != , &lt;&gt; , &lt;= , &gt;= , in , not in , is , is not )、布尔( and , or , not )。</p>
+<p>优先级高的运算符或操作符的前后不建议有空格。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Yes</span></span><br><span class="line">i = i + <span class="number">1</span></span><br><span class="line">submitted += <span class="number">1</span></span><br><span class="line">x = x*<span class="number">2</span> - <span class="number">1</span></span><br><span class="line">hypot2 = x*x + y*y</span><br><span class="line">c = (a+b) * (a-b)</span><br><span class="line"></span><br><span class="line"><span class="comment"># No</span></span><br><span class="line">i=i+<span class="number">1</span></span><br><span class="line">submitted +=<span class="number">1</span></span><br><span class="line">x = x * <span class="number">2</span> - <span class="number">1</span></span><br><span class="line">hypot2 = x * x + y * y</span><br><span class="line">c = (a + b) * (a - b)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>关键字参数和默认值参数的前后不要加空格</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Yes</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">complex</span><span class="params">(real, imag=<span class="number">0.0</span>)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> magic(r=real, i=imag)</span><br><span class="line"></span><br><span class="line"><span class="comment"># No</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">complex</span><span class="params">(real, imag = <span class="number">0.0</span>)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> magic(r = real, i = imag)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>通常不推荐复合语句(Compound statements: 多条语句写在同一行)。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Yes</span></span><br><span class="line"><span class="keyword">if</span> foo == <span class="string">'blah'</span>:</span><br><span class="line">    do_blah_thing()</span><br><span class="line">do_one()</span><br><span class="line">do_two()</span><br><span class="line">do_three()</span><br><span class="line"></span><br><span class="line"><span class="comment"># No</span></span><br><span class="line"><span class="keyword">if</span> foo == <span class="string">'blah'</span>: do_blah_thing()</span><br><span class="line">do_one(); do_two(); do_three()</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>尽管有时可以在if/for/while 的同一行跟一小段代码，但绝不要跟多个子句，并尽量避免换行。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># No</span></span><br><span class="line"><span class="keyword">if</span> foo == <span class="string">'blah'</span>: do_blah_thing()</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> lst: total += x</span><br><span class="line"><span class="keyword">while</span> t &lt; <span class="number">10</span>: t = delay()</span><br><span class="line">更不是：</span><br><span class="line"></span><br><span class="line"><span class="comment"># No</span></span><br><span class="line"><span class="keyword">if</span> foo == <span class="string">'blah'</span>: do_blah_thing()</span><br><span class="line"><span class="keyword">else</span>: do_non_blah_thing()</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>: something()</span><br><span class="line"><span class="keyword">finally</span>: cleanup()</span><br><span class="line"></span><br><span class="line">do_one(); do_two(); do_three(long, argument,</span><br><span class="line">                             list, like, this)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> foo == <span class="string">'blah'</span>: one(); two(); three()</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>避免采用的名字</p>
+</blockquote>
+<p>决不要用字符’l’(小写字母el)，’O’(大写字母oh)，或 ‘I’(大写字母eye) 作为单个字符的变量名。一些字体中，这些字符不能与数字1和0区别。用’L’ 代替’l’时。</p>
+<blockquote>
+<p>包和模块名</p>
+</blockquote>
+<p>模块名要简短，全部用小写字母，可使用下划线以提高可读性。包名和模块名类似，但不推荐使用下划线。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2018/10/28/python%E7%9B%B8%E5%85%B3/python-%E8%B0%83%E8%AF%95%E5%92%8C%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC/" title="python-调试和编码风格">https://zxucooly.github.io/2018/10/28/python相关/python-调试和编码风格/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+              <a href="/tags/python-base/" rel="tag"><i class="fa fa-tag"></i> python-base</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/27/python%E7%9B%B8%E5%85%B3/python-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" rel="prev" title="python-垃圾回收">
+      <i class="fa fa-chevron-left"></i> python-垃圾回收
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/09/spring%E7%9B%B8%E5%85%B3/SpringDataJPA%E6%80%BB%E7%BB%93/" rel="next" title="SpringDataJPA总结">
+      SpringDataJPA总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#调试"><span class="nav-number">1.</span> <span class="nav-text">调试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pdb"><span class="nav-number">1.1.</span> <span class="nav-text">pdb</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#执行时调试"><span class="nav-number">1.1.1.</span> <span class="nav-text">执行时调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#交互调试"><span class="nav-number">1.1.2.</span> <span class="nav-text">交互调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序里埋点"><span class="nav-number">1.1.3.</span> <span class="nav-text">程序里埋点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#日志调试"><span class="nav-number">1.2.</span> <span class="nav-text">日志调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#print大法好"><span class="nav-number">1.3.</span> <span class="nav-text">print大法好</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#demo-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">demo 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo-2"><span class="nav-number">1.3.2.</span> <span class="nav-text">demo 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo-3"><span class="nav-number">1.3.3.</span> <span class="nav-text">demo 3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo-4"><span class="nav-number">1.3.4.</span> <span class="nav-text">demo 4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#demo-5"><span class="nav-number">1.3.5.</span> <span class="nav-text">demo 5</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编码风格"><span class="nav-number">2.</span> <span class="nav-text">编码风格</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#错误认知"><span class="nav-number">2.1.</span> <span class="nav-text">错误认知</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正确认知"><span class="nav-number">2.2.</span> <span class="nav-text">正确认知</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pep8-编码规范"><span class="nav-number">2.3.</span> <span class="nav-text">pep8 编码规范</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

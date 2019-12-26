@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="1 Spring Validator 接口Spring提供了一个验证器接口，您可以使用它来验证对象。验证器接口使用Errors对象工作，这样在进行验证时，验证器可以向Errors对象报告验证失败。 Let’s consider a small data object: 1234567public class Person &amp;#123;    private String name;    priv">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3-数据验证、数据绑定、类型转换">
+<meta property="og:url" content="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/3-%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A%E3%80%81%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="1 Spring Validator 接口Spring提供了一个验证器接口，您可以使用它来验证对象。验证器接口使用Errors对象工作，这样在进行验证时，验证器可以向Errors对象报告验证失败。 Let’s consider a small data object: 1234567public class Person &amp;#123;    private String name;    priv">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-12-05T08:45:00.000Z">
+<meta property="article:modified_time" content="2019-12-23T15:00:52.067Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="Spring官方文档">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/3-%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A%E3%80%81%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>3-数据验证、数据绑定、类型转换 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/3-%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A%E3%80%81%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          3-数据验证、数据绑定、类型转换
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-05 16:45:00" itemprop="dateCreated datePublished" datetime="2018-12-05T16:45:00+08:00">2018-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-23 23:00:52" itemprop="dateModified" datetime="2019-12-23T23:00:52+08:00">2019-12-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-Spring-Validator-接口"><a href="#1-Spring-Validator-接口" class="headerlink" title="1 Spring Validator 接口"></a>1 Spring Validator 接口</h1><p>Spring提供了一个验证器接口，您可以使用它来验证对象。验证器接口使用Errors对象工作，这样在进行验证时，验证器可以向Errors对象报告验证失败。</p>
+<p>Let’s consider a small data object:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// the usual getters and setters...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>We’re going to provide validation behavior for the <code>Person</code> class by implementing the following two methods of the <code>org.springframework.validation.Validator</code> interface:</p>
+<ul>
+<li><code>supports(Class)</code> - Can this <code>Validator</code> validate instances of the supplied <code>Class</code>?</li>
+<li><code>validate(Object, org.springframework.validation.Errors)</code> - validates the given object and in case of validation errors, registers those with the given <code>Errors</code> object</li>
+</ul>
+<p>Implementing a <code>Validator</code> is fairly straightforward, especially when you know of the <code>ValidationUtils</code> helper class that the Spring Framework also provides.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PersonValidator</span> <span class="keyword">implements</span> <span class="title">Validator</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * This Validator validates *just* Person instances</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supports</span><span class="params">(Class clazz)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Person<span class="class">.<span class="keyword">class</span>.<span class="title">equals</span>(<span class="title">clazz</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">validate</span><span class="params">(Object obj, Errors e)</span> </span>&#123;</span><br><span class="line">        ValidationUtils.rejectIfEmpty(e, <span class="string">"name"</span>, <span class="string">"name.empty"</span>);</span><br><span class="line">        Person p = (Person) obj;</span><br><span class="line">        <span class="keyword">if</span> (p.getAge() &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            e.rejectValue(<span class="string">"age"</span>, <span class="string">"negativevalue"</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (p.getAge() &gt; <span class="number">110</span>) &#123;</span><br><span class="line">            e.rejectValue(<span class="string">"age"</span>, <span class="string">"too.darn.old"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>As you can see, the <code>static</code> <code>rejectIfEmpty(..)</code> method on the <code>ValidationUtils</code> class is used to reject the <code>&#39;name&#39;</code> property if it is <code>null</code> or the empty string. Have a look at the <code>ValidationUtils</code> javadocs to see what functionality it provides besides the example shown previously.</p>
+<p>Validation errors are reported to the <code>Errors</code> object passed to the validator. In case of Spring Web MVC you can use <code>&lt;spring:bind/&gt;</code> tag to inspect the error messages, but of course you can also inspect the errors object yourself. More information about the methods it offers can be found in the javadocs.</p>
+<h1 id="2-Bean-manipulation-and-the-BeanWrapper"><a href="#2-Bean-manipulation-and-the-BeanWrapper" class="headerlink" title="2 Bean manipulation and the BeanWrapper"></a>2 Bean manipulation and the BeanWrapper</h1><p>通过BeanWrapper装饰，提供更多的功能。</p>
+<p>One quite important class in the beans package is the <code>BeanWrapper</code> interface and its corresponding implementation ( <code>BeanWrapperImpl</code>). As quoted from the javadocs, the <code>BeanWrapper</code> offers functionality to set and get property values (individually or in bulk), <strong>get property descriptors, and to query properties to determine if they are readable or writable</strong>. Also, the <code>BeanWrapper</code> offers support for nested properties, enabling the setting of properties on sub-properties to an unlimited depth. Then, the <code>BeanWrapper</code> supports the ability to add standard JavaBeans <code>PropertyChangeListeners</code> and <code>VetoableChangeListeners</code>, without the need for supporting code in the target class. Last but not least, the <code>BeanWrapper</code>provides support for the setting of indexed properties. <strong>The <code>BeanWrapper</code> usually isn’t used by application code directly, but by the <code>DataBinder</code> and the <code>BeanFactory</code>.</strong></p>
+<p>The way the <code>BeanWrapper</code> works is partly indicated by its name: <em>it wraps a bean</em> to perform actions on that bean, like setting and retrieving properties.</p>
+<p>Setting and getting properties is done using the <code>setPropertyValue(s)</code> and <code>getPropertyValue(s)</code> methods that both come with a couple of overloaded variants. </p>
+<p><strong>格式</strong></p>
+<table>
+<thead>
+<tr>
+<th>Expression</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>Indicates the property <code>name</code> corresponding to the methods <code>getName()</code> or <code>isName()</code> and <code>setName(..)</code></td>
+</tr>
+<tr>
+<td><code>account.name</code></td>
+<td>Indicates the nested property <code>name</code> of the property <code>account</code>corresponding e.g. to the methods <code>getAccount().setName()</code>or <code>getAccount().getName()</code></td>
+</tr>
+<tr>
+<td><code>account[2]</code></td>
+<td>Indicates the <em>third</em> element of the indexed property <code>account</code>. Indexed properties can be of type <code>array</code>, <code>list</code> or other <em>naturally ordered</em> collection</td>
+</tr>
+<tr>
+<td><code>account[COMPANYNAME]</code></td>
+<td>Indicates the value of the map entry indexed by the key <em>COMPANYNAME</em> of the Map property <code>account</code></td>
+</tr>
+</tbody></table>
+<p>例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">User user = <span class="keyword">new</span> User(<span class="string">"张三"</span>,<span class="number">22</span>);</span><br><span class="line">BeanWrapperImpl beanWrapper = <span class="keyword">new</span> BeanWrapperImpl(user);</span><br><span class="line">System.out.println(beanWrapper.getPropertyValue(<span class="string">"name"</span>)); <span class="comment">// 张三</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="3-内置PropertyEditor实现"><a href="#3-内置PropertyEditor实现" class="headerlink" title="3 内置PropertyEditor实现"></a>3 内置PropertyEditor实现</h1><p>Spring使用propertyeditor的概念来实现对象和字符串之间的转换。<br>如果你仔细想想，有时候用一种不同于对象本身的方式来表示属性是很方便的。<br>例如，一个日期可以用人类可读的方式表示(如字符串’2007-14-09’)，而我们仍然能够将人类可读的形式转换回原始日期(或者更好:转换以人类可读形式输入的任何日期，返回到日期对象)。<br>这种行为可以通过注册java.bean . propertyeditor类型的自定义编辑器来实现。</p>
+<h2 id="3-1-注入编辑器"><a href="#3-1-注入编辑器" class="headerlink" title="3.1 注入编辑器"></a><strong>3.1 注入编辑器</strong></h2><ul>
+<li>use the <code>registerCustomEditor()</code> method of the<code>ConfigurableBeanFactory</code> interface, assuming you have a <code>BeanFactory</code> reference</li>
+<li>use a special bean factory post-processor called <code>CustomEditorConfigurer</code>. Although bean factory post-processors can be used with <code>BeanFactory</code> implementations, the <code>CustomEditorConfigurer</code> has a nested property setup, so it is strongly recommended that it is used with the <code>ApplicationContext</code>, where it may be deployed in similar fashion to any other bean, and automatically detected and applied.</li>
+</ul>
+<p>注意，所有bean工厂和应用程序上下文都自动使用许多内置的属性编辑器，通过使用所谓的BeanWrapper来处理属性转换。此外，ApplicationContexts还会重写或添加额外数量的编辑器来以适合特定应用程序上下文类型的方式处理资源查找。</p>
+<p>Standard JavaBeans <code>PropertyEditor</code> instances are used to convert property values expressed as strings to the actual complex type of the property. <code>CustomEditorConfigurer</code>, a bean factory post-processor, may be used to conveniently add support for additional <code>PropertyEditor</code> instances to an <code>ApplicationContext</code>.</p>
+<p>Consider a user class <code>ExoticType</code>, and another class <code>DependsOnExoticType</code> which needs <code>ExoticType</code> set as a property:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExoticType</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ExoticType</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DependsOnExoticType</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ExoticType type;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setType</span><span class="params">(ExoticType type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>When things are properly set up, we want to be able to assign the type property as a string, which a <code>PropertyEditor</code> will behind the scenes convert into an actual <code>ExoticType</code> instance:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"sample"</span> <span class="attr">class</span>=<span class="string">"example.DependsOnExoticType"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"type"</span> <span class="attr">value</span>=<span class="string">"aNameForExoticType"</span>/&gt;</span> </span><br><span class="line">    <span class="comment">&lt;!-- 字符串转对象 --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>The <code>PropertyEditor</code> implementation could look similar to this:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// converts string representation to ExoticType object</span></span><br><span class="line"><span class="keyword">package</span> example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExoticTypeEditor</span> <span class="keyword">extends</span> <span class="title">PropertyEditorSupport</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAsText</span><span class="params">(String text)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 字符串转对象逻辑代码实现</span></span><br><span class="line">        setValue(<span class="keyword">new</span> ExoticType(text.toUpperCase()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Finally, we use <code>CustomEditorConfigurer</code> to register the new <code>PropertyEditor</code> with the <code>ApplicationContext</code>, which will then be able to use it as needed:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.beans.factory.config.CustomEditorConfigurer"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"customEditors"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"example.ExoticType"</span> <span class="attr">value</span>=<span class="string">"example.ExoticTypeEditor"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-2-Using-PropertyEditorRegistrars"><a href="#3-2-Using-PropertyEditorRegistrars" class="headerlink" title="3.2 Using PropertyEditorRegistrars"></a><strong>3.2 Using PropertyEditorRegistrars</strong></h2><p>Another mechanism for registering property editors with the Spring container is to create and use a <code>PropertyEditorRegistrar</code>. </p>
+<p>Using a <code>PropertyEditorRegistrar</code> is perhaps best illustrated with an example. First off, you need to create your own <code>PropertyEditorRegistrar</code> implementation:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.foo.editors.spring;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomPropertyEditorRegistrar</span> <span class="keyword">implements</span> <span class="title">PropertyEditorRegistrar</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerCustomEditors</span><span class="params">(PropertyEditorRegistry registry)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// it is expected that new PropertyEditor instances are created</span></span><br><span class="line">        <span class="comment">// 不能通过构造参数改变注入字符串值</span></span><br><span class="line">        registry.registerCustomEditor(ExoticType<span class="class">.<span class="keyword">class</span>, <span class="title">new</span> <span class="title">ExoticTypeEditor</span>())</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// you could register as many custom property editors as are required here...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>See also the <code>org.springframework.beans.support.ResourceEditorRegistrar</code> for an example <code>PropertyEditorRegistrar</code>implementation. Notice how in its implementation of the <code>registerCustomEditors(..)</code> method it creates new instances of each property editor.</p>
+<p>Next we configure a <code>CustomEditorConfigurer</code> and inject an instance of our <code>CustomPropertyEditorRegistrar</code> into it:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.beans.factory.config.CustomEditorConfigurer"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"propertyEditorRegistrars"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">"customPropertyEditorRegistrar"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"customPropertyEditorRegistrar"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">class</span>=<span class="string">"com.foo.editors.spring.CustomPropertyEditorRegistrar"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Finally, and in a bit of a departure from the focus of this chapter, for those of you using <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yw==" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web.html#mvc">Spring’s MVC web framework<i class="fa fa-external-link"></i></span>, using <code>PropertyEditorRegistrars</code> in conjunction with data-binding <code>Controllers</code> (such as <code>SimpleFormController</code>) can be very convenient. Find below an example of using a <code>PropertyEditorRegistrar</code> in the implementation of an <code>initBinder(..)</code> method:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">RegisterUserController</span> <span class="keyword">extends</span> <span class="title">SimpleFormController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PropertyEditorRegistrar customPropertyEditorRegistrar;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RegisterUserController</span><span class="params">(PropertyEditorRegistrar propertyEditorRegistrar)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.customPropertyEditorRegistrar = propertyEditorRegistrar;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initBinder</span><span class="params">(HttpServletRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">            ServletRequestDataBinder binder)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.customPropertyEditorRegistrar.registerCustomEditors(binder);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// other methods to do with registering a User</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This style of <code>PropertyEditor</code> registration can lead to concise code (the implementation of <code>initBinder(..)</code> is just one line long!), and allows common <code>PropertyEditor</code> registration code to be encapsulated in a class and then shared amongst as many<code>Controllers</code> as needed.</p>
+<h1 id="4-类型转换"><a href="#4-类型转换" class="headerlink" title="4 类型转换"></a>4 类型转换</h1><h2 id="4-1-类型转换接口"><a href="#4-1-类型转换接口" class="headerlink" title="4.1 类型转换接口"></a>4.1 类型转换接口</h2><p>The SPI to implement type conversion logic is simple and strongly typed:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.core.convert.converter;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Converter</span>&lt;<span class="title">S</span>, <span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">T <span class="title">convert</span><span class="params">(S source)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例：String To Integer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.core.convert.support;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">StringToInteger</span> <span class="keyword">implements</span> <span class="title">Converter</span>&lt;<span class="title">String</span>, <span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">convert</span><span class="params">(String source)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Integer.valueOf(source);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-2-ConverterFactory"><a href="#4-2-ConverterFactory" class="headerlink" title="4.2 ConverterFactory"></a>4.2 ConverterFactory</h2><p>When you need to centralize the conversion logic for an entire class hierarchy, for example, when converting from String to java.lang.Enum objects, implement <code>ConverterFactory</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.core.convert.converter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ConverterFactory</span>&lt;<span class="title">S</span>, <span class="title">R</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    &lt;T extends R&gt; <span class="function">Converter&lt;S, T&gt; <span class="title">getConverter</span><span class="params">(Class&lt;T&gt; targetType)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Parameterize S to be the type you are converting from and R to be the base type defining the <em>range</em> of classes you can convert to. Then implement getConverter(Class<T>), where T is a subclass of R.</p>
+<p>Consider the <code>StringToEnum</code> ConverterFactory as an example:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.core.convert.support;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">StringToEnumConverterFactory</span> <span class="keyword">implements</span> <span class="title">ConverterFactory</span>&lt;<span class="title">String</span>, <span class="title">Enum</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;T extends Enum&gt; <span class="function">Converter&lt;String, T&gt; <span class="title">getConverter</span><span class="params">(Class&lt;T&gt; targetType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> StringToEnumConverter(targetType);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">StringToEnumConverter</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Enum</span>&gt; <span class="keyword">implements</span> <span class="title">Converter</span>&lt;<span class="title">String</span>, <span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> Class&lt;T&gt; enumType;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">StringToEnumConverter</span><span class="params">(Class&lt;T&gt; enumType)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.enumType = enumType;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> T <span class="title">convert</span><span class="params">(String source)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> (T) Enum.valueOf(<span class="keyword">this</span>.enumType, source.trim());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-3-GenericConverter"><a href="#4-3-GenericConverter" class="headerlink" title="4.3 GenericConverter"></a>4.3 GenericConverter</h2><p>当您需要复杂的转换器实现时，请考虑GenericConverter接口。由于具有更灵活但不那么强类型的签名，GenericConverter支持在多个源类型和目标类型之间进行转换。此外，GenericConverter允许您在实现转换逻辑时使用源和目标字段上下文。这种上下文允许类型转换由字段注释或在字段签名上声明的通用信息驱动。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.core.convert.converter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GenericConverter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Set&lt;ConvertiblePair&gt; <span class="title">getConvertibleTypes</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">Object <span class="title">convert</span><span class="params">(Object source, TypeDescriptor sourceType, TypeDescriptor targetType)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The source TypeDescriptor provides access to the source field holding the value being converted. The target TypeDescriptor provides access to the target field where the converted value will be set.</p>
+<p>A good example of a GenericConverter is a converter that converts between a Java Array and a Collection. Such an ArrayToCollectionConverter introspects the field that declares the target Collection type to resolve the Collection’s element type. This allows each element in the source array to be converted to the Collection element type before the Collection is set on the target field.</p>
+<h2 id="4-4-ConditionalGenericConverter"><a href="#4-4-ConditionalGenericConverter" class="headerlink" title="4.4 ConditionalGenericConverter"></a>4.4 ConditionalGenericConverter</h2><p>Sometimes you only want a <code>Converter</code> to execute if a specific condition holds true. For example, you might only want to execute a <code>Converter</code> if a specific annotation is present on the target field. Or you might only want to execute a <code>Converter</code> if a specific method, such as a <code>static valueOf</code> method, is defined on the target class. <code>ConditionalGenericConverter</code> is the union of the <code>GenericConverter</code> and <code>ConditionalConverter</code> interfaces that allows you to define such custom matching criteria:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ConditionalConverter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(TypeDescriptor sourceType, TypeDescriptor targetType)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ConditionalGenericConverter</span> <span class="keyword">extends</span> <span class="title">GenericConverter</span>, <span class="title">ConditionalConverter</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A good example of a <code>ConditionalGenericConverter</code> is an EntityConverter that converts between an persistent entity identifier and an entity reference. Such a EntityConverter might only match if the target entity type declares a static finder method e.g.<code>findAccount(Long)</code>. You would perform such a finder method check in the implementation of <code>matches(TypeDescriptor, TypeDescriptor)</code>.</p>
+<h2 id="4-5-ConversionService"><a href="#4-5-ConversionService" class="headerlink" title="4.5 ConversionService"></a>4.5 ConversionService</h2><h3 id="4-5-1-配置使用ConversionService"><a href="#4-5-1-配置使用ConversionService" class="headerlink" title="4.5.1 配置使用ConversionService"></a>4.5.1 配置使用ConversionService</h3><p>ConversionService是一个无状态对象，设计用于在应用程序启动时实例化，然后在多个线程之间共享。在Spring应用程序中，通常为每个Spring容器(或ApplicationContext)配置转换服务实例。该转换服务将由Spring接收，然后在框架需要执行类型转换时使用。您还可以将此转换服务注入任何bean并直接调用它。</p>
+<p>If no ConversionService is registered with Spring, the original PropertyEditor-based system is used.</p>
+<p>A default ConversionService can convert between strings, numbers, enums, collections, maps, and other common types. To supplement or override the default converters with your own custom converter(s), set the <code>converters</code> property. Property values may implement either of the Converter, ConverterFactory, or GenericConverter interfaces.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"conversionService"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">class</span>=<span class="string">"org.springframework.context.support.ConversionServiceFactoryBean"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"converters"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"example.MyCustomConverter"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>If no ConversionService is registered with Spring, the original PropertyEditor-based system is used.</p>
+<p>It is also common to use a ConversionService within a Spring MVC application. See Conversion and Formatting in the Spring MVC chapter.</p>
+<p>In certain situations you may wish to apply formatting during conversion. See FormatterRegistry SPI for details on using FormattingConversionServiceFactoryBean.</p>
+<h3 id="4-5-2-以编程方式使用ConversionService"><a href="#4-5-2-以编程方式使用ConversionService" class="headerlink" title="4.5.2 以编程方式使用ConversionService"></a>4.5.2 以编程方式使用ConversionService</h3><p>To work with a ConversionService instance programmatically, simply inject a reference to it like you would for any other bean:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyService</span><span class="params">(ConversionService conversionService)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.conversionService = conversionService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doIt</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.conversionService.convert(...)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>For most use cases, the <code>convert</code> method specifying the <em>targetType</em> can be used but it will not work with more complex types such as a collection of a parameterized element. If you want to convert a <code>List</code> of <code>Integer</code> to a <code>List</code> of <code>String</code>programmatically, for instance, you need to provide a formal definition of the source and target types.</p>
+<p>Fortunately, <code>TypeDescriptor</code> provides various options to make that straightforward:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DefaultConversionService cs = <span class="keyword">new</span> DefaultConversionService();</span><br><span class="line"></span><br><span class="line">List&lt;Integer&gt; input = ....</span><br><span class="line">cs.convert(input,</span><br><span class="line">    TypeDescriptor.forObject(input), <span class="comment">// List&lt;Integer&gt; type descriptor</span></span><br><span class="line">    TypeDescriptor.collection(List<span class="class">.<span class="keyword">class</span>, <span class="title">TypeDescriptor</span>.<span class="title">valueOf</span>(<span class="title">String</span>.<span class="title">class</span>)))</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="5-Field-Formatting"><a href="#5-Field-Formatting" class="headerlink" title="5 Field Formatting"></a>5 Field Formatting</h1><h2 id="5-1-Formatter-SPI"><a href="#5-1-Formatter-SPI" class="headerlink" title="5.1 Formatter SPI"></a>5.1 Formatter SPI</h2><p>The Formatter SPI to implement field formatting logic is simple and strongly typed:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.format;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Formatter</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">Printer</span>&lt;<span class="title">T</span>&gt;, <span class="title">Parser</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Where Formatter extends from the Printer and Parser building-block interfaces:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Printer</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">print</span><span class="params">(T fieldValue, Locale locale)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Parser</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">T <span class="title">parse</span><span class="params">(String clientValue, Locale locale)</span> <span class="keyword">throws</span> ParseException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Consider <code>DateFormatter</code> as an example <code>Formatter</code> implementation:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.format.datetime;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">DateFormatter</span> <span class="keyword">implements</span> <span class="title">Formatter</span>&lt;<span class="title">Date</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String pattern;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DateFormatter</span><span class="params">(String pattern)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.pattern = pattern;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">// Printer</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">print</span><span class="params">(Date date, Locale locale)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (date == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> getDateFormat(locale).format(date);</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">// Parser</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Date <span class="title">parse</span><span class="params">(String formatted, Locale locale)</span> <span class="keyword">throws</span> ParseException </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (formatted.length() == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> getDateFormat(locale).parse(formatted);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> DateFormat <span class="title">getDateFormat</span><span class="params">(Locale locale)</span> </span>&#123;</span><br><span class="line">        DateFormat dateFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="keyword">this</span>.pattern, locale);</span><br><span class="line">        dateFormat.setLenient(<span class="keyword">false</span>);</span><br><span class="line">        <span class="keyword">return</span> dateFormat;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-2-注解驱动格式化"><a href="#5-2-注解驱动格式化" class="headerlink" title="5.2 注解驱动格式化"></a>5.2 注解驱动格式化</h2><p>As you will see, field formatting can be configured by field type or annotation. To bind an Annotation to a formatter, implement AnnotationFormatterFactory:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.format;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AnnotationFormatterFactory</span>&lt;<span class="title">A</span> <span class="keyword">extends</span> <span class="title">Annotation</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    Set&lt;Class&lt;?&gt;&gt; getFieldTypes();</span><br><span class="line"></span><br><span class="line">    Printer&lt;?&gt; getPrinter(A annotation, Class&lt;?&gt; fieldType);</span><br><span class="line"></span><br><span class="line">    Parser&lt;?&gt; getParser(A annotation, Class&lt;?&gt; fieldType);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Parameterize A to be the field annotationType you wish to associate formatting logic with, for example <code>org.springframework.format.annotation.DateTimeFormat</code>. Have <code>getFieldTypes()</code> return the types of fields the annotation may be used on. Have <code>getPrinter()</code> return a Printer to print the value of an annotated field. Have <code>getParser()</code> return a Parser to parse a clientValue for an annotated field.</p>
+<p>The example AnnotationFormatterFactory implementation below binds the @NumberFormat Annotation to a formatter. This annotation allows either a number style or pattern to be specified:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">NumberFormatAnnotationFormatterFactory</span></span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">AnnotationFormatterFactory</span>&lt;<span class="title">NumberFormat</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Set&lt;Class&lt;?&gt;&gt; getFieldTypes() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> HashSet&lt;Class&lt;?&gt;&gt;(asList(<span class="keyword">new</span> Class&lt;?&gt;[] &#123;</span><br><span class="line">            Short<span class="class">.<span class="keyword">class</span>, <span class="title">Integer</span>.<span class="title">class</span>, <span class="title">Long</span>.<span class="title">class</span>, <span class="title">Float</span>.<span class="title">class</span>,</span></span><br><span class="line"><span class="class">            <span class="title">Double</span>.<span class="title">class</span>, <span class="title">BigDecimal</span>.<span class="title">class</span>, <span class="title">BigInteger</span>.<span class="title">class</span> &#125;))</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Printer&lt;Number&gt; <span class="title">getPrinter</span><span class="params">(NumberFormat annotation, Class&lt;?&gt; fieldType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> configureFormatterFrom(annotation, fieldType);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Parser&lt;Number&gt; <span class="title">getParser</span><span class="params">(NumberFormat annotation, Class&lt;?&gt; fieldType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> configureFormatterFrom(annotation, fieldType);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Formatter&lt;Number&gt; <span class="title">configureFormatterFrom</span><span class="params">(NumberFormat annotation, Class&lt;?&gt; fieldType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!annotation.pattern().isEmpty()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> NumberStyleFormatter(annotation.pattern());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            Style style = annotation.style();</span><br><span class="line">            <span class="keyword">if</span> (style == Style.PERCENT) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> PercentStyleFormatter();</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (style == Style.CURRENCY) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> CurrencyStyleFormatter();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> NumberStyleFormatter();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>To trigger formatting, simply annotate fields with @NumberFormat:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyModel</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NumberFormat</span>(style=Style.CURRENCY)</span><br><span class="line">    <span class="keyword">private</span> BigDecimal decimal;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-1-Format-Annotation-API"><a href="#5-2-1-Format-Annotation-API" class="headerlink" title="5.2.1 Format Annotation API"></a>5.2.1 Format Annotation API</h3><p>A portable format annotation API exists in the <code>org.springframework.format.annotation</code> package. Use @NumberFormat to format java.lang.Number fields. Use @DateTimeFormat to format java.util.Date, java.util.Calendar, java.util.Long, or Joda-Time fields.</p>
+<p>The example below uses @DateTimeFormat to format a java.util.Date as a ISO Date (yyyy-MM-dd):</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyModel</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@DateTimeFormat</span>(iso=ISO.DATE)</span><br><span class="line">    <span class="keyword">private</span> Date date;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-3-FormatterRegistry-SPI"><a href="#5-3-FormatterRegistry-SPI" class="headerlink" title="5.3 FormatterRegistry SPI"></a>5.3 FormatterRegistry SPI</h2><p>The FormatterRegistry is an SPI for registering formatters and converters. <code>FormattingConversionService</code> is an implementation of FormatterRegistry suitable for most environments. This implementation may be configured programmatically or declaratively as a Spring bean using <code>FormattingConversionServiceFactoryBean</code>. Because this implementation also implements <code>ConversionService</code>, <strong>it can be directly configured for use with Spring’s DataBinder and the Spring Expression Language (SpEL).</strong></p>
+<p>Review the FormatterRegistry SPI below:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.format;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FormatterRegistry</span> <span class="keyword">extends</span> <span class="title">ConverterRegistry</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addFormatterForFieldType</span><span class="params">(Class&lt;?&gt; fieldType, Printer&lt;?&gt; printer, Parser&lt;?&gt; parser)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addFormatterForFieldType</span><span class="params">(Class&lt;?&gt; fieldType, Formatter&lt;?&gt; formatter)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addFormatterForFieldType</span><span class="params">(Formatter&lt;?&gt; formatter)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addFormatterForAnnotation</span><span class="params">(AnnotationFormatterFactory&lt;?, ?&gt; factory)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>As shown above, Formatters can be registered by fieldType or annotation.</p>
+<p>The FormatterRegistry SPI allows you to configure Formatting rules centrally, instead of duplicating such configuration across your Controllers. For example, you might want to enforce that all Date fields are formatted a certain way, or fields with a specific annotation are formatted in a certain way. <strong>With a shared FormatterRegistry, you define these rules once and they are applied whenever formatting is needed.</strong></p>
+<h2 id="5-4-FormatterRegistrar-SPI"><a href="#5-4-FormatterRegistrar-SPI" class="headerlink" title="5.4 FormatterRegistrar SPI"></a>5.4 FormatterRegistrar SPI</h2><p>The FormatterRegistrar is an SPI for registering formatters and converters through the FormatterRegistry:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.springframework.format;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FormatterRegistrar</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">registerFormatters</span><span class="params">(FormatterRegistry registry)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A FormatterRegistrar is useful when registering multiple related converters and formatters for a given formatting category, <strong>such as Date formatting</strong>. It can also be useful where declarative registration is insufficient. For example when a formatter needs to be indexed under a specific field type different from its own <T> or when registering a Printer/Parser pair. The next section provides more information on converter and formatter registration.</p>
+<h2 id="5-5-Configuring-Formatting-in-Spring-MVC"><a href="#5-5-Configuring-Formatting-in-Spring-MVC" class="headerlink" title="5.5 Configuring Formatting in Spring MVC"></a>5.5 Configuring Formatting in Spring MVC</h2><p>See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctY29udmVyc2lvbg==" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web.html#mvc-config-conversion">Conversion and Formatting<i class="fa fa-external-link"></i></span> in the Spring MVC chapter.</p>
+<h2 id="5-6-配置全局时间日期格式化"><a href="#5-6-配置全局时间日期格式化" class="headerlink" title="5.6 配置全局时间日期格式化"></a>5.6 配置全局时间日期格式化</h2><p>You will need to ensure that Spring does not register default formatters, and instead you should register all formatters manually. Use the <code>org.springframework.format.datetime.joda.JodaTimeFormatterRegistrar</code> or<code>org.springframework.format.datetime.DateFormatterRegistrar</code> class depending on whether you use the Joda-Time library.</p>
+<p>For example, the following Java configuration will register a global ‘ `yyyyMMdd’ format. <strong>This example does not depend on the Joda-Time library:</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> FormattingConversionService <span class="title">conversionService</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Use the DefaultFormattingConversionService but do not register defaults</span></span><br><span class="line">        DefaultFormattingConversionService conversionService = <span class="keyword">new</span> DefaultFormattingConversionService(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Ensure @NumberFormat is still supported</span></span><br><span class="line">        conversionService.addFormatterForFieldAnnotation(<span class="keyword">new</span> NumberFormatAnnotationFormatterFactory());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Register date conversion with a specific global format</span></span><br><span class="line">        DateFormatterRegistrar registrar = <span class="keyword">new</span> DateFormatterRegistrar();</span><br><span class="line">        registrar.setFormatter(<span class="keyword">new</span> DateFormatter(<span class="string">"yyyyMMdd"</span>));</span><br><span class="line">        registrar.registerFormatters(conversionService);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> conversionService;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>If you prefer XML based configuration you can use a <code>FormattingConversionServiceFactoryBean</code>. Here is the same example, <strong>this time using Joda Time</strong>:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans/spring-beans.xsd&gt;</span></span></span><br><span class="line"><span class="tag"><span class="string"></span></span></span><br><span class="line"><span class="tag"><span class="string">    &lt;bean id="</span><span class="attr">conversionService</span>" <span class="attr">class</span>=<span class="string">"org.springframework.format.support.FormattingConversionServiceFactoryBean"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"registerDefaultFormatters"</span> <span class="attr">value</span>=<span class="string">"false"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"formatters"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.format.number.NumberFormatAnnotationFormatterFactory"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"formatterRegistrars"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.format.datetime.joda.JodaTimeFormatterRegistrar"</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"dateFormatter"</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean"</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"pattern"</span> <span class="attr">value</span>=<span class="string">"yyyyMMdd"</span>/&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>Joda-Time provides separate distinct types to represent <code>date</code>, <code>time</code> and <code>date-time</code> values. The <code>dateFormatter</code>, <code>timeFormatter</code> and <code>dateTimeFormatter</code> properties of the <code>JodaTimeFormatterRegistrar</code> should be used to configure the different formats for each type. The <code>DateTimeFormatterFactoryBean</code> provides a convenient way to create formatters</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+</tr>
+</tbody></table>
+<p>If you are using Spring MVC remember to explicitly configure the conversion service that is used. For Java based <code>@Configuration</code> this means extending the <code>WebMvcConfigurationSupport</code> class and overriding the <code>mvcConversionService()</code>method. For XML you should use the <code>&#39;conversion-service&#39;</code> attribute of the <code>mvc:annotation-driven</code> element. See <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjAuOC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL3dlYi5odG1sI212Yy1jb25maWctY29udmVyc2lvbg==" title="https://docs.spring.io/spring/docs/5.0.8.RELEASE/spring-framework-reference/web.html#mvc-config-conversion">Conversion and Formatting<i class="fa fa-external-link"></i></span> for details.</p>
+<h1 id="6-Spring-Validation-注解"><a href="#6-Spring-Validation-注解" class="headerlink" title="6 Spring Validation 注解"></a>6 Spring Validation 注解</h1><p>To illustrate, consider a simple PersonForm model with two properties:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PersonForm</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>JSR-303 allows you to define declarative validation constraints against such properties:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PersonForm</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotNull</span></span><br><span class="line">    <span class="meta">@Size</span>(max=<span class="number">64</span>)</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Min</span>(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>When an instance of this class is validated by a JSR-303 Validator, these constraints will be enforced.</p>
+<p>For general information on JSR-303/JSR-349, see the <span class="exturl" data-url="aHR0cDovL2JlYW52YWxpZGF0aW9uLm9yZy8=" title="http://beanvalidation.org/">Bean Validation website<i class="fa fa-external-link"></i></span>. For information on the specific capabilities of the default reference implementation, see the <span class="exturl" data-url="aHR0cHM6Ly93d3cuaGliZXJuYXRlLm9yZy80MTIuaHRtbA==" title="https://www.hibernate.org/412.html">Hibernate Validator<i class="fa fa-external-link"></i></span> documentation. To learn how to setup a Bean Validation provider as a Spring bean, keep reading.</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/3-%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A%E3%80%81%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" title="3-数据验证、数据绑定、类型转换">https://zxucooly.github.io/2018/12/05/spring官方文档/3-数据验证、数据绑定、类型转换/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/" rel="tag"><i class="fa fa-tag"></i> Spring官方文档</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/9-%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C-%E5%9F%BA%E7%A1%80/" rel="prev" title="9-数据操作-BASE">
+      <i class="fa fa-chevron-left"></i> 9-数据操作-BASE
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/05/spring%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3/7-spring%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6/" rel="next" title="7-Spring测试框架">
+      7-Spring测试框架 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Spring-Validator-接口"><span class="nav-number">1.</span> <span class="nav-text">1 Spring Validator 接口</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-Bean-manipulation-and-the-BeanWrapper"><span class="nav-number">2.</span> <span class="nav-text">2 Bean manipulation and the BeanWrapper</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-内置PropertyEditor实现"><span class="nav-number">3.</span> <span class="nav-text">3 内置PropertyEditor实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-注入编辑器"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 注入编辑器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-Using-PropertyEditorRegistrars"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Using PropertyEditorRegistrars</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-类型转换"><span class="nav-number">4.</span> <span class="nav-text">4 类型转换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-类型转换接口"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 类型转换接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-ConverterFactory"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 ConverterFactory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-GenericConverter"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 GenericConverter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-ConditionalGenericConverter"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 ConditionalGenericConverter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-5-ConversionService"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 ConversionService</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-1-配置使用ConversionService"><span class="nav-number">4.5.1.</span> <span class="nav-text">4.5.1 配置使用ConversionService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-2-以编程方式使用ConversionService"><span class="nav-number">4.5.2.</span> <span class="nav-text">4.5.2 以编程方式使用ConversionService</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-Field-Formatting"><span class="nav-number">5.</span> <span class="nav-text">5 Field Formatting</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-Formatter-SPI"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 Formatter SPI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-注解驱动格式化"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 注解驱动格式化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-1-Format-Annotation-API"><span class="nav-number">5.2.1.</span> <span class="nav-text">5.2.1 Format Annotation API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3-FormatterRegistry-SPI"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 FormatterRegistry SPI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-4-FormatterRegistrar-SPI"><span class="nav-number">5.4.</span> <span class="nav-text">5.4 FormatterRegistrar SPI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-5-Configuring-Formatting-in-Spring-MVC"><span class="nav-number">5.5.</span> <span class="nav-text">5.5 Configuring Formatting in Spring MVC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-6-配置全局时间日期格式化"><span class="nav-number">5.6.</span> <span class="nav-text">5.6 配置全局时间日期格式化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-Spring-Validation-注解"><span class="nav-number">6.</span> <span class="nav-text">6 Spring Validation 注解</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

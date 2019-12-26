@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="枚举一些方法在运行时，它需要的数据不能是任意的，而必须是一定范围内的值，此类问题在JDK5以前采用自定义带有枚举功能的类解决，Java5以后可以直接使用枚举予以解决。 例如:   交通灯(红、黄、绿)    性别(男、女)   星期(星期一、二、三…..) 分数等级(A、B、C、D、E)  JDK 5新增的 enum 关键字用于定义一个枚举类。 枚举的实现： 使用enum定义枚举类 在枚举类中定义">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java基础知识-正则-枚举">
+<meta property="og:url" content="https://zxucooly.github.io/2017/12/04/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/7-Java_%E6%AD%A3%E5%88%99_%E6%9E%9A%E4%B8%BE_jdk1.5%E7%89%B9%E6%80%A7/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="枚举一些方法在运行时，它需要的数据不能是任意的，而必须是一定范围内的值，此类问题在JDK5以前采用自定义带有枚举功能的类解决，Java5以后可以直接使用枚举予以解决。 例如:   交通灯(红、黄、绿)    性别(男、女)   星期(星期一、二、三…..) 分数等级(A、B、C、D、E)  JDK 5新增的 enum 关键字用于定义一个枚举类。 枚举的实现： 使用enum定义枚举类 在枚举类中定义">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-12-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2018-11-29T00:53:47.334Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="java基础知识">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2017/12/04/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/7-Java_%E6%AD%A3%E5%88%99_%E6%9E%9A%E4%B8%BE_jdk1.5%E7%89%B9%E6%80%A7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>java基础知识-正则-枚举 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2017/12/04/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/7-Java_%E6%AD%A3%E5%88%99_%E6%9E%9A%E4%B8%BE_jdk1.5%E7%89%B9%E6%80%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java基础知识-正则-枚举
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-12-04 00:00:00" itemprop="dateCreated datePublished" datetime="2017-12-04T00:00:00+08:00">2017-12-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2018-11-29 08:53:47" itemprop="dateModified" datetime="2018-11-29T08:53:47+08:00">2018-11-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h1><p>一些方法在运行时，它需要的数据不能是任意的，而必须是一定范围内的值，此类问题在JDK5以前采用自定义带有枚举功能的类解决，Java5以后可以直接使用枚举予以解决。</p>
+<p>例如: </p>
+<ul>
+<li>交通灯(红、黄、绿)    性别(男、女)   星期(星期一、二、三…..)</li>
+<li>分数等级(A、B、C、D、E)</li>
+</ul>
+<p>JDK 5新增的 enum 关键字用于定义一个枚举类。</p>
+<p>枚举的实现：</p>
+<p>使用enum定义枚举类</p>
+<p>在枚举类中定义枚举值(大写)</p>
+<a id="more"></a>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Gender &#123;</span><br><span class="line">	MALE,FEMALE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>javap -p Gender.class:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Compiled from <span class="string">"Gender.java"</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> 枚举.<span class="title">Gender</span> <span class="keyword">extends</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">Enum</span>&lt;枚举.<span class="title">Gender</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> 枚举.Gender MALE;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> 枚举.Gender FEMALE;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> 枚举.Gender[] ENUM$VALUES;</span><br><span class="line">  <span class="keyword">static</span> &#123;&#125;;</span><br><span class="line">  <span class="keyword">private</span> 枚举.Gender(java.lang.String, <span class="keyword">int</span>);</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> 枚举.Gender[] values();</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> 枚举.<span class="function">Gender <span class="title">valueOf</span><span class="params">(java.lang.String)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现其中每一个枚举值都是枚举类的具体实例对象.只不过是静态常量.</p>
+<p>枚举类具有如下特性：</p>
+<ul>
+<li>枚举类也是一种特殊形式的Java类。</li>
+<li>枚举类中声明的每一个枚举值代表枚举类的一个实例对象。</li>
+<li>与java中的普通类一样，在声明枚举类时，也可以声明属性、方法和构造函数</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Gender &#123;</span><br><span class="line">	MALE(<span class="string">"男"</span>), FEMALE;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 成员变量</span></span><br><span class="line">	<span class="keyword">private</span> String info;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 构造函数</span></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Gender</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Gender</span><span class="params">(String info)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.info = info;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 成员方法</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> info;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Gender male = Gender.MALE;</span><br><span class="line">System.out.println(male.getInfo());</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>枚举类可以声明抽象方法，但要有具体的枚举值去实现</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Gender &#123;</span><br><span class="line">	MALE(<span class="string">"男"</span>) &#123;</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">speak</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			System.out.println(<span class="string">"是男人"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,</span><br><span class="line">	FEMALE &#123;</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">speak</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			System.out.println(<span class="string">"是女人"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 成员变量</span></span><br><span class="line">	<span class="keyword">private</span> String info;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 构造函数</span></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Gender</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Gender</span><span class="params">(String info)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.info = info;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 成员方法</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> info;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">speak</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line">Gender male = Gender.MALE;</span><br><span class="line">System.out.println(male.getInfo());</span><br><span class="line">male.speak();</span><br></pre></td></tr></table></figure>
+
+<h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><ul>
+<li>正则表达式：其实一种规则，有自己特殊的应用,其作用就是针对于字符串进行操作。</li>
+<li>正则：就是用于操作字符串的规则,其中这些规则使用了一些字符表示。</li>
+</ul>
+<p>字符串的matches方法可以匹配正则表达式，返回布尔类型</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 只匹配数字</span></span><br><span class="line">String str = <span class="string">"12343"</span>;</span><br><span class="line"><span class="keyword">boolean</span> flag = str.matches([<span class="number">0</span>-<span class="number">9</span>]+); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="正则表达式的符号"><a href="#正则表达式的符号" class="headerlink" title="正则表达式的符号"></a>正则表达式的符号</h2><h3 id="预定义字符类"><a href="#预定义字符类" class="headerlink" title="预定义字符类"></a>预定义字符类</h3><table>
+<thead>
+<tr>
+<th>.</th>
+<th>任何字符（与行结束符可能匹配也可能不匹配）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>\d</td>
+<td>数字：[0-9]</td>
+</tr>
+<tr>
+<td>\D</td>
+<td>非数字：<code>[^0-9]</code></td>
+</tr>
+<tr>
+<td>\s</td>
+<td>空白字符：<code>[  \t\n\x0B\f\r]</code></td>
+</tr>
+<tr>
+<td>\S</td>
+<td>非空白字符：<code>[^\s]</code></td>
+</tr>
+<tr>
+<td>\w</td>
+<td>单词字符：<code>[a-zA-Z_0-9]</code></td>
+</tr>
+<tr>
+<td>\W</td>
+<td>非单词字符：<code>[^\w]</code></td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">"a"</span>.matches(<span class="string">"."</span>)); <span class="comment">// 转义字符不匹配</span></span><br><span class="line">System.out.println(<span class="string">"1"</span>.matches(<span class="string">"\\d"</span>));</span><br><span class="line">System.out.println(<span class="string">"%"</span>.matches(<span class="string">"\\D"</span>));</span><br><span class="line">System.out.println(<span class="string">"\r"</span>.matches(<span class="string">"\\s"</span>));</span><br><span class="line">System.out.println(<span class="string">"^"</span>.matches(<span class="string">"\\S"</span>));</span><br><span class="line">System.out.println(<span class="string">"a"</span>.matches(<span class="string">"\\w"</span>)); <span class="comment">// 都是true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="数量词（greedy）"><a href="#数量词（greedy）" class="headerlink" title="数量词（greedy）"></a>数量词（greedy）</h3><table>
+<thead>
+<tr>
+<th>X?</th>
+<th>X，一次或一次也没有</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>X*</td>
+<td>X，零次或多次</td>
+</tr>
+<tr>
+<td>X+</td>
+<td>X，一次或多次</td>
+</tr>
+<tr>
+<td>X{n}</td>
+<td>X，恰好n次</td>
+</tr>
+<tr>
+<td>X{n,}</td>
+<td>X，至少n次</td>
+</tr>
+<tr>
+<td>X{n,m}</td>
+<td>X，至少n次，但是不超过m次</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">System.out.println( <span class="string">"a"</span>.matches(<span class="string">"."</span>) ); <span class="comment">// true</span></span><br><span class="line">System.out.println( <span class="string">"a"</span>.matches(<span class="string">"a"</span>) ); <span class="comment">//true</span></span><br><span class="line">System.out.println(<span class="string">"a"</span>.matches(<span class="string">"a?"</span>) ); <span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">"aaa"</span>.matches(<span class="string">"a*"</span>) );<span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">""</span>.matches(<span class="string">"a+"</span>) ); <span class="comment">//false</span></span><br><span class="line">System.out.println( <span class="string">"aaaaa"</span>.matches(<span class="string">"a&#123;5&#125;"</span>) );<span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">"aaaaaaaaa"</span>.matches(<span class="string">"a&#123;5,8&#125;"</span>) );<span class="comment">//false</span></span><br><span class="line">System.out.println( <span class="string">"aaa"</span>.matches(<span class="string">"a&#123;5,&#125;"</span>) );<span class="comment">//false</span></span><br><span class="line">System.out.println( <span class="string">"aaaaab"</span>.matches(<span class="string">"a&#123;5,&#125;"</span>) );<span class="comment">//false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="范围表示"><a href="#范围表示" class="headerlink" title="范围表示"></a>范围表示</h3><table>
+<thead>
+<tr>
+<th>[abc]</th>
+<th>a、b 或 c（简单类）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>[^abc]</code></td>
+<td>任何字符，除了 a、b 或 c（否定）</td>
+</tr>
+<tr>
+<td>[a-zA-Z]</td>
+<td>a 到 z 或 A 到 Z，两头的字母包括在内（范围）</td>
+</tr>
+<tr>
+<td>[a-d[m-p]]</td>
+<td>a 到 d 或 m 到 p：[a-dm-p]（并集）</td>
+</tr>
+<tr>
+<td>[a-z&amp;&amp;[def]]</td>
+<td>d、e 或 f（交集）</td>
+</tr>
+<tr>
+<td><code>[a-z&amp;&amp;[^bc]]</code></td>
+<td>a 到 z，除了 b 和 c：[ad-z]（减去）</td>
+</tr>
+<tr>
+<td><code>[a-z&amp;&amp;[^m-p]]</code></td>
+<td>a 到 z，而非 m 到 p：[a-lp-z]（减去）</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">System.out.println( <span class="string">"a"</span>.matches(<span class="string">"[a]"</span>) ); <span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">"aa"</span>.matches(<span class="string">"[a]+"</span>) );<span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">"abc"</span>.matches(<span class="string">"[abc]&#123;3,&#125;"</span>) );<span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">"abc"</span>.matches(<span class="string">"[abc]+"</span>) );<span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">"dshfshfu1"</span>.matches(<span class="string">"[^abc]+"</span>) );<span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">"abcdsaA"</span>.matches(<span class="string">"[a-z]&#123;5,&#125;"</span>) );<span class="comment">//false</span></span><br><span class="line">System.out.println( <span class="string">"abcdsaA12"</span>.matches(<span class="string">"[a-zA-Z]&#123;5,&#125;"</span>) );<span class="comment">//false</span></span><br><span class="line">System.out.println( <span class="string">"abcdsaA12"</span>.matches(<span class="string">"[a-zA-Z0-9]&#123;5,&#125;"</span>) );<span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">"abdxyz"</span>.matches(<span class="string">"[a-c[x-z]]+"</span>));<span class="comment">//false</span></span><br><span class="line">System.out.println( <span class="string">"abcxyz"</span>.matches(<span class="string">"[a-c[x-z]]+"</span>));<span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">"bcbcbc"</span>.matches(<span class="string">"[a-z&amp;&amp;[b-c]]&#123;5,&#125;"</span>));<span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">"tretrt"</span>.matches(<span class="string">"[a-z&amp;&amp;[^b-c]]&#123;5,&#125;"</span>));<span class="comment">//true</span></span><br><span class="line">System.out.println( <span class="string">"tretrtb"</span>.matches(<span class="string">"[a-z&amp;&amp;[^b-c]]&#123;5,&#125;"</span>));<span class="comment">//false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="匹配功能"><a href="#匹配功能" class="headerlink" title="匹配功能"></a>匹配功能</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用户输入电话号码，判断号码是否合法？1 3458 </span></span><br><span class="line">Scanner sc = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">String phoneNum = sc.next();</span><br><span class="line">String regex = <span class="string">"^1[3458]\\d&#123;9&#125;$"</span>;</span><br><span class="line">System.out.println(<span class="string">"号码是否合法？"</span>+phoneNum.matches(regex));</span><br></pre></td></tr></table></figure>
+
+<h3 id="切割功能"><a href="#切割功能" class="headerlink" title="切割功能"></a>切割功能</h3><p>String arr[] = str.split(regex);</p>
+<ul>
+<li>根据空格对一段字符串进行分割</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="string">"a b cb c f   djk  "</span>;</span><br><span class="line">String [] arr = str.split(<span class="string">" *"</span>);</span><br><span class="line"><span class="keyword">for</span>(String s : arr)&#123;</span><br><span class="line">    System.out.print(s);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// abcbcfdjk</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>根据重叠词进行分割</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">	String str = <span class="string">"sdqqfgkkkhjppppkl"</span>;</span><br><span class="line">		String[] arr = str.split(<span class="string">"(.)\\1+"</span>);</span><br><span class="line">		<span class="keyword">for</span>(String s : arr)                </span><br><span class="line">		&#123;                                  </span><br><span class="line">			System.out.print(s);         </span><br><span class="line">		&#125;     </span><br><span class="line"><span class="comment">// sdfghjkl</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：为了提高规则复用，用()进行封装，每一个括号都有一个编号，从1开始，为了复用这个规则。可以通过编号来完成该规则的调用。需要对编号数字进行转义。\1就代表获取1组规则。</p>
+<h3 id="替换功能"><a href="#替换功能" class="headerlink" title="替换功能"></a>替换功能</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="string">"联系我：13567012119联系我：13567012119联系我：13567012119联系我：13567012119联系我：13567012119联系我：13567012119"</span>;</span><br><span class="line">		String reg= <span class="string">"1[34578]\\d&#123;9&#125;"</span>;</span><br><span class="line">		str =	str.replaceAll(reg,<span class="string">"******"</span>);</span><br><span class="line">		System.out.println(<span class="string">"替换后的帖子："</span>+ str);</span><br><span class="line">替换后的帖子：联系我：******联系我：******联系我：******联系我：******联系我：******联系我：******</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//我我....我...我.要...要要...要学....学学..学.编..编编.编.程.程.程..程</span></span><br><span class="line">		<span class="comment">//将字符串还原成:  我要学编程。</span></span><br><span class="line">String str = <span class="string">"我我....我...我.要...要要...要学....学学..学.编..编编.编.程.程.程..程"</span>;</span><br><span class="line">String str1 = <span class="string">"我我....我...我.要...要要...要学....学学..学.编..编编.编.程.程.程..程"</span>;</span><br><span class="line">		<span class="comment">// 先将点去掉</span></span><br><span class="line">		String str2 = str1.replaceAll(<span class="string">"\\.+"</span>,<span class="string">""</span>);</span><br><span class="line">		System.out.println(str2);</span><br><span class="line">		String str3 = str2.replaceAll(<span class="string">"(.)\\1+"</span>, <span class="string">"$1"</span>);</span><br><span class="line">		System.out.println(str3);</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取功能"><a href="#获取功能" class="headerlink" title="获取功能"></a>获取功能</h3><p>获取需要使用到正则的两个对象：使用的是用正则对象Pattern 和匹配器Matcher。</p>
+<p>用法：</p>
+<p>​       范例：</p>
+<p>​        Pattern p = Pattern.compile(“a*b”);</p>
+<p>​        Matcher m = p.matcher(“aaaaab”);</p>
+<p>​        boolean b = m.matches();</p>
+<p>​       步骤：</p>
+<p>​       1，先将正则表达式编译成正则对象。使用的是Pattern类一个静态的方法。compile(regex);</p>
+<p>​       2，让正则对象和要操作的字符串相关联，通过matcher方法完成，并返回匹配器对象。</p>
+<p>​       3，通过匹配器对象的方法将正则模式作用到字符串上对字符串进行针对性的功能操作</p>
+<ul>
+<li><strong>获取由3个字母组成的单词。</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getDemo</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		String str = <span class="string">"da jia zhu yi le,ming tian bu fang jia,xie xie!"</span>;</span><br><span class="line">		<span class="comment">//想要获取由3个字母组成的单词。</span></span><br><span class="line">		<span class="comment">//刚才的功能返回的都是一个结果，只有split返回的是数组，但是它是把规则作为分隔符，不会获取符合规则的内容。</span></span><br><span class="line">		<span class="comment">//这时我们要用到一些正则对象。</span></span><br><span class="line">		String reg = <span class="string">"\\b[a-z]&#123;3&#125;\\b"</span>;</span><br><span class="line">		Pattern p = Pattern.compile(reg);</span><br><span class="line">		Matcher m = p.matcher(str);</span><br><span class="line">		<span class="keyword">while</span>(m.find())</span><br><span class="line">		&#123;</span><br><span class="line">			System.out.println(m.start()+<span class="string">"...."</span>+m.end());</span><br><span class="line">			System.out.println(<span class="string">"sub:"</span>+str.substring(m.start(),m.end()));</span><br><span class="line">			System.out.println(m.group());</span><br><span class="line">		&#125;</span><br><span class="line"><span class="comment">//		System.out.println(m.find());//将规则对字符串进行匹配查找。</span></span><br><span class="line"><span class="comment">//		System.out.println(m.find());//将规则对字符串进行匹配查找。</span></span><br><span class="line"><span class="comment">//		System.out.println(m.group());//在使用group方法之前，必须要先找，找到了才可以取。</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>校验邮件</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">checkMail</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		String mail = <span class="string">"abc123@sina.com.cn"</span>;</span><br><span class="line">		mail = <span class="string">"1@1.1"</span>;</span><br><span class="line">		String reg = <span class="string">"[a-zA-Z_0-9]+@[a-zA-Z0-9]+(\\.[a-zA-Z]+)+"</span>;</span><br><span class="line">		reg = <span class="string">"\\w+@\\w+(\\.\\w+)+"</span>;<span class="comment">//简化的规则。笼统的匹配。</span></span><br><span class="line">		<span class="keyword">boolean</span> b = mail.matches(reg);</span><br><span class="line">		System.out.println(mail+<span class="string">":"</span>+b);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>网络爬虫</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GetMailList</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		String reg = <span class="string">"\\w+@[a-zA-Z]+(\\.[a-zA-Z]+)+"</span>;</span><br><span class="line">		getMailsByWeb(reg);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getMailsByWeb</span><span class="params">(String regex)</span><span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		URL url = <span class="keyword">new</span> URL(<span class="string">"http://localhost:8080/myweb/mail.html"</span>);</span><br><span class="line">		</span><br><span class="line">		URLConnection conn = url.openConnection();</span><br><span class="line">		BufferedReader bufIn = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(conn.getInputStream()));</span><br><span class="line">		String line = <span class="keyword">null</span>;</span><br><span class="line">		Pattern p = Pattern.compile(regex);		</span><br><span class="line">		<span class="keyword">while</span>((line=bufIn.readLine())!=<span class="keyword">null</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">//System.out.println(line);</span></span><br><span class="line">			Matcher m = p.matcher(line);</span><br><span class="line">			<span class="keyword">while</span>(m.find())</span><br><span class="line">			&#123;</span><br><span class="line">				System.out.println(m.group());</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		bufIn.close();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getMails</span><span class="params">(String regex)</span><span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		BufferedReader bufr = </span><br><span class="line">			<span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(<span class="string">"mail.txt"</span>));</span><br><span class="line">		String line = <span class="keyword">null</span>;</span><br><span class="line">		Pattern p = Pattern.compile(regex);		</span><br><span class="line">		<span class="keyword">while</span>((line=bufr.readLine())!=<span class="keyword">null</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">//System.out.println(line);</span></span><br><span class="line">			Matcher m = p.matcher(line);</span><br><span class="line">			<span class="keyword">while</span>(m.find())</span><br><span class="line">			&#123;</span><br><span class="line">				System.out.println(m.group());</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		bufr.close();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用正则表达式"><a href="#常用正则表达式" class="headerlink" title="常用正则表达式"></a>常用正则表达式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">非负整数：^\d+$</span><br><span class="line"> </span><br><span class="line">正整数：^[<span class="number">0</span>-<span class="number">9</span>]*[<span class="number">1</span>-<span class="number">9</span>][<span class="number">0</span>-<span class="number">9</span>]*$</span><br><span class="line"> </span><br><span class="line">非正整数：^((-\d+)|(<span class="number">0</span>+))$</span><br><span class="line"> </span><br><span class="line">负整数：^-[<span class="number">0</span>-<span class="number">9</span>]*[<span class="number">1</span>-<span class="number">9</span>][<span class="number">0</span>-<span class="number">9</span>]*$</span><br><span class="line"> </span><br><span class="line">整数：^-?\d+$</span><br><span class="line"> </span><br><span class="line">非负浮点数：^\d+(\.\d+)?$</span><br><span class="line"> </span><br><span class="line">正浮点数 : ^((<span class="number">0</span>-<span class="number">9</span>)+\.[<span class="number">0</span>-<span class="number">9</span>]*[<span class="number">1</span>-<span class="number">9</span>][<span class="number">0</span>-<span class="number">9</span>]*)|([<span class="number">0</span>-<span class="number">9</span>]*[<span class="number">1</span>-<span class="number">9</span>][<span class="number">0</span>-<span class="number">9</span>]*\.[<span class="number">0</span>-<span class="number">9</span>]+)|([<span class="number">0</span>-<span class="number">9</span>]*[<span class="number">1</span>-<span class="number">9</span>][<span class="number">0</span>-<span class="number">9</span>]*)$</span><br><span class="line"> </span><br><span class="line">非正浮点数：^((-\d+\.\d+)?)|(<span class="number">0</span>+(\.<span class="number">0</span>+)?))$</span><br><span class="line"> </span><br><span class="line">负浮点数：^(-((正浮点数正则式)))$</span><br><span class="line"> </span><br><span class="line">英文字符串：^[A-Za-z]+$</span><br><span class="line"> </span><br><span class="line">英文大写串：^[A-Z]+$</span><br><span class="line"> </span><br><span class="line">英文小写串：^[a-z]+$</span><br><span class="line"> </span><br><span class="line">英文字符数字串：^[A-Za-z0-<span class="number">9</span>]+$</span><br><span class="line"> </span><br><span class="line">英数字加下划线串：^\w+$</span><br><span class="line"> </span><br><span class="line">E-mail地址：^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$</span><br><span class="line"> </span><br><span class="line">URL：^[a-zA-Z]+:<span class="comment">//(\w+(-\w+)*)(\.(\w+(-\w+)*))*(\?\s*)?$ </span></span><br><span class="line"> 或：^http:\/\/[A-Za-z0-<span class="number">9</span>]+\.[A-Za-z0-<span class="number">9</span>]+[\/=\?%\-&amp;_~`@[\]\<span class="string">':+!]*([^&lt;&gt;\"\"])*$</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">邮政编码：^[1-9]\d&#123;5&#125;$</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">中文：^[\u0391-\uFFE5]+$</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">电话号码：^((\(\d&#123;2,3&#125;\))|(\d&#123;3&#125;\-))?(\(0\d&#123;2,3&#125;\)|0\d&#123;2,3&#125;-)?[1-9]\d&#123;6,7&#125;(\-\d&#123;1,4&#125;)?$</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">手机号码：^((\(\d&#123;2,3&#125;\))|(\d&#123;3&#125;\-))?13\d&#123;9&#125;$</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">双字节字符(包括汉字在内)：^\x00-\xff</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">匹配首尾空格：(^\s*)|(\s*$)（像vbscript那样的trim函数）</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">匹配HTML标记：&lt;(.*)&gt;.*&lt;\/\1&gt;|&lt;(.*) \/&gt;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">匹配空行：\n[\s| ]*\r</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">提取信息中的网络链接：(h|H)(r|R)(e|E)(f|F)  *=  *('</span>|<span class="string">")?(\w|\\|\/|\.)+('|"</span>|  *|&gt;)?</span><br><span class="line"> </span><br><span class="line">提取信息中的邮件地址：\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*</span><br><span class="line"> </span><br><span class="line">提取信息中的图片链接：(s|S)(r|R)(c|C)  *=  *(<span class="string">'|")?(\w|\\|\/|\.)+('</span>|<span class="string">"|  *|&gt;)?</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">提取信息中的IP地址：(\d+)\.(\d+)\.(\d+)\.(\d+)</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">提取信息中的中国手机号码：(86)*0*13\d&#123;9&#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">提取信息中的中国固定电话号码：(\(\d&#123;3,4&#125;\)|\d&#123;3,4&#125;-|\s)?\d&#123;8&#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">提取信息中的中国电话号码（包括移动和固定电话）：(\(\d&#123;3,4&#125;\)|\d&#123;3,4&#125;-|\s)?\d&#123;7,14&#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">提取信息中的中国邮政编码：[1-9]&#123;1&#125;(\d+)&#123;5&#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">提取信息中的浮点数（即小数）：(-?\d*)\.?\d+</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">提取信息中的任何数字 ：(-?\d*)(\.\d+)? </span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">IP：(\d+)\.(\d+)\.(\d+)\.(\d+)</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">电话区号：/^0\d&#123;2,3&#125;$/</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">腾讯QQ号：^[1-9]*[1-9][0-9]*$</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">帐号(字母开头，允许5-16字节，允许字母数字下划线)：^[a-zA-Z][a-zA-Z0-9_]&#123;4,15&#125;$</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">中文、英文、数字及下划线：^[\u4e00-\u9fa5_a-zA-Z0-9]+$</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">匹配中文字符的正则表达式： [\u4e00-\u9fa5]</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">匹配双字节字符(包括汉字在内)：[^\x00-\xff]</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">匹配空行的正则表达式：\n[\s| ]*\r</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">匹配HTML标记的正则表达式：/&lt;(.*)&gt;.*&lt;\/\1&gt;|&lt;(.*) \/&gt;/</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">sql语句：^(select|drop|delete|create|update|insert).*$</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">匹配首尾空格的正则表达式：(^\s*)|(\s*$)</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">匹配Email地址的正则表达式：\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="静态导入"><a href="#静态导入" class="headerlink" title="静态导入"></a>静态导入</h1><p>jdk1.5新特性之——-静态导入</p>
+<p> 静态导入的作用： 简化书写。</p>
+<p>静态导入可以作用一个类的所有静态成员。 </p>
+<p> 静态导入的格式：<br>     import static 包名.类名.静态的成员；</p>
+<p>静态导入要注意的事项：<br>       1. 如果静态导入的成员与本类的成员存在同名的情况下，那么默认使用本类的静态成员，如果需要指定使用静态导入的成员，那么需要在静态成员前面加上类名</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.util.Collections.sort;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.util.Collections.binarySearch;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.util.Collections.max;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.System.out;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo1</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line">		list.add(<span class="number">13</span>);</span><br><span class="line">		list.add(<span class="number">9</span>);</span><br><span class="line">		list.add(<span class="number">10</span>);</span><br><span class="line">		list.add(<span class="number">19</span>);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//排序</span></span><br><span class="line">		Collections.sort(list);</span><br><span class="line">		out.println(<span class="string">"集合的元素："</span>+ list);</span><br><span class="line">		out.println(<span class="string">"索引值："</span>+ binarySearch(list,<span class="number">13</span>));</span><br><span class="line">		out.println(<span class="string">"最大值："</span>+ max(list));</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(ArrayList&lt;Integer&gt; list)</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"本类 的sort方法....."</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="可变参数"><a href="#可变参数" class="headerlink" title="可变参数"></a>可变参数</h1><p>jdk1.5新特性之——-&gt;可变参数</p>
+<p>需求： 定义一个函数做加法功能（函数做几个数据 的加法功能是不确定）。</p>
+<p>可变参数的格式：<br>    数据类型… 变量名</p>
+<p>可变参数要 注意的细节：<br>    1. 如果一个函数 的形参使用上了可变参数之后，那么调用该方法的时候可以传递参数也可以不传递参数。<br>    2. 可变参数实际上是一个数组对象。<br>    3. 可变参数必须位于形参中的最后一个参数。<br>    4. 一个函数最多只能有一个可变 参数，因为可变参数要位于形参中最后一个位置上。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo4</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span>[] arr = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">45</span>,<span class="number">6</span>,<span class="number">7</span>&#125;;</span><br><span class="line">		<span class="comment">/*System.out.println(arr);</span></span><br><span class="line"><span class="comment">			add(arr);*/</span></span><br><span class="line">		add();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span>... arr)</span></span>&#123; <span class="comment">//长度是0</span></span><br><span class="line">		</span><br><span class="line">		<span class="keyword">int</span> result = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> item : arr)&#123;</span><br><span class="line">			result+=item;</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(<span class="string">"总和："</span>+ result);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="增强for循环"><a href="#增强for循环" class="headerlink" title="增强for循环"></a>增强for循环</h1><p>jdk1.5出现的新特性—-&gt;增强for循环</p>
+<p>增强for循环的作用： 简化迭代器的书写格式。(注意：增强for循环的底层还是使用了迭代器遍历。)</p>
+<p>增强for循环的适用范围： 如果是实现了Iterable接口的对象或者是数组对象都可以使用增强for循环。</p>
+<p>增强for循环的格式：</p>
+<pre><code>for(数据类型  变量名  :遍历的目标){
+
+}</code></pre><p>增强for循环要注意的事项：<br>    1. 增强for循环底层也是使用了迭代器获取的，只不过获取迭代器由jvm完成，不需要我们获取迭代器而已，所以在使** 用增强for循环变量元素的过程中不准使用集合<br>    ** 对象对集合的元素个数进行修改。<br>    2. 迭代器遍历元素与增强for循环变量元素的区别：使用迭代器遍历集合的元素时可以删除集合的元素，而增强for循环变量集合的元素时，不能调用迭代器的remove方法删除元素。<br>    3. 普通for循环与增强for循环的区别：普通for循环可以没有变量的目标，而增强for循环一定要有变量的目标。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo2</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		HashSet&lt;String&gt; set = <span class="keyword">new</span> HashSet&lt;String&gt;();</span><br><span class="line">		<span class="comment">//添加元素</span></span><br><span class="line">		set.add(<span class="string">"狗娃"</span>);</span><br><span class="line">		set.add(<span class="string">"狗剩"</span>);</span><br><span class="line">		set.add(<span class="string">"铁蛋"</span>);</span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		//使用迭代器遍历Set的集合.</span></span><br><span class="line"><span class="comment">		Iterator&lt;String&gt; it  = set.iterator();</span></span><br><span class="line"><span class="comment">		while(it.hasNext())&#123;</span></span><br><span class="line"><span class="comment">			String temp = it.next();</span></span><br><span class="line"><span class="comment">			System.out.println("元素："+ temp);</span></span><br><span class="line"><span class="comment">			it.remove();</span></span><br><span class="line"><span class="comment">		&#125;</span></span><br><span class="line"><span class="comment">		//使用增强for循环解决</span></span><br><span class="line"><span class="comment">		for(String item : set)&#123;</span></span><br><span class="line"><span class="comment">			System.out.println("元素："+ item);</span></span><br><span class="line"><span class="comment">		&#125;</span></span><br><span class="line"><span class="comment">		int[] arr = &#123;12,5,6,1&#125;;</span></span><br><span class="line"><span class="comment">	 	普通for循环的遍历方式</span></span><br><span class="line"><span class="comment">	 	for(int i =  0 ; i&lt;arr.length ; i++)&#123;</span></span><br><span class="line"><span class="comment">			System.out.println("元素："+ arr[i]);</span></span><br><span class="line"><span class="comment">		&#125;</span></span><br><span class="line"><span class="comment">		//使用增强for循环实现</span></span><br><span class="line"><span class="comment">		for(int item :arr)&#123;</span></span><br><span class="line"><span class="comment">			System.out.println("元素："+ item);</span></span><br><span class="line"><span class="comment">		&#125;</span></span><br><span class="line"><span class="comment">		//需求： 在控制台打印5句hello world.</span></span><br><span class="line"><span class="comment">		for(int i = 0 ; i &lt; 5; i++)&#123;</span></span><br><span class="line"><span class="comment">			System.out.println("hello world");</span></span><br><span class="line"><span class="comment">		&#125;</span></span><br><span class="line"><span class="comment">		*/</span></span><br><span class="line">		<span class="comment">//注意： Map集合没有实现Iterable接口，所以map集合不能直接使用增强for循环，如果需要使用增强for循环需要借助于Collection</span></span><br><span class="line">		<span class="comment">// 的集合。</span></span><br><span class="line">		HashMap&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line">		map.put(<span class="string">"001"</span>,<span class="string">"张三"</span>);</span><br><span class="line">		map.put(<span class="string">"002"</span>,<span class="string">"李四"</span>);</span><br><span class="line">		map.put(<span class="string">"003"</span>,<span class="string">"王五"</span>);</span><br><span class="line">		map.put(<span class="string">"004"</span>,<span class="string">"赵六"</span>);</span><br><span class="line">		Set&lt;Map.Entry&lt;String, String&gt;&gt; entrys = map.entrySet();</span><br><span class="line">		<span class="keyword">for</span>(Map.Entry&lt;String, String&gt; entry  :entrys)&#123;</span><br><span class="line">			System.out.println(<span class="string">"键："</span>+ entry.getKey()+<span class="string">" 值："</span>+ entry.getValue());</span><br><span class="line">		&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="自定一个类使用增强for循环"><a href="#自定一个类使用增强for循环" class="headerlink" title="自定一个类使用增强for循环"></a>自定一个类使用增强for循环</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Eg</span>自定一个类使用增强<span class="title">for</span>循环 &lt;<span class="title">T</span>&gt;  <span class="keyword">implements</span> <span class="title">Iterable</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">	<span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">	T[] obj = (T[]) <span class="keyword">new</span> Object[<span class="number">10</span>];</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">public</span> Eg自定一个类使用增强<span class="keyword">for</span>循环() &#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(T t)</span></span>&#123;</span><br><span class="line">		obj[index++] = t;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.index;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Iterator&lt;T&gt; <span class="title">iterator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> Iterator&lt;T&gt;()&#123;</span><br><span class="line">			<span class="keyword">int</span> cursor = <span class="number">0</span>;</span><br><span class="line">			<span class="meta">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">				<span class="keyword">return</span> cursor&lt;index;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">			<span class="meta">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> T <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">				<span class="keyword">return</span> (T) obj[cursor++];</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">		&#125;;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Eg自定一个类使用增强<span class="keyword">for</span>循环&lt;String&gt; eg = <span class="keyword">new</span> Eg自定一个类使用增强<span class="keyword">for</span>循环&lt;String&gt;();</span><br><span class="line">		eg.add(<span class="string">"aa"</span>);</span><br><span class="line">		eg.add(<span class="string">"bb"</span>);</span><br><span class="line">		eg.add(<span class="string">"cc"</span>);</span><br><span class="line">		Iterator&lt;String&gt; it = eg.iterator();</span><br><span class="line">		<span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">			String s = it.next();</span><br><span class="line">			System.out.print(s+<span class="string">"　"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println();</span><br><span class="line">		<span class="keyword">for</span>(String s : eg)&#123;</span><br><span class="line">			System.out.print(s+<span class="string">" "</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="自动装箱与自动拆箱"><a href="#自动装箱与自动拆箱" class="headerlink" title="自动装箱与自动拆箱"></a>自动装箱与自动拆箱</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"> java是面向对象的语言，任何事物都可以使用类进行描述，sun就使用了一些类描述java中八种基本数据类型数据</span><br><span class="line"> </span><br><span class="line"> 	基本数据类型            包装类型</span><br><span class="line"> 	<span class="keyword">byte</span>     	  Byte</span><br><span class="line">	<span class="keyword">short</span>      	  Short</span><br><span class="line">	<span class="keyword">int</span>           Integer</span><br><span class="line">	<span class="keyword">long</span>          Long </span><br><span class="line">	<span class="keyword">float</span>          Float</span><br><span class="line">	<span class="keyword">double</span>         Double </span><br><span class="line">	<span class="keyword">boolean</span>        Boolean </span><br><span class="line">	<span class="keyword">char</span>          Character</span><br><span class="line">基本数据类型数据有了对应 的包装 类型的好处：</span><br><span class="line"> */</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo5</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		String str = <span class="string">"12"</span>;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//字符串转换成int类型数据。 可以把字符串转换成对应的数字</span></span><br><span class="line">		<span class="keyword">int</span> i = Integer.parseInt(str);</span><br><span class="line">		System.out.println(i+<span class="number">1</span>);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//把数字转换成字符串</span></span><br><span class="line">		System.out.println(<span class="string">"把整数转换成对应 的字符串："</span>+Integer.toString(i));</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//把整数转换成对应的进制形式</span></span><br><span class="line">		System.out.println(<span class="string">"10的二进制："</span>+ Integer.toBinaryString(<span class="number">10</span>));</span><br><span class="line">		System.out.println(<span class="string">"10的二进制："</span>+ Integer.toBinaryString(<span class="number">10</span>));</span><br><span class="line">		System.out.println(<span class="string">"10的十六进制："</span>+ Integer.toHexString(<span class="number">10</span>));</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//可以把字符串当成对应的进行数据帮你转换</span></span><br><span class="line">		String data = <span class="string">"10"</span>;</span><br><span class="line">		<span class="keyword">int</span> a = Integer.parseInt(data, <span class="number">2</span>);</span><br><span class="line">		System.out.println(<span class="string">"a="</span>+a);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//集合： 集合是可以存储任意对象类型数据的容器。</span></span><br><span class="line">		ArrayList list = <span class="keyword">new</span> ArrayList();</span><br><span class="line">		list.add(<span class="number">1</span>);</span><br><span class="line">		list.add(<span class="number">2</span>);</span><br><span class="line">		list.add(<span class="number">3</span>);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//自动装箱： 自动把java的基本数据类型数据转换成对象类型数据。</span></span><br><span class="line">		<span class="keyword">int</span> temp = <span class="number">10</span>;  <span class="comment">//基本数据类型</span></span><br><span class="line">		Integer b =temp; <span class="comment">//把a存储的值赋予给b变量。</span></span><br><span class="line">		</span><br><span class="line">		<span class="comment">//自动拆箱： 把引用类型的数据转换成基本类型的数据</span></span><br><span class="line">		Integer c = <span class="keyword">new</span> Integer(<span class="number">13</span>);</span><br><span class="line">		<span class="keyword">int</span> d = c; <span class="comment">//</span></span><br><span class="line">		System.out.println(d);</span><br><span class="line">		<span class="comment">//引用的数据类型</span></span><br><span class="line">		Integer e = <span class="number">128</span>;</span><br><span class="line">		Integer f = <span class="number">128</span>; </span><br><span class="line">		System.out.println(<span class="string">"同一个对象吗？"</span>+(e==f)); <span class="comment">// Integer类内部维护了缓冲数组，该缓冲数组存储的-128~127 这些数据在一个数组中。如果你获取的数据是落入到这个范围之内的，那么就直接从该缓冲区中获取对应的数据。</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2017/12/04/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/7-Java_%E6%AD%A3%E5%88%99_%E6%9E%9A%E4%B8%BE_jdk1.5%E7%89%B9%E6%80%A7/" title="java基础知识-正则-枚举">https://zxucooly.github.io/2017/12/04/Java基础知识/7-Java_正则_枚举_jdk1.5特性/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag"><i class="fa fa-tag"></i> java基础知识</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/12/03/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/6-Java_%E6%96%87%E4%BB%B6_%E6%B5%81%E5%AF%B9%E8%B1%A1/" rel="prev" title="java基础知识-文件">
+      <i class="fa fa-chevron-left"></i> java基础知识-文件
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/12/04/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/4-Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86_%E7%BA%BF%E7%A8%8B/" rel="next" title="java基础知识-线程">
+      java基础知识-线程 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#枚举"><span class="nav-number">1.</span> <span class="nav-text">枚举</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正则表达式"><span class="nav-number">2.</span> <span class="nav-text">正则表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#正则表达式的符号"><span class="nav-number">2.1.</span> <span class="nav-text">正则表达式的符号</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#预定义字符类"><span class="nav-number">2.1.1.</span> <span class="nav-text">预定义字符类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数量词（greedy）"><span class="nav-number">2.1.2.</span> <span class="nav-text">数量词（greedy）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#范围表示"><span class="nav-number">2.1.3.</span> <span class="nav-text">范围表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#匹配功能"><span class="nav-number">2.1.4.</span> <span class="nav-text">匹配功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#切割功能"><span class="nav-number">2.1.5.</span> <span class="nav-text">切割功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#替换功能"><span class="nav-number">2.1.6.</span> <span class="nav-text">替换功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取功能"><span class="nav-number">2.1.7.</span> <span class="nav-text">获取功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用正则表达式"><span class="nav-number">2.1.8.</span> <span class="nav-text">常用正则表达式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#静态导入"><span class="nav-number">3.</span> <span class="nav-text">静态导入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可变参数"><span class="nav-number">4.</span> <span class="nav-text">可变参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#增强for循环"><span class="nav-number">5.</span> <span class="nav-text">增强for循环</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#自定一个类使用增强for循环"><span class="nav-number">5.1.</span> <span class="nav-text">自定一个类使用增强for循环</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自动装箱与自动拆箱"><span class="nav-number">6.</span> <span class="nav-text">自动装箱与自动拆箱</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

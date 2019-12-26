@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="垃圾回收1. 小整数对象池整数在程序中的使用非常广泛，Python为了优化速度，使用了小整数对象池， 避免为整数频繁申请和销毁内存空间。 Python 对小整数的定义是 [-5, 257) 这些整数对象是提前建立好的，不会被垃圾回收。在一个 Python 的程序中，所有位于这个范围内的整数使用的都是同一个对象. 同理，单个字母也是这样的。 但是当定义2个相同的字符串时，引用计数为0，触发垃圾回收">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python-垃圾回收">
+<meta property="og:url" content="https://zxucooly.github.io/2018/10/27/python%E7%9B%B8%E5%85%B3/python-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="垃圾回收1. 小整数对象池整数在程序中的使用非常广泛，Python为了优化速度，使用了小整数对象池， 避免为整数频繁申请和销毁内存空间。 Python 对小整数的定义是 [-5, 257) 这些整数对象是提前建立好的，不会被垃圾回收。在一个 Python 的程序中，所有位于这个范围内的整数使用的都是同一个对象. 同理，单个字母也是这样的。 但是当定义2个相同的字符串时，引用计数为0，触发垃圾回收">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-27T02:55:35.000Z">
+<meta property="article:modified_time" content="2018-11-25T07:20:28.795Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="python-base">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2018/10/27/python%E7%9B%B8%E5%85%B3/python-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>python-垃圾回收 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2018/10/27/python%E7%9B%B8%E5%85%B3/python-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          python-垃圾回收
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-27 10:55:35" itemprop="dateCreated datePublished" datetime="2018-10-27T10:55:35+08:00">2018-10-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2018-11-25 15:20:28" itemprop="dateModified" datetime="2018-11-25T15:20:28+08:00">2018-11-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h1><h2 id="1-小整数对象池"><a href="#1-小整数对象池" class="headerlink" title="1. 小整数对象池"></a>1. 小整数对象池</h2><p>整数在程序中的使用非常广泛，Python为了优化速度，使用了小整数对象池， 避免为整数频繁申请和销毁内存空间。</p>
+<p>Python 对小整数的定义是 [-5, 257) 这些整数对象是提前建立好的，不会被垃圾回收。在一个 Python 的程序中，所有位于这个范围内的整数使用的都是同一个对象.</p>
+<p>同理，单个字母也是这样的。</p>
+<p>但是当定义2个相同的字符串时，引用计数为0，触发垃圾回收</p>
+<a id="more"></a>
+
+<h2 id="2-大整数对象池"><a href="#2-大整数对象池" class="headerlink" title="2. 大整数对象池"></a>2. 大整数对象池</h2><p>每一个大整数，均创建一个新的对象。</p>
+<h2 id="3-intern机制"><a href="#3-intern机制" class="headerlink" title="3. intern机制"></a>3. intern机制</h2><blockquote>
+<p>python会不会创建9个对象呢？在内存中会不会开辟9个”HelloWorld”的内存空间呢？ 想一下，如果是这样的话，我们写10000个对象，比如a1=”HelloWorld”…..a1000=”HelloWorld”， 那他岂不是开辟了1000个”HelloWorld”所占的内存空间了呢？如果真这样，内存不就爆了吗？所以python中有这样一个机制——<code>intern机制</code>，让他只占用一个”HelloWorld”所占的内存空间。靠引用计数去维护何时释放。</p>
+</blockquote>
+<blockquote>
+<p>intern机制相当于共享机制</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="string">'abcde'</span></span><br><span class="line">b = <span class="string">'abcde'</span></span><br><span class="line">id(a)</span><br><span class="line">Out[<span class="number">4</span>]: <span class="number">116404992</span></span><br><span class="line">id(b)</span><br><span class="line">Out[<span class="number">5</span>]: <span class="number">116404992</span></span><br><span class="line">c = <span class="string">'a b'</span></span><br><span class="line">d = <span class="string">'a b'</span></span><br><span class="line">id(c)</span><br><span class="line">Out[<span class="number">9</span>]: <span class="number">116283136</span></span><br><span class="line">id(d)</span><br><span class="line">Out[<span class="number">10</span>]: <span class="number">116282208</span></span><br><span class="line"><span class="keyword">del</span> a</span><br><span class="line"><span class="keyword">del</span> b</span><br><span class="line">e = <span class="string">'abcde'</span></span><br><span class="line">id(e)</span><br><span class="line">Out[<span class="number">14</span>]: <span class="number">116282400</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>小整数[-5,257)共用对象，常驻内存</li>
+<li>单个字符共用对象，常驻内存</li>
+<li>单个单词，不可修改，默认开启intern机制，共用对象，引用计数为0，则销毁 </li>
+<li>字符串（含有空格、特殊符号），不可修改，没开启intern机制，不共用对象，引用计数为0，销毁 </li>
+<li>大整数不共用内存，引用计数为0，销毁 </li>
+<li>数值类型和字符串类型在 Python 中都是不可变的，这意味着你无法修改这个对象的值，每次对变量的修改，实际上是创建一个新的对象 </li>
+</ul>
+<h2 id="4-Garbage-collection"><a href="#4-Garbage-collection" class="headerlink" title="4. Garbage collection"></a>4. Garbage collection</h2><p>现在的高级语言如java，c#等，都采用了垃圾收集机制，而不再是c，c++里用户自己管理维护内存的方式。自己管理内存极其自由，可以任意申请内存，但如同一把双刃剑，为大量内存泄露，悬空指针等bug埋下隐患。 对于一个字符串、列表、类甚至数值都是对象，且定位简单易用的语言，自然不会让用户去处理如何分配回收内存的问题。 python里也同java一样采用了垃圾收集机制，不过不一样的是: <strong>python采用的是引用计数机制为主，隔代收集两种机制为辅的策略。</strong></p>
+<p>引用计数机制：</p>
+<p>python里每一个东西都是对象，它们的核心就是一个结构体：<code>PyObject</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">typedef struct_object &#123;</span><br><span class="line">    int ob_refcnt;</span><br><span class="line">    struct_typeobject *ob_type;</span><br><span class="line">&#125; PyObject;</span><br></pre></td></tr></table></figure>
+
+<p>PyObject是每个对象必有的内容，其中ob_refcnt就是做为引用计数。当一个对象有新的引用时，它的ob_refcnt就会增加，当引用它的对象被删除，它的ob_refcnt就会减少</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#define Py_INCREF(op)   ((op)-&gt;ob_refcnt++) &#x2F;&#x2F;增加计数</span><br><span class="line">#define Py_DECREF(op) \ &#x2F;&#x2F;减少计数</span><br><span class="line">    if (--(op)-&gt;ob_refcnt !&#x3D; 0) \</span><br><span class="line">        ; \</span><br><span class="line">    else \</span><br><span class="line">        __Py_Dealloc((PyObject *)(op))</span><br></pre></td></tr></table></figure>
+
+<p>当引用计数为0时，该对象生命就结束了。</p>
+<h3 id="引用计数机制的优点："><a href="#引用计数机制的优点：" class="headerlink" title="引用计数机制的优点："></a>引用计数机制的优点：</h3><ul>
+<li>简单</li>
+<li>实时性：一旦没有引用，内存就直接释放了。不用像其他机制等到特定时机。实时性还带来一个好处：处理回收内存的时间分摊到了平时。</li>
+</ul>
+<h3 id="引用计数机制的缺点："><a href="#引用计数机制的缺点：" class="headerlink" title="引用计数机制的缺点："></a>引用计数机制的缺点：</h3><ul>
+<li><p>维护引用计数消耗资源</p>
+</li>
+<li><p>循环引用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">list1 &#x3D; []</span><br><span class="line">list2 &#x3D; []</span><br><span class="line">list1.append(list2)</span><br><span class="line">list2.append(list1)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>list1与list2相互引用，如果不存在其他对象对它们的引用，list1与list2的引用计数也仍然为1，所占用的内存永远无法被回收，这将是致命的。 对于如今的强大硬件，缺点1尚可接受，但是循环引用导致内存泄露，注定python还将引入新的回收机制。(标记清除和分代收集)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gc</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassA</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">'object born,id:%s'</span>%str(hex(id(self))))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f2</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        c1 = ClassA()</span><br><span class="line">        c2 = ClassA()</span><br><span class="line">        c1.t = c2</span><br><span class="line">        c2.t = c1</span><br><span class="line">        <span class="keyword">del</span> c1</span><br><span class="line">        <span class="keyword">del</span> c2</span><br><span class="line">        gc.collect()</span><br><span class="line">gc.disable()</span><br><span class="line">f2()</span><br><span class="line"><span class="comment"># C1和C2对象相互引用，引用计数解决不了，内存泄漏，程序蹦。</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="5-Ruby标记-清除"><a href="#5-Ruby标记-清除" class="headerlink" title="5. Ruby标记-清除"></a>5. Ruby标记-清除</h2><h3 id="标记-删除-vs-引用计数"><a href="#标记-删除-vs-引用计数" class="headerlink" title="标记-删除 vs. 引用计数"></a>标记-删除 vs. 引用计数</h3><p>乍一看，Python的GC算法貌似远胜于Ruby的：宁舍洁宇而居秽室乎？为什么Ruby宁愿定期强制程序停止运行，也不使用Python的算法呢？</p>
+<p>然而，引用计数并不像第一眼看上去那样简单。有许多原因使得不许多语言不像Python这样使用引用计数GC算法：</p>
+<p>首先，它不好实现。Python不得不在每个对象内部留一些空间来处理引用数。这样付出了一小点儿空间上的代价。但更糟糕的是，每个简单的操作（像修改变量或引用）都会变成一个更复杂的操作，因为Python需要增加一个计数，减少另一个，还可能释放对象。</p>
+<p>第二点，它相对较慢。虽然Python随着程序执行GC很稳健（一把脏碟子放在洗碗盆里就开始洗啦），但这并不一定更快。Python不停地更新着众多引用数值。特别是当你不再使用一个大数据结构的时候，比如一个包含很多元素的列表，Python可能必须一次性释放大量对象。减少引用数就成了一项复杂的递归过程了。</p>
+<p>最后，它不是总奏效的。引用计数不能处理环形数据结构–也就是含有循环引用的数据结构。</p>
+<h2 id="6-Python中的零代（隔代回收）"><a href="#6-Python中的零代（隔代回收）" class="headerlink" title="6. Python中的零代（隔代回收）"></a>6. Python中的零代（隔代回收）</h2><p>解决循环引用</p>
+<blockquote>
+<p>创建ABC节点的时候，Python将其加入零代链表。请注意到这并不是一个真正的列表，并不能直接在你的代码中访问，事实上这个链表是一个完全内部的Python运行时。 相似的，当我们创建DEF节点的时候，Python将其加入同样的链表</p>
+<p>现在零代包含了两个节点对象。(他还将包含Python创建的每个其他值，与一些Python自己使用的内部值。)</p>
+<p>随后，Python会循环遍历零代列表上的每个对象，检查列表中每个互相引用的对象，根据规则减掉其引用计数。在这个过程中，Python会一个接一个的统计内部引用的数量以防过早地释放对象。</p>
+<p>通过识别内部引用，Python能够减少许多零代链表对象的引用计数。当节点对象的引用计数已经变为零了，这意味着收集器可以释放它们并回收内存空间了。剩下的活跃的对象则被移动到一个新的链表：一代链表。</p>
+<p>达到某种情况下(<code>gc.get_count()..</code>)，对零代上的节点对象的引用减一。引用为零的节点被删除。</p>
+<p>对还活跃在一代链表的继续减一，总共有三代链表。</p>
+</blockquote>
+<h2 id="7-Python中的GC阈值"><a href="#7-Python中的GC阈值" class="headerlink" title="7. Python中的GC阈值"></a>7. Python中的GC阈值</h2><p>Python什么时候会进行这个标记过程？随着你的程序运行，Python解释器保持对新创建的对象，以及因为引用计数为零而被释放掉的对象的追踪。从理论上说，这两个值应该保持一致，因为程序新建的每个对象都应该最终被释放掉。</p>
+<p>当然，事实并非如此。因为循环引用的原因，并且因为你的程序使用了一些比其他对象存在时间更长的对象，从而被分配对象的计数值与被释放对象的计数值之间的差异在逐渐增长。一旦这个差异累计超过某个阈值，则Python的收集机制就启动了，并且触发上边所说到的零代算法，释放“浮动的垃圾”，并且将剩下的对象移动到一代列表。</p>
+<p>随着时间的推移，程序所使用的对象逐渐从零代列表移动到一代列表。而Python对于一代列表中对象的处理遵循同样的方法，一旦被分配计数值与被释放计数值累计到达一定阈值，Python会将剩下的活跃对象移动到二代列表。</p>
+<p>通过这种方法，你的代码所长期使用的对象，那些你的代码持续访问的活跃对象，会从零代链表转移到一代再转移到二代。通过不同的阈值设置，Python可以在不同的时间间隔处理这些对象。Python处理零代最为频繁，其次是一代然后才是二代。</p>
+<p>弱代假说</p>
+<p>来看看代垃圾回收算法的核心行为：垃圾回收器会更频繁的处理新对象。一个新的对象即是你的程序刚刚创建的，而一个来的对象则是经过了几个时间周期之后仍然存在的对象。Python会在当一个对象从零代移动到一代，或是从一代移动到二代的过程中提升(promote)这个对象。</p>
+<p>为什么要这么做？这种算法的根源来自于弱代假说(weak generational hypothesis)。这个假说由两个观点构成：首先是年亲的对象通常死得也快，而老对象则很有可能存活更长的时间。</p>
+<p>假定现在我用Python或是Ruby创建一个新对象：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">n1 = Node(<span class="string">'ABC'</span>)         n2 = Node.new(<span class="string">'ABC'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>根据假说，我的代码很可能仅仅会使用ABC很短的时间。这个对象也许仅仅只是一个方法中的中间结果，并且随着方法的返回这个对象就将变成垃圾了。大部分的新对象都是如此般地很快变成垃圾。然而，偶尔程序会创建一些很重要的，存活时间比较长的对象-例如web应用中的session变量或是配置项。</p>
+<p>通过频繁的处理零代链表中的新对象，Python的垃圾收集器将把时间花在更有意义的地方：它处理那些很快就可能变成垃圾的新对象。同时只在很少的时候，当满足阈值的条件，收集器才回去处理那些老变量。</p>
+<h1 id="垃圾回收-gc模块"><a href="#垃圾回收-gc模块" class="headerlink" title="垃圾回收-gc模块"></a>垃圾回收-gc模块</h1><h2 id="一-垃圾回收机制"><a href="#一-垃圾回收机制" class="headerlink" title="一.垃圾回收机制"></a>一.垃圾回收机制</h2><p>Python中的垃圾回收是以引用计数为主，分代收集为辅。</p>
+<h3 id="1、导致引用计数-1的情况"><a href="#1、导致引用计数-1的情况" class="headerlink" title="1、导致引用计数+1的情况"></a>1、导致引用计数+1的情况</h3><ul>
+<li><code>对象被创建，例如a=23</code></li>
+<li><code>对象被引用，例如b=a</code></li>
+<li><code>对象被作为参数，传入到一个函数中，例如func(a)</code></li>
+<li><code>对象作为一个元素，存储在容器中，例如list1=[a,a]</code></li>
+</ul>
+<h3 id="2、导致引用计数-1的情况"><a href="#2、导致引用计数-1的情况" class="headerlink" title="2、导致引用计数-1的情况"></a>2、导致引用计数-1的情况</h3><ul>
+<li><code>对象的别名被显式销毁，例如del a</code></li>
+<li><code>对象的别名被赋予新的对象，例如a=24</code></li>
+<li><code>一个对象离开它的作用域，例如f函数执行完毕时，func函数中的局部变量（全局变量不会）</code></li>
+<li><code>对象所在的容器被销毁，或从容器中删除对象</code></li>
+</ul>
+<h3 id="3、查看一个对象的引用计数"><a href="#3、查看一个对象的引用计数" class="headerlink" title="3、查看一个对象的引用计数"></a>3、查看一个对象的引用计数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">a = <span class="string">"hello world"</span></span><br><span class="line">sys.getrefcount(a)</span><br></pre></td></tr></table></figure>
+
+<p>可以查看a对象的引用计数，但是比正常计数大1，因为调用函数的时候传入a，这会让a的引用计数+1</p>
+<h2 id="二-循环引用导致内存泄露"><a href="#二-循环引用导致内存泄露" class="headerlink" title="二.循环引用导致内存泄露"></a>二.循环引用导致内存泄露</h2><p>引用计数的缺陷是循环引用的问题</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gc</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassA</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">'object born,id:%s'</span>%str(hex(id(self))))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f2</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        c1 = ClassA()</span><br><span class="line">        c2 = ClassA()</span><br><span class="line">        c1.t = c2</span><br><span class="line">        c2.t = c1</span><br><span class="line">        <span class="keyword">del</span> c1</span><br><span class="line">        <span class="keyword">del</span> c2</span><br><span class="line"></span><br><span class="line"><span class="comment">#把python的gc关闭</span></span><br><span class="line">gc.disable()</span><br><span class="line"></span><br><span class="line">f2()</span><br></pre></td></tr></table></figure>
+
+<p>执行f2()，进程占用的内存会不断增大。</p>
+<ul>
+<li>创建了c1，c2后这两块内存的引用计数都是1，执行<code>c1.t=c2</code>和<code>c2.t=c1</code>后，这两块内存的引用计数变成2.</li>
+<li>在del c1后，内存1的对象的引用计数变为1，由于不是为0，所以内存1的对象不会被销毁，所以内存2的对象的引用数依然是2，在del c2后，同理，内存1的对象，内存2的对象的引用数都是1。</li>
+<li>虽然它们两个的对象都是可以被销毁的，但是由于循环引用，导致垃圾回收器都不会回收它们，所以就会导致内存泄露。</li>
+</ul>
+<h2 id="三-垃圾回收"><a href="#三-垃圾回收" class="headerlink" title="三.垃圾回收"></a>三.垃圾回收</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> gc</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassA</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">'object born,id:%s'</span>%str(hex(id(self))))</span><br><span class="line">    <span class="comment"># def __del__(self):</span></span><br><span class="line">    <span class="comment">#     print('object del,id:%s'%str(hex(id(self))))</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f3</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">"-----0------"</span>)</span><br><span class="line">    <span class="comment"># print(gc.collect())</span></span><br><span class="line">    c1 = ClassA()</span><br><span class="line">    c2 = ClassA()</span><br><span class="line">    c1.t = c2</span><br><span class="line">    c2.t = c1</span><br><span class="line">    print(<span class="string">"-----1------"</span>)</span><br><span class="line">    <span class="keyword">del</span> c1</span><br><span class="line">    <span class="keyword">del</span> c2</span><br><span class="line">    print(<span class="string">"-----2------"</span>)</span><br><span class="line">    print(gc.garbage)</span><br><span class="line">    print(<span class="string">"-----3------"</span>)</span><br><span class="line">    print(gc.collect()) <span class="comment">#显式执行垃圾回收</span></span><br><span class="line">    print(<span class="string">"-----4------"</span>)</span><br><span class="line">    print(gc.garbage)</span><br><span class="line">    print(<span class="string">"-----5------"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    gc.set_debug(gc.DEBUG_LEAK) <span class="comment">#设置gc模块的日志</span></span><br><span class="line">    f3()</span><br></pre></td></tr></table></figure>
+
+<p>python2运行结果:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">----<span class="number">-0</span>------</span><br><span class="line">object born,id:<span class="number">0x724b20</span></span><br><span class="line">object born,id:<span class="number">0x724b48</span></span><br><span class="line">----<span class="number">-1</span>------</span><br><span class="line">----<span class="number">-2</span>------</span><br><span class="line">[]</span><br><span class="line">----<span class="number">-3</span>------</span><br><span class="line">gc: collectable &lt;ClassA instance at <span class="number">0x724b20</span>&gt;</span><br><span class="line">gc: collectable &lt;ClassA instance at <span class="number">0x724b48</span>&gt;</span><br><span class="line">gc: collectable &lt;dict <span class="number">0x723300</span>&gt;</span><br><span class="line">gc: collectable &lt;dict <span class="number">0x71bf60</span>&gt;</span><br><span class="line"><span class="number">4</span></span><br><span class="line">----<span class="number">-4</span>------</span><br><span class="line">[&lt;__main__.ClassA instance at <span class="number">0x724b20</span>&gt;, &lt;__main__.ClassA instance at <span class="number">0x724b48</span>&gt;, &#123;<span class="string">'t'</span>: &lt;__main__.ClassA instance at <span class="number">0x724b48</span>&gt;&#125;, &#123;<span class="string">'t'</span>: &lt;__main__.ClassA instance at <span class="number">0x724b20</span>&gt;&#125;]</span><br><span class="line">----<span class="number">-5</span>------</span><br></pre></td></tr></table></figure>
+
+<h5 id="说明"><a href="#说明" class="headerlink" title="说明:"></a>说明:</h5><ul>
+<li>垃圾回收后的对象会放在gc.garbage列表里面</li>
+<li>gc.collect()会返回不可达的对象数目，4等于两个对象以及它们对应的dict</li>
+</ul>
+<h3 id="有三种情况会触发垃圾回收："><a href="#有三种情况会触发垃圾回收：" class="headerlink" title="有三种情况会触发垃圾回收："></a>有三种情况会触发垃圾回收：</h3><ol>
+<li>调用gc.collect(),</li>
+<li>当gc模块的计数器达到阀值的时候。</li>
+<li>程序退出的时候</li>
+</ol>
+<h2 id="四-gc模块常用功能解析"><a href="#四-gc模块常用功能解析" class="headerlink" title="四.gc模块常用功能解析"></a>四.gc模块常用功能解析</h2><p><code>gc模块提供一个接口给开发者设置垃圾回收的选项</code>。上面说到，采用引用计数的方法管理内存的一个缺陷是循环引用，而gc模块的一个主要功能就是解决循环引用的问题。</p>
+<h5 id="常用函数："><a href="#常用函数：" class="headerlink" title="常用函数："></a>常用函数：</h5><p>1、gc.set_debug(flags) 设置gc的debug日志，一般设置为gc.DEBUG_LEAK</p>
+<p>2、gc.collect([generation]) 显式进行垃圾回收，可以输入参数，0代表只检查第一代的对象，1代表检查一，二代的对象，2代表检查一，二，三代的对象，如果不传参数，执行一个full collection，也就是等于传2。 返回不可达（unreachable objects）对象的数目</p>
+<p>3、gc.get_threshold() 获取的gc模块中自动执行垃圾回收的频率。</p>
+<p>4、gc.set_threshold(threshold0[, threshold1[, threshold2]) 设置自动执行垃圾回收的频率。</p>
+<p>5、gc.get_count() 获取当前自动执行垃圾回收的计数器，返回一个长度为3的列表</p>
+<h4 id="gc模块的自动垃圾回收机制"><a href="#gc模块的自动垃圾回收机制" class="headerlink" title="gc模块的自动垃圾回收机制"></a>gc模块的自动垃圾回收机制</h4><p>必须要import gc模块，并且<code>gc.isenabled()=True</code>才会启动自动垃圾回收。</p>
+<p>这个机制的<code>主要作用就是发现并处理不可达的垃圾对象</code>。</p>
+<p><code>垃圾回收=垃圾检查+垃圾回收</code></p>
+<p>在Python中，采用分代收集的方法。把对象分为三代，一开始，对象在创建的时候，放在一代中，如果在一次一代的垃圾检查中，改对象存活下来，就会被放到二代中，同理在一次二代的垃圾检查中，该对象存活下来，就会被放到三代中。</p>
+<p>gc模块里面会有一个长度为3的列表的计数器，可以通过gc.get_count()获取。</p>
+<p>例如(488,3,0)，其中488是指距离上一次一代垃圾检查，Python分配内存的数目减去释放内存的数目，注意是内存分配，而不是引用计数的增加。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">print</span> gc.get_count() <span class="comment"># (590, 8, 0)</span></span><br><span class="line">a = ClassA()</span><br><span class="line"><span class="keyword">print</span> gc.get_count() <span class="comment"># (591, 8, 0)</span></span><br><span class="line"><span class="keyword">del</span> a</span><br><span class="line"><span class="keyword">print</span> gc.get_count() <span class="comment"># (590, 8, 0)</span></span><br><span class="line"><span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<p>3是指距离上一次二代垃圾检查，一代垃圾检查的次数，同理，0是指距离上一次三代垃圾检查，二代垃圾检查的次数。</p>
+<p>gc模快有一个自动垃圾回收的<code>阀值</code>，即通过gc.get_threshold函数获取到的长度为3的元组，例如(700,10,10) 每一次计数器的增加，gc模块就会检查增加后的计数是否达到阀值的数目，如果是，就会执行对应的代数的垃圾检查，然后重置计数器</p>
+<p>例如，假设阀值是(700,10,10)：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当计数器从(<span class="number">699</span>,<span class="number">3</span>,<span class="number">0</span>)增加到(<span class="number">700</span>,<span class="number">3</span>,<span class="number">0</span>)，gc模块就会执行gc.collect(<span class="number">0</span>),即检查一代对象的垃圾，并重置计数器为(<span class="number">0</span>,<span class="number">4</span>,<span class="number">0</span>)</span><br><span class="line">当计数器从(<span class="number">699</span>,<span class="number">9</span>,<span class="number">0</span>)增加到(<span class="number">700</span>,<span class="number">9</span>,<span class="number">0</span>)，gc模块就会执行gc.collect(<span class="number">1</span>),即检查一、二代对象的垃圾，并重置计数器为(<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">当计数器从(<span class="number">699</span>,<span class="number">9</span>,<span class="number">9</span>)增加到(<span class="number">700</span>,<span class="number">9</span>,<span class="number">9</span>)，gc模块就会执行gc.collect(<span class="number">2</span>),即检查一、二、三代对象的垃圾，并重置计数器为(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h2><p>gc模块唯一处理不了的是循环引用的类都有<strong>del</strong>方法，所以项目中要避免定义<strong>del</strong>方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gc</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassA</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line">    <span class="comment"># def __del__(self):</span></span><br><span class="line">    <span class="comment">#     print('object born,id:%s'%str(hex(id(self))))</span></span><br><span class="line"></span><br><span class="line">gc.set_debug(gc.DEBUG_LEAK)</span><br><span class="line">a = ClassA()</span><br><span class="line">b = ClassA()</span><br><span class="line"></span><br><span class="line">a.next = b</span><br><span class="line">b.prev = a</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"--1--"</span></span><br><span class="line"><span class="keyword">print</span> gc.collect()</span><br><span class="line"><span class="keyword">print</span> <span class="string">"--2--"</span></span><br><span class="line"><span class="keyword">del</span> a</span><br><span class="line"><span class="keyword">print</span> <span class="string">"--3--"</span></span><br><span class="line"><span class="keyword">del</span> b</span><br><span class="line"><span class="keyword">print</span> <span class="string">"--3-1--"</span></span><br><span class="line"><span class="keyword">print</span> gc.collect()</span><br><span class="line"><span class="keyword">print</span> <span class="string">"--4--"</span></span><br></pre></td></tr></table></figure>
+
+<p>运行结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">-<span class="number">-1</span>--</span><br><span class="line"><span class="number">0</span></span><br><span class="line">-<span class="number">-2</span>--</span><br><span class="line">-<span class="number">-3</span>--</span><br><span class="line">-<span class="number">-3</span><span class="number">-1</span>--</span><br><span class="line">gc: collectable &lt;ClassA instance at <span class="number">0x21248c8</span>&gt;</span><br><span class="line">gc: collectable &lt;ClassA instance at <span class="number">0x21248f0</span>&gt;</span><br><span class="line">gc: collectable &lt;dict <span class="number">0x2123030</span>&gt;</span><br><span class="line">gc: collectable &lt;dict <span class="number">0x2123150</span>&gt;</span><br><span class="line"><span class="number">4</span></span><br><span class="line">-<span class="number">-4</span>--</span><br></pre></td></tr></table></figure>
+
+<p>如果把<strong>del</strong>打开，运行结果为:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">-<span class="number">-1</span>--</span><br><span class="line"><span class="number">0</span></span><br><span class="line">-<span class="number">-2</span>--</span><br><span class="line">-<span class="number">-3</span>--</span><br><span class="line">-<span class="number">-3</span><span class="number">-1</span>--</span><br><span class="line">gc: uncollectable &lt;ClassA instance at <span class="number">0x6269b8</span>&gt;</span><br><span class="line">gc: uncollectable &lt;ClassA instance at <span class="number">0x6269e0</span>&gt;</span><br><span class="line">gc: uncollectable &lt;dict <span class="number">0x61bed0</span>&gt;</span><br><span class="line">gc: uncollectable &lt;dict <span class="number">0x6230c0</span>&gt;</span><br><span class="line"><span class="number">4</span></span><br><span class="line">-<span class="number">-4</span>--</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2018/10/27/python%E7%9B%B8%E5%85%B3/python-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" title="python-垃圾回收">https://zxucooly.github.io/2018/10/27/python相关/python-垃圾回收/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+              <a href="/tags/python-base/" rel="tag"><i class="fa fa-tag"></i> python-base</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/27/python%E7%9B%B8%E5%85%B3/python-%E5%85%83%E7%B1%BB/" rel="prev" title="python-元类">
+      <i class="fa fa-chevron-left"></i> python-元类
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/10/28/python%E7%9B%B8%E5%85%B3/python-%E8%B0%83%E8%AF%95%E5%92%8C%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC/" rel="next" title="python-调试和编码风格">
+      python-调试和编码风格 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#垃圾回收"><span class="nav-number">1.</span> <span class="nav-text">垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-小整数对象池"><span class="nav-number">1.1.</span> <span class="nav-text">1. 小整数对象池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-大整数对象池"><span class="nav-number">1.2.</span> <span class="nav-text">2. 大整数对象池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-intern机制"><span class="nav-number">1.3.</span> <span class="nav-text">3. intern机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Garbage-collection"><span class="nav-number">1.5.</span> <span class="nav-text">4. Garbage collection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#引用计数机制的优点："><span class="nav-number">1.5.1.</span> <span class="nav-text">引用计数机制的优点：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引用计数机制的缺点："><span class="nav-number">1.5.2.</span> <span class="nav-text">引用计数机制的缺点：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Ruby标记-清除"><span class="nav-number">1.6.</span> <span class="nav-text">5. Ruby标记-清除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#标记-删除-vs-引用计数"><span class="nav-number">1.6.1.</span> <span class="nav-text">标记-删除 vs. 引用计数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Python中的零代（隔代回收）"><span class="nav-number">1.7.</span> <span class="nav-text">6. Python中的零代（隔代回收）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Python中的GC阈值"><span class="nav-number">1.8.</span> <span class="nav-text">7. Python中的GC阈值</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#垃圾回收-gc模块"><span class="nav-number">2.</span> <span class="nav-text">垃圾回收-gc模块</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-垃圾回收机制"><span class="nav-number">2.1.</span> <span class="nav-text">一.垃圾回收机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、导致引用计数-1的情况"><span class="nav-number">2.1.1.</span> <span class="nav-text">1、导致引用计数+1的情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、导致引用计数-1的情况"><span class="nav-number">2.1.2.</span> <span class="nav-text">2、导致引用计数-1的情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、查看一个对象的引用计数"><span class="nav-number">2.1.3.</span> <span class="nav-text">3、查看一个对象的引用计数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-循环引用导致内存泄露"><span class="nav-number">2.2.</span> <span class="nav-text">二.循环引用导致内存泄露</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-垃圾回收"><span class="nav-number">2.3.</span> <span class="nav-text">三.垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#说明"><span class="nav-number">2.3.0.0.1.</span> <span class="nav-text">说明:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有三种情况会触发垃圾回收："><span class="nav-number">2.3.1.</span> <span class="nav-text">有三种情况会触发垃圾回收：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-gc模块常用功能解析"><span class="nav-number">2.4.</span> <span class="nav-text">四.gc模块常用功能解析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#常用函数："><span class="nav-number">2.4.0.0.1.</span> <span class="nav-text">常用函数：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gc模块的自动垃圾回收机制"><span class="nav-number">2.4.0.1.</span> <span class="nav-text">gc模块的自动垃圾回收机制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注意点"><span class="nav-number">2.5.</span> <span class="nav-text">注意点</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

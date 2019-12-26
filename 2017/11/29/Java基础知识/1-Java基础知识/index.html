@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-z-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-z-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://zxucooly.github.io').hostname,
+    root: '/',
+    scheme: 'Mist',
+    version: '7.6.0',
+    exturl: true,
+    sidebar: {"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="常见的dos命令盘符： 进入指定的盘符下。 dir : 列出当前目录下的文件以及文件夹 md : 创建目录 rd : 删除目录    注意：rd不能删除非空的文件夹，而且只能用于删除文件夹。 cd : 进入指定目录 cd.. : 退回到上一级目录 cd \ : 退回到根目录 echo “hello java”&gt;a.txt  **写入文本到指定文件  ** *type a.txt *显示文件内">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java基础知识">
+<meta property="og:url" content="https://zxucooly.github.io/2017/11/29/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/1-Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/index.html">
+<meta property="og:site_name" content="ZXUBLOG">
+<meta property="og:description" content="常见的dos命令盘符： 进入指定的盘符下。 dir : 列出当前目录下的文件以及文件夹 md : 创建目录 rd : 删除目录    注意：rd不能删除非空的文件夹，而且只能用于删除文件夹。 cd : 进入指定目录 cd.. : 退回到上一级目录 cd \ : 退回到根目录 echo “hello java”&gt;a.txt  **写入文本到指定文件  ** *type a.txt *显示文件内">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-11-29T00:26:45.000Z">
+<meta property="article:modified_time" content="2018-11-29T00:47:40.328Z">
+<meta property="article:author" content="zxucooly">
+<meta property="article:tag" content="java基础知识">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zxucooly.github.io/2017/11/29/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/1-Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>java基础知识 | ZXUBLOG</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZXUBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">PERSISTENCE</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">48</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zxucooly.github.io/2017/11/29/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/1-Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zxucooly">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZXUBLOG">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java基础知识
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-11-29 08:26:45" itemprop="dateCreated datePublished" datetime="2017-11-29T08:26:45+08:00">2017-11-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2018-11-29 08:47:40" itemprop="dateModified" datetime="2018-11-29T08:47:40+08:00">2018-11-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="常见的dos命令"><a href="#常见的dos命令" class="headerlink" title="常见的dos命令"></a>常见的dos命令</h1><p>盘符： 进入指定的盘符下。</p>
+<p><strong>dir</strong> : 列出当前目录下的文件以及文件夹</p>
+<p><strong>md :</strong> 创建目录</p>
+<p><strong>rd</strong> : 删除目录    注意：rd不能删除非空的文件夹，而且只能用于删除文件夹。</p>
+<p><strong>cd</strong> : 进入指定目录</p>
+<p><strong>cd..</strong> : 退回到上一级目录</p>
+<p><em><code>cd \</code></em> : 退回到根目录</p>
+<p><strong>echo “hello java”&gt;a.txt  **写入文本到指定文件</strong>  **</p>
+<p>*<em>type a.txt *</em>显示文件内容命令</p>
+<p><strong>del</strong> : 删除文件    注意：不能删除文件夹，只能删除文件。</p>
+<p><strong>exit</strong> : 推出dos命令行</p>
+<p>*<em>cls *</em> : 通知计算机将当前的命令清空</p>
+<p>*:  是通配符。</p>
+<p><strong>tab</strong>  命令补全。</p>
+<p>方向键上下是找回上次你写过的命令。</p>
+<a id="more"></a>
+
+<h1 id="classpath、path环境变量"><a href="#classpath、path环境变量" class="headerlink" title="classpath、path环境变量"></a>classpath、path环境变量</h1><p>运行一个Java程序，首先需要javac编译源文件.java，然后jvm将编译后的.class文件翻译成所在系统支持运行的二进制文件，java  类名,运行程序;</p>
+<p>使用 javac java 等命令，需要在bin文件夹使用，为了在任何路径都能使用这些命令，将bin目录完整路径设置在path环境变量中就可以了。</p>
+<p>使用java 运行一个.class文件时，也是需要在其目录中才能找到文件并运行，将文件的完整路径设置classpath环境变量，无论命令行的路径在哪都可以运行。</p>
+<p>需求： 在现实开发中有时候jdk版本的信息有时候只会使用一次或者几次就不再使用了，那么如果是这种需求，我们一般都是通过set命令配置临时环境变量。</p>
+<p><strong>临时环境变量就是仅对于当前控制台窗口起作用，窗口一旦关闭，那么配置的临时环境变量信息会发生消失。</strong></p>
+<p>set命令的用法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">set    				查看所有的环境变量信息。</span><br><span class="line">set 环境变量的名字 		查看指定的环境变量信息。</span><br><span class="line">set 环境变量名字 = 路径信息     设置指定的环境变量信息。</span><br><span class="line">set 环境变量名字 =              清空指定的环境变量信息。</span><br><span class="line">set 环境变量名字 = 新路径；%环境变量名字%    在原有的基础上添加新的路径信息。</span><br><span class="line"></span><br><span class="line">使用%%:</span><br><span class="line">JAVA_HOME = C:\java</span><br><span class="line">path = %JAVA_HOME%\bin</span><br><span class="line"></span><br><span class="line">classpath = C:\codeRun;（.(./)）    <span class="comment">// ；相当于当前路径，也就是 . ;运行程序先到classpath路径找，找不到才到当前路径中找。</span></span><br><span class="line">classpath = ;C:\codeRun;   <span class="comment">// 查找路径顺序相反。</span></span><br></pre></td></tr></table></figure>
+
+<p>注意： 以后大家但凡看到是set命令设置的环境变量信息，都是临时环境变量信息。</p>
+<h1 id="标识符"><a href="#标识符" class="headerlink" title="标识符"></a>标识符</h1><ul>
+<li><p>标识符由数字、字母、_(下划线)、$(美元符号)组成</p>
+</li>
+<li><p>不能以数字开头，标识符名应见名知意</p>
+<h1 id="关键字"><a href="#关键字" class="headerlink" title="关键字"></a>关键字</h1><table>
+<thead>
+<tr>
+<th><strong>关键字</strong></th>
+<th><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>abstract</td>
+<td>表明类或者成员方法具有抽象属性</td>
+</tr>
+<tr>
+<td>assert</td>
+<td>断言，用来进行程序调试</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>基本数据类型之一，布尔类型</td>
+</tr>
+<tr>
+<td>break</td>
+<td>提前跳出一个块</td>
+</tr>
+<tr>
+<td>byte</td>
+<td>基本数据类型之一，字节类型</td>
+</tr>
+<tr>
+<td>case</td>
+<td>用在switch语句之中，表示其中的一个分支</td>
+</tr>
+<tr>
+<td>catch</td>
+<td>用在异常处理中，用来捕捉异常</td>
+</tr>
+<tr>
+<td>char</td>
+<td>基本数据类型之一，字符类型</td>
+</tr>
+<tr>
+<td>class</td>
+<td>声明一个类</td>
+</tr>
+<tr>
+<td>const</td>
+<td>保留关键字，没有具体含义</td>
+</tr>
+<tr>
+<td>continue</td>
+<td>回到一个块的开始处</td>
+</tr>
+<tr>
+<td>default</td>
+<td>默认，例如，用在switch语句中，表明一个默认的分支</td>
+</tr>
+<tr>
+<td>do</td>
+<td>用在do-while循环结构中</td>
+</tr>
+<tr>
+<td>double</td>
+<td>基本数据类型之一，双精度浮点数类型</td>
+</tr>
+<tr>
+<td>else</td>
+<td>用在条件语句中，表明当条件不成立时的分支</td>
+</tr>
+<tr>
+<td>enum</td>
+<td>枚举</td>
+</tr>
+<tr>
+<td>extends</td>
+<td>表明一个类型是另一个类型的子类型，这里常见的类型有类和接口</td>
+</tr>
+<tr>
+<td>final</td>
+<td>用来说明最终属性，表明一个类不能派生出子类，或者成员方法不能被覆盖，或者成员域的值不能被改变，用来定义常量</td>
+</tr>
+<tr>
+<td>finally</td>
+<td>用于处理异常情况，用来声明一个基本肯定会被执行到的语句块</td>
+</tr>
+<tr>
+<td>float</td>
+<td>基本数据类型之一，单精度浮点数类型</td>
+</tr>
+<tr>
+<td>for</td>
+<td>一种循环结构的引导词</td>
+</tr>
+<tr>
+<td>goto</td>
+<td>保留关键字，没有具体含义</td>
+</tr>
+<tr>
+<td>if</td>
+<td>条件语句的引导词</td>
+</tr>
+<tr>
+<td>implements</td>
+<td>表明一个类实现了给定的接口</td>
+</tr>
+<tr>
+<td>import</td>
+<td>表明要访问指定的类或包</td>
+</tr>
+<tr>
+<td>instanceof</td>
+<td>用来测试一个对象是否是指定类型的实例对象</td>
+</tr>
+<tr>
+<td>int</td>
+<td>基本数据类型之一，整数类型</td>
+</tr>
+<tr>
+<td>interface</td>
+<td>接口</td>
+</tr>
+<tr>
+<td>long</td>
+<td>基本数据类型之一，长整数类型</td>
+</tr>
+<tr>
+<td>native</td>
+<td>用来声明一个方法是由与计算机相关的语言（如C/C++/FORTRAN语言）实现的</td>
+</tr>
+<tr>
+<td>new</td>
+<td>用来创建新实例对象</td>
+</tr>
+<tr>
+<td>package</td>
+<td>包</td>
+</tr>
+<tr>
+<td>private</td>
+<td>一种访问控制方式：私用模式</td>
+</tr>
+<tr>
+<td>protected</td>
+<td>一种访问控制方式：保护模式</td>
+</tr>
+<tr>
+<td>public</td>
+<td>一种访问控制方式：共用模式</td>
+</tr>
+<tr>
+<td>return</td>
+<td>从成员方法中返回数据</td>
+</tr>
+<tr>
+<td>short</td>
+<td>基本数据类型之一,短整数类型</td>
+</tr>
+<tr>
+<td>static</td>
+<td>表明具有静态属性</td>
+</tr>
+<tr>
+<td>strictfp</td>
+<td>用来声明FP_strict（单精度或双精度浮点数）表达式遵循<span class="exturl" data-url="aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9JRUVFJTIwNzU0" title="https://baike.baidu.com/item/IEEE%20754">IEEE 754<i class="fa fa-external-link"></i></span>算术规范[1]<a href=""> </a></td>
+</tr>
+<tr>
+<td>super</td>
+<td>表明当前对象的父类型的引用或者父类型的构造方法</td>
+</tr>
+<tr>
+<td>switch</td>
+<td>分支语句结构的引导词</td>
+</tr>
+<tr>
+<td>synchronized</td>
+<td>表明一段代码需要同步执行</td>
+</tr>
+<tr>
+<td>this</td>
+<td>指向当前实例对象的引用</td>
+</tr>
+<tr>
+<td>throw</td>
+<td>抛出一个异常</td>
+</tr>
+<tr>
+<td>throws</td>
+<td>声明在当前定义的成员方法中所有需要抛出的异常</td>
+</tr>
+<tr>
+<td>transient</td>
+<td>声明不用序列化的成员域</td>
+</tr>
+<tr>
+<td>try</td>
+<td>尝试一个可能抛出异常的程序块</td>
+</tr>
+<tr>
+<td>void</td>
+<td>声明当前成员方法没有返回值</td>
+</tr>
+<tr>
+<td>volatile</td>
+<td>表明两个或者多个变量必须同步地发生变化</td>
+</tr>
+<tr>
+<td>while</td>
+<td>用在循环结构中</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>保留字</p>
+<p>goto const</p>
+</li>
+<li><p>标识符</p>
+<p>false true null</p>
+</li>
+</ul>
+<h1 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">单行注释： <span class="comment">// code</span></span><br><span class="line"></span><br><span class="line">多行注释： <span class="comment">/* code */</span></span><br><span class="line"></span><br><span class="line">文档注释，生产开发者文档。</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	<span class="doctag">@author</span> zx</span></span><br><span class="line"><span class="comment">	<span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment">	<span class="doctag">@param</span> 参数</span></span><br><span class="line"><span class="comment">	<span class="doctag">@return</span> 返回的类型参数值</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">使用javadoc开发工具即可生成一个开发者文档。</span><br><span class="line"></span><br><span class="line">javadoc工具的使用格式：</span><br><span class="line">	javadoc -d 存放文档的路径   java的源文件 </span><br><span class="line">	或 javadoc –d 指定存储文档的路径  -version –author（可选）  目标文件</span><br><span class="line">使用javadoc工具要注意细节：</span><br><span class="line">	<span class="number">1</span>. 如果一个类需要使用javadoc工具生成一个软件的开发者文档，那么该类必须使用<span class="keyword">public</span>修饰。</span><br><span class="line">	<span class="number">2</span>. 文档注释注释的内容一般都是位于类或者方法的上面的。</span><br><span class="line"></span><br><span class="line">写注释的规范：一般单行注释是位于代码的右侧，多行注释与文档注释一般是写在类或者方法的上面的。</span><br></pre></td></tr></table></figure>
+<h1 id="常量和变量"><a href="#常量和变量" class="headerlink" title="常量和变量"></a>常量和变量</h1><h2 id="java中常量的分类"><a href="#java中常量的分类" class="headerlink" title="java中常量的分类"></a>java中常量的分类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">  整数常量 ： 所有整数</span><br><span class="line">  小数常量 ： 所有小数</span><br><span class="line">  布尔常量 ： 只有<span class="keyword">true</span>和<span class="keyword">false</span></span><br><span class="line">  字符常量 ：使用’’引起来的单个字符</span><br><span class="line">  字符串常量 ：使用“”引起来的字符序列，“”  、“a” 、” ”  </span><br><span class="line">  <span class="keyword">null</span>常量 ： 只有一个值<span class="keyword">null</span></span><br><span class="line">  		<span class="comment">/*</span></span><br><span class="line"><span class="comment">System.out.println(12); //整数常量</span></span><br><span class="line"><span class="comment">System.out.println(3.14); //小数常量</span></span><br><span class="line"><span class="comment">System.out.println(false); //布尔常量</span></span><br><span class="line"><span class="comment">System.out.println('1'); //字符常量</span></span><br><span class="line"><span class="comment">System.out.println("hello world"); //字符串常量</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">如果一个数据没有加上任何的标识之前，默认就是十进制的数据。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">System.out.println(<span class="number">10</span>);<span class="comment">// 十进制</span></span><br><span class="line">System.out.println(<span class="number">0b10</span>); <span class="comment">//二进制 , 如果一个数据要表示二进制，那么要在该数据的前面加上0b开头。</span></span><br><span class="line">System.out.println(<span class="number">010</span>); <span class="comment">//八进制数据， 八进制的数据需要以0开头</span></span><br><span class="line">System.out.println(<span class="number">0x10</span>); <span class="comment">//十六进制数据， 十六进制的数据需要以0x开头</span></span><br></pre></td></tr></table></figure>
+<h2 id="变量的数据类型"><a href="#变量的数据类型" class="headerlink" title="变量的数据类型"></a>变量的数据类型</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>. 整型</span><br><span class="line">	<span class="keyword">byte</span>   代表一个字节的大小   <span class="number">8</span>bit  <span class="number">2</span>(<span class="number">8</span>)   -<span class="number">128</span>~<span class="number">127</span>        <span class="number">256</span></span><br><span class="line">	<span class="keyword">short</span>  代表两个字节的大小  <span class="number">16</span>bit  <span class="number">2</span>(<span class="number">16</span>)  -<span class="number">2</span>(<span class="number">15</span>)~<span class="number">2</span>(<span class="number">15</span>)-<span class="number">1</span></span><br><span class="line">	<span class="keyword">int</span>    代表四个字节的大小  <span class="number">32</span>bit  <span class="number">2</span>(<span class="number">32</span>)  -<span class="number">2</span>(<span class="number">31</span>)~<span class="number">2</span>(<span class="number">31</span>)-<span class="number">1</span></span><br><span class="line">	<span class="keyword">long</span>   代表八个字节的大小  <span class="number">64</span>bit  <span class="number">2</span>(<span class="number">64</span>)  -<span class="number">2</span>(<span class="number">63</span>)~<span class="number">2</span>(<span class="number">63</span>)-<span class="number">1</span></span><br><span class="line">	如果一个数值没有采取特殊的处理，那么该整数默认的类型是<span class="keyword">int</span>。</span><br><span class="line">	可以使用数值后面添加L或小写l改变默认的整数类型。<span class="comment">// long a = 110L;</span></span><br><span class="line"><span class="number">2</span>. 浮点型</span><br><span class="line">	 <span class="keyword">float</span>  代表四个字节的大小  <span class="number">32</span>bit</span><br><span class="line">	 <span class="keyword">double</span> 代表八个字节的大小  <span class="number">64</span>bit</span><br><span class="line">java程序中所有的小数默认的类型是<span class="keyword">double</span>类型，所以需要使用特殊的符号改变默认的小数类型，如果</span><br><span class="line">	需要表示成<span class="keyword">float</span>类型，那么需要在小数的后面加上f表示。f不区分大小写的。<span class="comment">// float ff = 3.14f;</span></span><br><span class="line"><span class="number">3</span>. 字符型</span><br><span class="line">	  <span class="keyword">char</span>   代表两个字节的大小  <span class="number">16</span>bit  <span class="number">2</span>(<span class="number">16</span>) </span><br><span class="line">	  原理：将字符映射为码表中对应的十进制数据加以存储。</span><br><span class="line"><span class="number">4</span>. 布尔型</span><br><span class="line"><span class="keyword">boolean</span> <span class="keyword">true</span> <span class="keyword">false</span>   <span class="number">1</span>字节或者<span class="number">4</span>个字节   </span><br><span class="line">	如果使用<span class="keyword">boolean</span>声明一个基本类型的变量时，那么该变量占<span class="number">4</span>个字节，如果使用<span class="keyword">boolean</span>声明一个数组类型 的时候，那么每个数组的元素占一个字节。</span><br></pre></td></tr></table></figure>
+
+<h2 id="变量类型转换"><a href="#变量类型转换" class="headerlink" title="变量类型转换"></a>变量类型转换</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">数据类型转换： </span><br><span class="line">	</span><br><span class="line">	小数据类型--------&gt;大数据类型     自动类型转换</span><br><span class="line">	</span><br><span class="line">	大数据类型---------&gt;小数据类型    强制类型转换</span><br><span class="line"></span><br><span class="line">强制类型转换的格式：</span><br><span class="line">			</span><br><span class="line">			小数据类型  变量名 = (小数据类型)大数据类型</span><br><span class="line">	</span><br><span class="line">数据类型转换要注意的细节：</span><br><span class="line">	<span class="number">1</span>. 凡是<span class="keyword">byte</span>、<span class="keyword">short</span> 、 <span class="keyword">char</span>数据类型数据在运算的时候都会自动转换成<span class="keyword">int</span>类型的数据再运算。</span><br><span class="line">	<span class="number">2</span>. 两个不同数据类型的数据在运算的时候，结果取决于大的数据类型。</span><br><span class="line"><span class="keyword">byte</span> b = <span class="number">2</span>+<span class="number">1</span>; <span class="comment">// error 2 1 是int类型，需要强转才能赋值给byte类型的b变量</span></span><br><span class="line"><span class="keyword">byte</span> b = (<span class="keyword">byte</span>)(<span class="number">2</span>+<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<h1 id="运算符和优先级"><a href="#运算符和优先级" class="headerlink" title="运算符和优先级"></a>运算符和优先级</h1><ul>
+<li>与C语言一致</li>
+</ul>
+<h1 id="流程控制语句"><a href="#流程控制语句" class="headerlink" title="流程控制语句"></a>流程控制语句</h1><ul>
+<li>与C语言基本一致</li>
+<li>switch（ch） ch 可以是 整型、字符串、字符、枚举</li>
+<li>无goto语句，但关键字保留</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// break 可以控制结束内外循环</span></span><br><span class="line">aaa:<span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span> ; j&lt;<span class="number">3</span> ; j++)&#123; <span class="comment">// j=0 外层for循环</span></span><br><span class="line">    bbb:<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span> ; i&lt; <span class="number">2</span> ; i++)&#123;  <span class="comment">// i=0 内层for循环</span></span><br><span class="line">        System.out.println(<span class="string">"hello world"</span>); <span class="comment">// 1	</span></span><br><span class="line">        <span class="keyword">break</span> aaa;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// continue 也是可以的</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h1><p>Java无指针,有函数重载（overload），其他与C语言类似。</p>
+<p><strong>函数重载的定义：</strong>在同一个类中，有一个以上的同名函数，只要函数的参数列表或参数类型不一样即可，与返回值无关， 这些统称为方法的重载。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> b = <span class="number">2</span>;</span><br><span class="line">reverse(a,b); <span class="comment">// 无效</span></span><br><span class="line">System.out.println(<span class="string">"a= "</span>+a+<span class="string">"b= "</span>+b);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">reverse</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> temp;</span><br><span class="line">    temp = a;</span><br><span class="line">    a = b;</span><br><span class="line">    b = temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h1><p><strong>数组的定义：</strong></p>
+<ol>
+<li><p>元素类型[] 数组名 = new 元素类型[元素个数或数组长度];</p>
+<p>示例：</p>
+<p>int[] arr = newint[5];</p>
+</li>
+<li><p>元素类型[] 数组名 = new 元素类型[]{元素，元素，……};</p>
+<p>int[] arr = new int[]{3,5,1,7};</p>
+<p>int[]arr = {3,5,1,7};</p>
+</li>
+</ol>
+<p>new相当于C语言中malloc，在堆内存中分配内存空间。</p>
+<p><strong>二维数组的定义：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">	动态初始化:		</span><br><span class="line">		数据类型[][] 变量名 = <span class="keyword">new</span> 数据类型[长度<span class="number">1</span>][长度<span class="number">2</span>];</span><br><span class="line">	静态初始化：</span><br><span class="line">		数据类型[][]  变量名 = &#123;&#123;元素<span class="number">1</span>,元素<span class="number">2</span>...&#125;,&#123;元素<span class="number">1</span>,元素<span class="number">2</span>...&#125;,&#123;元素<span class="number">1</span>,元素<span class="number">2</span>...&#125; ..&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>[][] arr = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>][<span class="number">4</span>]; <span class="comment">//3 可以是值为3的变量</span></span><br><span class="line"><span class="keyword">int</span>[][] arr = &#123;&#123;<span class="number">10</span>,<span class="number">11</span>,<span class="number">9</span>&#125;,&#123;<span class="number">67</span>,<span class="number">12</span>&#125;,&#123;<span class="number">33</span>,<span class="number">35</span>,<span class="number">39</span>,<span class="number">40</span>&#125;&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="包机制"><a href="#包机制" class="headerlink" title="包机制"></a>包机制</h1><p>包: </p>
+<p>java中的包就相当于windows文件夹。</p>
+<p>包的作用：<br>    1. 解决类名重复产生冲突的问题。<br>    2. 便于软件版本的发布。</p>
+<p>定义包的格式：<br>    package 包名;</p>
+<p>包名命名规范：包名全部小写。</p>
+<p>包语句要注意的事项：<br>    1. package语句必须位于java文件中中第一个语句。<br>    2. 如果一个类加上了包语句，那么该类的完整类名就是: 包名.类名<br>    3. 一个java文件只能有一个包语句。</p>
+<p>问题：  每次编译的时候都需要自己创建一个文件夹，把对应 的class文件存储 到文件夹中。烦！！！<br>        javac -d 指定类文件的存放路径   java源文件<br>        javac -d ./ Demo.java<br>        java aa.Demo 运行</p>
+<p><strong>导包语句作用：简化书写。 (误区： 把一个类导入到内存中)</strong></p>
+<p>导包语句的格式：<br>             import 包名.类名;   （导入xxx包中某个类）</p>
+<p>导包语句要注意的细节：<br>     1. 一个java文件中可以出现多句导包语句。<br>     2. “*”是 导包语句的通配符。可以匹配任何 的类名。<br>     3. import aa.*; 是不会作用于aa包下面的子包的。</p>
+<p>推荐使用：import 包名.类名;   因为使用*通配符会导致结构不清晰。</p>
+<p>什么时候使用import语句:<br>    1. 相互访问的两个类不是在同一个包下面，这时候就需要使用到导包语句。<br>    2. java.lang 是默认导入 的，不需要我们自己导入。</p>
+<h1 id="jar包"><a href="#jar包" class="headerlink" title="jar包"></a>jar包</h1><p>1：<strong>jar</strong>就是打包文件</p>
+<p>jar文件时一种打包文件java active File,与zip兼容，称之为jar包</p>
+<p>开发了很多类，需要将类提供给别人使用，通常以jar包形式提供.当项目写完之后，需要及将class字节码文件打包部署给客户。如何打包？可以使用jar命令.</p>
+<p>2：jar命令</p>
+<p>   1：jar工具存放于jdk的bin目录中(jar.exe)</p>
+<p>   2：jar工具：主要用于对class文件进行打包(压缩)</p>
+<p>   3：dos中输入jar查看帮助</p>
+<p><strong>用法：</strong></p>
+<p><code>jar cvf jar文件的名字  class文件或者是文件夹</code></p>
+<p>打jar包要注意的事项：</p>
+<pre><code>1. 一个程序打完了jar之后 必须要在清单文件上指定入口类： 格式 Main-Class: 包名.类名
+2. jar包双击运行仅对于图形化界面的程序起作用，对控制台的程序不起作用。</code></pre><p>jar文件的作用：<br>jar文件的作用：<br>    1. 方便用户快速运行一个项目。<br>    2. 提供工具类以jar包的形式给别人使用。 </p>
+<p>如果使用jar包里面的类必须要先设置classpath路径。</p>
+<p>jre = jvm+ 核心类库</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zxucooly
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zxucooly.github.io/2017/11/29/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/1-Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" title="java基础知识">https://zxucooly.github.io/2017/11/29/Java基础知识/1-Java基础知识/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag"><i class="fa fa-tag"></i> java基础知识</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2017/11/30/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/2-Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86_%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" rel="next" title="java基础知识-面向对象">
+      java基础知识-面向对象 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#常见的dos命令"><span class="nav-number">1.</span> <span class="nav-text">常见的dos命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#classpath、path环境变量"><span class="nav-number">2.</span> <span class="nav-text">classpath、path环境变量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#标识符"><span class="nav-number">3.</span> <span class="nav-text">标识符</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关键字"><span class="nav-number">4.</span> <span class="nav-text">关键字</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注释"><span class="nav-number">5.</span> <span class="nav-text">注释</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常量和变量"><span class="nav-number">6.</span> <span class="nav-text">常量和变量</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#java中常量的分类"><span class="nav-number">6.1.</span> <span class="nav-text">java中常量的分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变量的数据类型"><span class="nav-number">6.2.</span> <span class="nav-text">变量的数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变量类型转换"><span class="nav-number">6.3.</span> <span class="nav-text">变量类型转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#运算符和优先级"><span class="nav-number">7.</span> <span class="nav-text">运算符和优先级</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#流程控制语句"><span class="nav-number">8.</span> <span class="nav-text">流程控制语句</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#函数"><span class="nav-number">9.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数组"><span class="nav-number">10.</span> <span class="nav-text">数组</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#包机制"><span class="nav-number">11.</span> <span class="nav-text">包机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#jar包"><span class="nav-number">12.</span> <span class="nav-text">jar包</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zxucooly"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zxucooly</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnp4dWNvb2x5QGdtYWlsLmNvbQ==" title="E-Mail → mailto:zxucooly@gmail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zxu's blog</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
